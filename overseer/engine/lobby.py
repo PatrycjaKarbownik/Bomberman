@@ -1,5 +1,7 @@
 import json
+import logging
 
+logger = logging.getLogger(__name__)
 logged_users = json.load(open('mock_data/users.json', 'r'))
 
 def get_users():

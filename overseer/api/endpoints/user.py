@@ -1,6 +1,10 @@
 from flask_restplus import Resource
 from api.restful import api
+
 import engine.lobby as lobby
+import logging
+
+logger = logging.getLogger(__name__)
 
 ns = api.namespace('user', description='Showing users and adding them :)')
 

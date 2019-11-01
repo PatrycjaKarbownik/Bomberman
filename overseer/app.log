@@ -1,0 +1,22 @@
+[2019-11-01 22:49:20,961]werkzeug - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+[2019-11-01 22:49:20,962]werkzeug - INFO -  * Restarting with stat
+[2019-11-01 22:49:21,146]werkzeug - WARNING -  * Debugger is active!
+[2019-11-01 22:49:21,147]werkzeug - INFO -  * Debugger PIN: 159-453-833
+[2019-11-01 22:51:02,079]werkzeug - INFO -  * Detected change in '/home/temebe/Projekty/ZPR_Bomberman/overseer/engine/lobby.py', reloading
+[2019-11-01 22:51:02,130]werkzeug - INFO -  * Restarting with stat
+[2019-11-01 22:51:02,336]werkzeug - WARNING -  * Debugger is active!
+[2019-11-01 22:51:02,337]werkzeug - INFO -  * Debugger PIN: 159-453-833
+[2019-11-01 22:51:58,985]werkzeug - INFO -  * Detected change in '/home/temebe/Projekty/ZPR_Bomberman/overseer/engine/lobby.py', reloading
+[2019-11-01 22:51:59,021]werkzeug - INFO -  * Restarting with stat
+[2019-11-01 22:53:01,730]werkzeug - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+[2019-11-01 22:53:01,732]werkzeug - INFO -  * Restarting with stat
+[2019-11-01 22:53:01,901]werkzeug - WARNING -  * Debugger is active!
+[2019-11-01 22:53:01,902]werkzeug - INFO -  * Debugger PIN: 159-453-833
+[2019-11-01 22:54:09,915]werkzeug - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+[2019-11-01 22:54:09,916]werkzeug - INFO -  * Restarting with stat
+[2019-11-01 22:54:10,083]werkzeug - WARNING -  * Debugger is active!
+[2019-11-01 22:54:10,084]werkzeug - INFO -  * Debugger PIN: 159-453-833
+[2019-11-01 22:54:23,941]werkzeug - INFO - 127.0.0.1 - - [01/Nov/2019 22:54:23] "GET / HTTP/1.1" 404 -
+[2019-11-01 22:54:28,753]werkzeug - INFO - 127.0.0.1 - - [01/Nov/2019 22:54:28] "GET /api/ HTTP/1.1" 200 -
+[2019-11-01 22:54:28,952]werkzeug - INFO - 127.0.0.1 - - [01/Nov/2019 22:54:28] "GET /api/swagger.json HTTP/1.1" 200 -
+[2019-11-01 22:55:14,005]werkzeug - INFO - 127.0.0.1 - - [01/Nov/2019 22:55:14] "GET /api/swagger.json HTTP/1.1" 200 -
