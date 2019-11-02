@@ -1,14 +1,15 @@
-import logging
 import logging.config
 
 from flask import Flask, Blueprint
-from api.restful import api
+
 from api.endpoints.user import ns as user_ns
+from api.restful import api
 
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
 
 def configure_app(flask_app):
     flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = 'list'
