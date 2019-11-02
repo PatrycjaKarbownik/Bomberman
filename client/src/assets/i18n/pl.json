@@ -1,0 +1,26 @@
+{
+  "ALL": {
+    "WARNING": "Ostrzeżenie",
+    "ADD": "Dodaj",
+    "CHOOSE": "Wybierz",
+    "SAVE": "Zapisz",
+    "CANCEL": "Anuluj",
+    "YES": "Tak",
+    "BACK": "Wróć"
+  },
+  "AUTH": {
+    "LOGIN": "Login",
+    "SIGN_IN": "Zaloguj"
+  },
+  "LOBBY": {
+    "TITLE": "Lobby"
+  },
+  "EXCEPTION": {
+    "UNEXPECTED": "Wystąpił nieoczekiwany błąd"
+  },
+  "VALIDATION": {
+    "FIELD_NOT_VALID": "Pole jest niepoprawne.",
+    "BAD_CREDENTIALS": "Niepoprawna nazwa użytkownika",
+    "REQUIRED": "Pole jest wymagane."
+  }
+}

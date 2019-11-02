@@ -1,0 +1,39 @@
+@import "shared";
+@import "bootstrap/overrides";
+@import "bootstrap/bootstrap";
+
+@import '~ngx-toastr/toastr-bs4-alert';
+
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+html {
+  min-height: 100%;
+  font-size: 10px;
+}
+
+body {
+  background-color: $black;
+  font-size: 1.6rem;
+}
+
+html, body {
+  height: 100%;
+}
+
+.validation-error {
+  color: $bomb-primary;
+  font-size: 50%;
+}
+
+.required::after {
+  content: '*';
+  color: $bomb-primary;
+  position: absolute;
+  margin-left: 5px;
+  margin-top: 3px;
+  z-index: 10;
+}
