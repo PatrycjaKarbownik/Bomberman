@@ -1,7 +1,6 @@
 {
   "ALL": {
     "WARNING": "Ostrzeżenie",
-    "ADD": "Dodaj",
     "CHOOSE": "Wybierz",
     "SAVE": "Zapisz",
     "CANCEL": "Anuluj",
@@ -14,7 +13,9 @@
   },
   "LOBBY": {
     "TITLE": "Lobby",
-    "ENTRY_ROOM": "Dołącz do pokoju"
+    "ROOM_LIST": "Lista pokoi",
+    "ENTRY_ROOM": "Dołącz do pokoju",
+    "ADD_AND_ENTRY": "Dodaj pokój i dołącz"
   },
   "EXCEPTION": {
     "UNEXPECTED": "Wystąpił nieoczekiwany błąd"

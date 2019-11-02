@@ -1,5 +1,10 @@
 @import "~styles/shared";
 
+.room-list {
+  font-weight: 600;
+  font-size: 2rem;
+}
+
 .tile {
   margin-top: 2rem;
   margin-right: 5rem;
@@ -13,7 +18,21 @@
   border-radius: $border-radius;
   box-shadow: 0 .1rem .3rem 0 rgba(0, 0, 0, 0.16);
   border: solid .09rem $bomb-primary;
-  background-color: $bomb-light-black;
+  background-color: $bomb-very-light-black;
+
+  &.canEntry{
+    background-color: $bomb-light-black;
+    .header {
+      font-size: 2rem;
+      font-weight: 600;
+      color: $bomb-primary-very-dark-font;
+    }
+
+    .users {
+      font-size: 1.2rem;
+      color: $bomb-primary-very-dark-font;
+    }
+  }
 
   .header {
     font-size: 2rem;
@@ -22,7 +41,7 @@
   }
 
   .users {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: $bomb-primary-font;
   }
 
