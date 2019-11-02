@@ -1,0 +1,21 @@
+[
+  {
+    "name": "Pati",
+    "state": "in_game",
+    "room": "0323"
+  },
+  {
+    "name": "Tromba",
+    "state": "in_game",
+    "room": "0323"
+  },
+  {
+    "name": "Piotrek",
+    "state": "in_room",
+    "room": "0324"
+  },
+  {
+    "name": "xXx_KoWaLPL1337_xXx",
+    "state": "in_lobby"
+  }
+]
