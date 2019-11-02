@@ -24,7 +24,7 @@ class IdManager(object):
 
     def add_id(self, id):
         i = 0
-        for i in range(self.free_ids):
+        for i in range(len(self.free_ids)):
             if id < self.free_ids[i]:
                 self.free_ids.insert(i, id)
                 break
