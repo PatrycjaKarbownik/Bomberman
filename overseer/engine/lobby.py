@@ -11,7 +11,7 @@ def get_users():
     pass
 
 
-def user_exist(nickname):
+def user_exists(nickname):
     """Return True if nickname is taken, otherwise False"""
     for user in logged_users:
         if user['name'] == nickname:

@@ -18,9 +18,9 @@ class UserCollection(Resource):
         return lobby.get_users(), 200
 
 
-@ns.route('/exist/<string:username>')
-class UserExist(Resource):
+@ns.route('/exists/<string:username>')
+class UserExists(Resource):
 
     def get(self, username):
         """Check whether user exists"""
-        return lobby.user_exist(username), 200
+        return lobby.user_exists(username), 200
