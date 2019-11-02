@@ -1,6 +1,12 @@
-$bomb-primary: #fd495c;
+$bomb-primary: #008baa;
+$bomb-primary-font: #dfdfdf;
 $bomb-primary-darker: #84484e;
-$bomb-blue: #008baa;
+$bomb-warning: #fd495c;
+$bomb-light-black: #181818;
+
+$element-active-unselected-border: #979797;
+
+$border-radius: .35rem;
 
 @import "bootstrap/overrides";
 @import "~bootstrap/scss/functions";

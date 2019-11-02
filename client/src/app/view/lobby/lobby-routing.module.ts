@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { LobbyComponent } from '@app/view/lobby/lobby.component';
 
-import { LobbyComponent } from '@app/lobby/lobby.component';
 
 const routes: Routes = [
   { path: '',

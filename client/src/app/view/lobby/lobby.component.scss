@@ -1,0 +1,33 @@
+@import "~styles/shared";
+
+.tile {
+  margin-top: 2rem;
+  margin-right: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.1rem;
+
+  width: 30rem;
+  height: 15rem;
+  border-radius: $border-radius;
+  box-shadow: 0 .1rem .3rem 0 rgba(0, 0, 0, 0.16);
+  border: solid .09rem $bomb-primary;
+  background-color: $bomb-light-black;
+
+  .header {
+    font-size: 2rem;
+    font-weight: 600;
+    color: $bomb-primary-font;
+  }
+
+  .users {
+    font-size: 1rem;
+    color: $bomb-primary-font;
+  }
+
+  .next {
+    font-size: 1.5rem;
+    color: $bomb-primary;
+  }
+}

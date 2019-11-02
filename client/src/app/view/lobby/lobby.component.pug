@@ -1,0 +1,15 @@
+.col-sm-12.py-4.d-flex.flex-column
+  bomb-page-header([title]="'LOBBY.TITLE' | translate")
+
+  .row.justify-content-end
+    button.btn-primary(translate) ALL.ADD
+
+  .row.justify-content-center
+    div(*ngFor="let room of (rooms$ | async)")
+      .row
+        div.tile
+          span.header {{ room.id }}
+          div.users(*ngFor="let user of room.users")
+            span {{ user }}
+          //a.active([routerLink]="'/' + View.PLANS")
+          span.next(translate) LOBBY.ENTRY_ROOM

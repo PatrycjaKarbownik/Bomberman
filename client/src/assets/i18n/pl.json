@@ -13,7 +13,8 @@
     "SIGN_IN": "Zaloguj"
   },
   "LOBBY": {
-    "TITLE": "Lobby"
+    "TITLE": "Lobby",
+    "ENTRY_ROOM": "Dołącz do pokoju"
   },
   "EXCEPTION": {
     "UNEXPECTED": "Wystąpił nieoczekiwany błąd"

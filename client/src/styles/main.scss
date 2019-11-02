@@ -1,4 +1,5 @@
 @import "shared";
+@import "fonts";
 @import "bootstrap/overrides";
 @import "bootstrap/bootstrap";
 
@@ -16,8 +17,10 @@ html {
 }
 
 body {
+  font-family: "Open Sans", "Open Sans", sans-serif;
   background-color: $black;
   font-size: 1.6rem;
+  color: $bomb-primary-font;
 }
 
 html, body {
@@ -25,13 +28,13 @@ html, body {
 }
 
 .validation-error {
-  color: $bomb-primary;
+  color: $bomb-warning;
   font-size: 50%;
 }
 
 .required::after {
   content: '*';
-  color: $bomb-primary;
+  color: $bomb-warning;
   position: absolute;
   margin-left: 5px;
   margin-top: 3px;
