@@ -1,0 +1,9 @@
+h4(translate) ALL.WARNING
+
+hr
+div.text-md-center {{ message }}
+
+hr.mt-5
+.d-flex.justify-content-center
+  button.btn.btn-primary(type="button", (click)="this.closeModal(true)", translate) ALL.YES
+  button.btn.btn-link(type='button', (click)="this.closeModal(false)", translate) ALL.CANCEL
