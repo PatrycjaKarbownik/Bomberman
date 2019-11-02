@@ -7,7 +7,7 @@
         form(id="loginForm", name="loginForm", #loginForm="ngForm", (ngSubmit)="onSubmit(loginForm)")
           .form-group
             label.required(for="login", translate) AUTH.LOGIN
-            input#login.form-control(name="login", type="email", [(ngModel)]="username", #login="ngModel", required)
+            input#login.form-control(name="login", [(ngModel)]="username", #login="ngModel", required)
             bomb-validation-errors([for]="login")
               bomb-validation-error(name="required") {{ 'VALIDATION.REQUIRED' | translate }}
               bomb-validation-error(name="userExists") {{ userExistsErrorMessage }}

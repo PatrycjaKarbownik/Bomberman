@@ -31,5 +31,4 @@ Web application for Bomberman game - server using C++ and Python, web client usi
 #### Tests
 
 # 2. Starting project
-- Frontend
-In `client` directory execute `npm install` and next `npm start`
+- Frontend: In `client` directory execute `npm install` and next `npm start`
