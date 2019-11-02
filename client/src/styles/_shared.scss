@@ -1,15 +1,15 @@
 $bomb-primary: #008baa;
+$bomb-primary-dark: #007896;
 $bomb-primary-font: #dfdfdf;
 $bomb-primary-very-dark-font: #646464;
-$bomb-primary-darker: #84484e;
 $bomb-warning: #fd495c;
 $bomb-very-light-black: #181818;
 $bomb-light-black: #111111;
+$bomb-light-light-black: #202020;
 
 $element-active-unselected-border: #979797;
 
 $border-radius: .35rem;
-
 
 // properties to override in ~bootstrap/scss/variables
 $primary: $bomb-primary;

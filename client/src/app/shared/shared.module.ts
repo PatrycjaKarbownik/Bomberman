@@ -12,7 +12,7 @@ import { CurrentUserService } from '@app/shared/auth/current-user.service';
 import { ValidationErrorsComponent } from '@app/shared/validation/validation-errors.component';
 import { ValidationErrorComponent } from '@app/shared/validation/validation-error.component';
 import { PopupComponent } from '@app/shared/popup/popup.component';
-import { PageHeaderComponent } from './page-header/page-header.component';
+import { PageHeaderComponent } from '@app/shared/page-header/page-header.component';
 
 export const components = [
   ValidationErrorsComponent,

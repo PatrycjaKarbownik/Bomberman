@@ -20,6 +20,10 @@
   border: solid .09rem $bomb-primary;
   background-color: $bomb-very-light-black;
 
+  &:hover {
+    background-color: $bomb-light-light-black;
+  }
+
   &.canEntry{
     background-color: $bomb-light-black;
     .header {
