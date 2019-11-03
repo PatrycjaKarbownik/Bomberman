@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 // primary validation component
-// show error message when receive info that it should occur
+// shows error message when receive info that it should occur
 @Component({
   selector: 'bomb-validation-error',
   templateUrl: './validation-error.component.pug',
