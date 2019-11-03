@@ -14,7 +14,7 @@ const routes: Routes = [
         loadChildren: '@app/view/lobby/lobby.module#LobbyModule',
       },
       {
-        path: 'room/:roomId',
+        path: ViewModel.ROOM + '/:roomId',
         loadChildren: '@app/view/room/room.module#RoomModule',
       }
     ]

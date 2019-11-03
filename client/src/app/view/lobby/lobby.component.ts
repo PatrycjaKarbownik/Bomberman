@@ -29,7 +29,13 @@ export class LobbyComponent implements OnInit {
   }
 
   navigateToRoom(id: number) {
-    this.router.navigateByUrl(`/${ViewModel.ROOM}/${id}`);
+    this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
+  }
+
+  // creates room and navigate user to it
+  createAndEntryRoom() {
+    this.lobbyService.addRoom()
+      .subscribe(response => this.navigateToRoom(response));
   }
 
 }

@@ -15,69 +15,82 @@ export class LobbyService {
   constructor() { }
 
   getRooms(): Observable<RoomModel[]> {
-    return of([
-      {
-        id: 123,
-        users: ['Pati', 'Tromba', 'Mops', 'Tadzik']
-      },
-      {
-        id: 234,
-        users: ['Kowal', 'Piter']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }, {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }, {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }, {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }, {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }, {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }, {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      },
-      {
-        id: 351,
-        users: ['Gracz1', 'Gracz2', 'Gracz3']
-      }
-    ]);
+    // todo: change to websocket
+    return of(this.rooms);
   }
+
+  addRoom(): Observable<number> {
+    // todo: change to http request
+    return of(this.newRoom.id);
+  }
+
+  private newRoom: RoomModel = {
+    id: 666,
+    users: ['Monkey', 'Pig']
+  };
+
+  private rooms: RoomModel[] = [
+    {
+      id: 123,
+      users: ['Pati', 'Tromba', 'Mops', 'Tadzik']
+    },
+    {
+      id: 234,
+      users: ['Kowal', 'Piter']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }, {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }, {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }, {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }, {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }, {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }, {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    },
+    {
+      id: 351,
+      users: ['Gracz1', 'Gracz2', 'Gracz3']
+    }
+  ];
 }
