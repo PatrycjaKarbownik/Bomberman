@@ -7,6 +7,7 @@ class Room:
     def __init__(self):
         self.id = -1
         self.users = list()
+        self.users.append(User())
 
     def add_user(self, user):
         """Add given user to room
@@ -28,7 +29,7 @@ class Room:
     def remove_user(self, user_id):
         """Removes given user from room
 
-        First there is a check whether user with given id is in rum. Then he is removed from list of users
+        First there is a check whether user with given id iskk in rum. Then he is removed from list of users
         and his state is changed to IN_LOBBY.
 
         Args:
@@ -48,3 +49,11 @@ class Room:
 
         self.users.remove(user)
         user.state = UserState.IN_LOBBY
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'players': [
+                user.serialize() for user in self.users
+            ]
+        }

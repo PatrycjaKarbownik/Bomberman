@@ -12,11 +12,6 @@ room_id_manager = IdManager()
 logger = logging.getLogger(__name__)
 
 
-def get_users():
-    """Return list of all logged users"""
-    return users
-
-
 def user_exists(nickname):
     """Return True if nickname is taken, otherwise False"""
     for user in users:
@@ -65,3 +60,9 @@ def remove_room(room_id):
         return False
 
     return True
+
+
+def get_json_rooms():
+    """Returns JSON string with all rooms"""
+    test = [room.serialize() for room in rooms.values()]
+    return str(test)

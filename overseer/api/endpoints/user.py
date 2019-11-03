@@ -15,7 +15,7 @@ class UserCollection(Resource):
 
     def get(self):
         """Returns list of users"""
-        return lobby.get_users(), 200
+        return lobby.users, 200
 
 
 @ns.route('/exists/<string:username>')

@@ -1,0 +1,2 @@
+DEBUG_MODE = True
+FLASK_IP = '0.0.0.0'

@@ -1,7 +1,7 @@
 import logging.config
 
 from flask import Flask, Blueprint
-
+import settings
 from api.endpoints.user import ns as user_ns
 from api.endpoints.room import ns as room_ns
 from api.restful import api
@@ -29,4 +29,4 @@ def initialize_app(flask_app):
 
 if __name__ == '__main__':
     initialize_app(app)
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE)

@@ -15,7 +15,7 @@ class RoomCollection(Resource):
 
     def get(self):
         """Returns all rooms with all players"""
-        return lobby.get_users(), 200
+        return lobby.get_json_rooms(), 200
 
 
 @ns.route('/add/')
