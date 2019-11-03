@@ -1,0 +1,28 @@
+@import "~styles/shared";
+
+.button {
+  font-size: 1.7rem;
+  color: $primary;
+  background-color: $white;
+  border: solid .1rem $primary;
+  height: 3.2rem;
+  padding: 0 1rem;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: $bomb-primary-dark;
+    color: $white;
+  }
+
+  &:focus {
+    outline:0;
+  }
+}
+
+.button-primary {
+  @extend .button;
+
+  color: $white;
+  background-color: $primary;
+  text-transform: uppercase;
+}

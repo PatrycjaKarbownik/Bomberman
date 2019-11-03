@@ -1,7 +1,7 @@
 @import "~styles/shared";
 
 nav {
-  background-color: $bomb-blue;
+  background-color: $bomb-primary;
 }
 
 a, label {
@@ -14,7 +14,7 @@ a, label {
 
 .nav-item:hover {
   transform: translateY(-2px);
-  background-color: $bomb-primary-darker;
+  //background-color: $bomb-primary-darker;
 }
 
 .user-icon {

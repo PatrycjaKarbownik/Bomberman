@@ -10,7 +10,7 @@ const routes: Routes = [
       { path: '', redirectTo: ViewModel.LOBBY, pathMatch: 'full' },
       {
         path: ViewModel.LOBBY,
-        loadChildren: '@app/lobby/lobby.module#LobbyModule',
+        loadChildren: '@app/view/lobby/lobby.module#LobbyModule',
       }
     ]
   }
