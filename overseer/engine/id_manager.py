@@ -12,8 +12,10 @@ from collections import deque
 
 
 class IdManager(object):
-    free_ids = deque([0, 1, 2, 3, 4])
-    new_id = 5
+
+    def __init__(self):
+        self.free_ids = deque([0, 1, 2, 3, 4])
+        self.new_id = 5
 
     def get_id(self):
         id = self.free_ids.popleft()
@@ -28,7 +30,3 @@ class IdManager(object):
             if id < self.free_ids[i]:
                 self.free_ids.insert(i, id)
                 break
-
-
-# Instance of IdManager
-id_manager = IdManager()

@@ -31,7 +31,6 @@ class MyTestCase(unittest.TestCase):
             id_manager.get_id()
 
         self.assertGreaterEqual(len(id_manager.free_ids), 5)
-        id_manager = None
 
 
 if __name__ == '__main__':
