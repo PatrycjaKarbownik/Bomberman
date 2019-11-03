@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
-import { RoomModel } from '@app/view/lobby/models/room.model';
+import { RoomWithNicknamesModel } from '@app/view/lobby/models/room-with-nicknames.model';
 import { LobbyService } from '@app/view/lobby/lobby.service';
 import { ViewModel } from '@app/core/navigation/view.model';
 
@@ -16,9 +16,8 @@ import { ViewModel } from '@app/core/navigation/view.model';
 })
 export class LobbyComponent implements OnInit {
 
-  private rooms$: Observable<RoomModel[]>;
-
-  public ViewModel: typeof ViewModel = ViewModel;
+  // room with users' nicknames only (we needn't other info about users)
+  private rooms$: Observable<RoomWithNicknamesModel[]>;
 
   constructor(private lobbyService: LobbyService, private router: Router) { }
 

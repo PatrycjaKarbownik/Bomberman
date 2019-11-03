@@ -1,8 +1,8 @@
 .col-sm-12.py-4.d-flex.flex-column
   bomb-page-header([title]="'LOBBY.TITLE' | translate")
 
-  .row.mt-5.ml-3.room-list
-    span(translate) LOBBY.ROOM_LIST
+  .row.mt-5.rooms-list-header
+    span(translate) LOBBY.ROOMS_LIST
     button.ml-5.button-primary(translate, (click)="createAndEntryRoom()") LOBBY.ADD_AND_ENTRY
 
 

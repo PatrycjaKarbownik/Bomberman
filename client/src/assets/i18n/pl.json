@@ -13,9 +13,17 @@
   },
   "LOBBY": {
     "TITLE": "Lobby",
-    "ROOM_LIST": "Lista pokoi",
+    "ROOMS_LIST": "Lista pokoi",
     "ENTRY_ROOM": "Dołącz do pokoju",
     "ADD_AND_ENTRY": "Dodaj pokój i dołącz"
+  },
+  "ROOM": {
+    "TITLE": "Pokój",
+    "USERS_LIST": "Lista graczy",
+    "REPORT_READINESS": "Zgłoś gotowość do gry",
+    "LEGEND": "Legenda",
+    "USER_READY": "Gracz zgłosił gotowość do gry",
+    "USER_NOT_READY": "Gracz nie zgłosił gotowości do gry"
   },
   "EXCEPTION": {
     "UNEXPECTED": "Wystąpił nieoczekiwany błąd"

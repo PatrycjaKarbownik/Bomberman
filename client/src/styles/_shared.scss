@@ -1,10 +1,16 @@
+$bomb-green: #00d800;
+$bomb-very-light-green: #ceffce;
+
+$bomb-red: #fd495c;
+$bomb-very-light-red: #fddee4;
+
 $bomb-primary: #008baa;
 $bomb-primary-dark: #007896;
 $bomb-primary-font: #dfdfdf;
 $bomb-primary-very-dark-font: #646464;
-$bomb-warning: #fd495c;
-$bomb-very-light-black: #181818;
+$bomb-warning: $bomb-red;
 $bomb-light-black: #111111;
+$bomb-very-light-black: #181818;
 $bomb-light-light-black: #202020;
 
 $element-active-unselected-border: #979797;

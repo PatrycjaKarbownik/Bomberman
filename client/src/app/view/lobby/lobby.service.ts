@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 
-import { RoomModel } from '@app/view/lobby/models/room.model';
+import { RoomWithNicknamesModel } from '@app/view/lobby/models/room-with-nicknames.model';
 
 // lobby service
 // communicate with overseer
@@ -14,7 +14,7 @@ export class LobbyService {
 
   constructor() { }
 
-  getRooms(): Observable<RoomModel[]> {
+  getRooms(): Observable<RoomWithNicknamesModel[]> {
     // todo: change to websocket
     return of(this.rooms);
   }
@@ -24,12 +24,12 @@ export class LobbyService {
     return of(this.newRoom.id);
   }
 
-  private newRoom: RoomModel = {
+  private newRoom: RoomWithNicknamesModel = {
     id: 666,
     users: ['Monkey', 'Pig']
   };
 
-  private rooms: RoomModel[] = [
+  private rooms: RoomWithNicknamesModel[] = [
     {
       id: 123,
       users: ['Pati', 'Tromba', 'Mops', 'Tadzik']
