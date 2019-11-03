@@ -1,6 +1,6 @@
 import logging
 
-import engine.user as User
+from engine.user import *
 
 users = dict()
 # Number of next not taken user id, -1 means error
@@ -32,4 +32,4 @@ def add_user(username):
     new_user.name = username
     new_user.id = free_id
     free_id += 1
-    new_user.state = User.UserState.IN_LOBBY
+    new_user.state = UserState.IN_LOBBY
