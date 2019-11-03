@@ -13,5 +13,4 @@
           span.header {{ room.id }}
           div.users(*ngFor="let user of room.users")
             span {{ user }}
-          //a.active([routerLink]="'/' + View.PLANS")
-          span(*ngIf="room.users.length < 4").next(translate) LOBBY.ENTRY_ROOM
+          span.next(*ngIf="room.users.length < 4", translate, (click)="navigateToRoom(room.id)") LOBBY.ENTRY_ROOM
