@@ -5,6 +5,9 @@ import { Subscription } from 'rxjs';
 
 import { ValidationErrorComponent } from '@app/shared/validation/validation-error.component';
 
+// main validation component
+// it collects changes on observing component
+// and transmit it to appropriate children
 @Component({
   selector: 'bomb-validation-errors',
   templateUrl: './validation-errors.component.pug'
@@ -16,6 +19,8 @@ export class ValidationErrorsComponent implements OnInit, OnDestroy {
   private formStatusChangeSubscription: Subscription;
   private formSubmitSubscription: Subscription;
 
+  // execute on create component
+  // it subscribes changes on observing component
   ngOnInit(): void {
     const form: NgForm = this.for.formDirective;
     const input: NgModel = this.for;
@@ -24,6 +29,8 @@ export class ValidationErrorsComponent implements OnInit, OnDestroy {
     this.formSubmitSubscription = form.ngSubmit.subscribe(() => this.updateState(input, true));
   }
 
+  // execute on destroy component
+  // it unsubscribes from changes on observing component
   ngOnDestroy(): void {
     this.formStatusChangeSubscription.unsubscribe();
     this.formSubmitSubscription.unsubscribe();

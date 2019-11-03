@@ -8,6 +8,7 @@ import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { CurrentUserModel } from '@app/shared/auth/current-user.model';
 import { CurrentUserService } from '@app/shared/auth/current-user.service';
 
+// bar on view top -> shows username and gives logout option
 @Component({
   selector: 'bomb-header',
   templateUrl: './header.component.pug',
@@ -18,7 +19,7 @@ export class HeaderComponent {
   @AuthToken()
   private authToken: string;
 
-  constructor(private router: Router, private modal: NgbModal, private currentUser: CurrentUserService) { }
+  constructor(private router: Router, private modal: NgbModal, private currentUserService: CurrentUserService) { }
 
   logout() {
     this.authToken = null;
@@ -26,6 +27,6 @@ export class HeaderComponent {
   }
 
   getUsername(): Observable<CurrentUserModel> {
-    return this.currentUser.getCurrentUser();
+    return this.currentUserService.getCurrentUser();
   }
 }

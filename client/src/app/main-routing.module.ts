@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainContainerComponent } from '@app/layout/main-container/main-container.component';
 import { ViewModel } from '@app/core/navigation/view.model';
 
+// routing available after logging
 const routes: Routes = [
   {
     path: '', component: MainContainerComponent, children: [

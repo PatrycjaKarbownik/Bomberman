@@ -1,3 +1,4 @@
+// remember token in local storage
 export function AuthToken() {
   return (target: any, key: string) => {
     const tokenKey = 'authToken';

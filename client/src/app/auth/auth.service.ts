@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 
+// service using to login to app
 @Injectable()
 export class AuthService {
 
@@ -13,6 +14,8 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
+  // send log in request
+  // set auth token, which receives in response
   login(username: string): Observable<any> {
     return this.httpClient.post('auth/login', username, { observe: 'response' }).pipe(
       first(),

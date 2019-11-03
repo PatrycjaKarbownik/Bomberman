@@ -3,6 +3,9 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 
 import { Observable } from 'rxjs';
 
+// primary http interceptor
+// it adds base url ('api') to urls used in requests
+// and sends them
 @Injectable()
 export class BaseUrlInterceptor implements HttpInterceptor {
 
