@@ -8,7 +8,9 @@ class UserState(Enum):
 
 
 class User:
-    name = "DefaultUser"
-    id = -1
-    state = UserState.IN_GAME
-    room = None
+    
+    def __init__(self):
+        self.name = "DefaultUser"
+        self.id = -1
+        self.state = UserState.IN_GAME
+        self.room = None
