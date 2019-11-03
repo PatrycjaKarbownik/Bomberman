@@ -3,6 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '@app/core/guards/auth.guard';
 
+// primary routing:
+// before logging, user has to log in to app
+// after he can explore other views
+// (AuthGuard is to protect against exploring by not logged user)
 const routes: Routes = [
   { path: '',
     loadChildren: '@app/main.module#MainModule'/*,

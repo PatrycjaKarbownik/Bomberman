@@ -4,6 +4,9 @@ import { Observable, of } from 'rxjs';
 
 import { RoomModel } from '@app/view/lobby/models/room.model';
 
+// lobby service
+// communicate with overseer
+// send requests to overseer
 @Injectable({
   providedIn: 'root'
 })

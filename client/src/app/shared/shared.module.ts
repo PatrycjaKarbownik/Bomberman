@@ -14,6 +14,7 @@ import { ValidationErrorComponent } from '@app/shared/validation/validation-erro
 import { PopupComponent } from '@app/shared/popup/popup.component';
 import { PageHeaderComponent } from '@app/shared/page-header/page-header.component';
 
+// module which can be imported by another modules
 export const components = [
   ValidationErrorsComponent,
   ValidationErrorComponent,

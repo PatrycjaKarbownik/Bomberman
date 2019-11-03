@@ -7,6 +7,9 @@ import { catchError } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
+// exception handler
+// it handle exception which comes in response from rest api
+// and show toast with error message
 @Injectable()
 export class ExceptionHandlerInterceptor implements HttpInterceptor {
 

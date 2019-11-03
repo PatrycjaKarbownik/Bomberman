@@ -1,3 +1,4 @@
+// using in navigation between views
 export enum ViewModel {
   LOGIN = 'login',
   LOBBY = 'lobby',

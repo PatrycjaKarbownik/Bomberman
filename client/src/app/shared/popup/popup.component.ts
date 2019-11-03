@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
+// modal which shows warning
 @Component({
   selector: 'bomb-popup',
   templateUrl: './popup.component.pug',

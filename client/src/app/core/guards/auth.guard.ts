@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 
+// protect against not logged users
 @Injectable()
 export class AuthGuard implements CanActivate {
 

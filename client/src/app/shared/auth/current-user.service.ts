@@ -11,11 +11,11 @@ export class CurrentUserService {
 
   private currentUserCache$: Observable<CurrentUserModel>;
 
-  constructor(private http: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
 
   getCurrentUser(): Observable<CurrentUserModel> {
     if (!this.currentUserCache$) {
-      this.currentUserCache$ = this.http.get<CurrentUserModel>('auth')
+      this.currentUserCache$ = this.httpClient.get<CurrentUserModel>('auth')
         .pipe(shareReplay(1));
     }
     return this.currentUserCache$;

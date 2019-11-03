@@ -9,6 +9,8 @@ import { throwError } from 'rxjs';
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { AuthService } from '@app/auth/auth.service';
 
+// login view
+// it will be shown when user won't be logged
 @Component({
   selector: 'bomb-login',
   templateUrl: './login.component.pug',
@@ -25,12 +27,16 @@ export class LoginComponent {
   username: string = null;
   userExistsErrorMessage: string;
 
-  constructor(private auth: AuthService, private router: Router) {  }
+  constructor(private authService: AuthService, private router: Router) {  }
 
+  // execute after login button click
+  // send log in request to overseer
+  // check errors in response
+  // and navigate to lobby view, when receive auth token
   onSubmit(form: NgForm) {
     if (form.invalid) return;
 
-    this.auth.login(this.username)
+    this.authService.login(this.username)
       .pipe(
         catchError((err: HttpErrorResponse) => {
           if (err.error.code === LoginComponent.USER_EXISTS_ERR_CODE) {

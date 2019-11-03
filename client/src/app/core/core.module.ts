@@ -14,6 +14,9 @@ import { BaseUrlInterceptor } from '@app/core/interceptors/base-url.interceptor'
 import { ExceptionHandlerInterceptor } from '@app/core/interceptors/exception-handler.interceptor';
 import { AuthService } from '@app/auth/auth.service';
 
+// module including primary modules
+// which have to be imported by app module
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
