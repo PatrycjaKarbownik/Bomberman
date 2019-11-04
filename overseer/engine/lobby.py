@@ -62,7 +62,12 @@ def remove_room(room_id):
     return True
 
 
-def get_json_rooms():
-    """Returns JSON string with all rooms"""
-    test = [room.serialize() for room in rooms.values()]
+def get_json_rooms(only_usernames=True):
+    """Returns JSON string with all rooms
+
+    Args:
+        only_usernames: Argument of serialize method of Room class. If set to true users in room will be serialized
+        only as their names and not as a whole objects (they won't have their id or theirs room id)
+    """
+    test = [room.serialize(only_usernames) for room in rooms.values()]
     return str(test)

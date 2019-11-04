@@ -14,8 +14,8 @@ ns = api.namespace('room', description='Operating on rooms in lobby')
 class RoomCollection(Resource):
 
     def get(self):
-        """Returns all rooms with all players"""
-        return lobby.get_json_rooms(), 200
+        """Returns all rooms including their users"""
+        return lobby.get_json_rooms(only_usernames=False), 200
 
 
 @ns.route('/add/')
