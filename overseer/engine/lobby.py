@@ -12,10 +12,10 @@ room_id_manager = IdManager()
 logger = logging.getLogger(__name__)
 
 
-def user_exists(nickname):
-    """Return True if nickname is taken, otherwise False"""
+def user_exists(username):
+    """Return True if username is taken, otherwise False"""
     for user in users:
-        if user.name == nickname:
+        if user.name == username:
             return True
 
     return False
@@ -35,7 +35,8 @@ def remove_user(user_id):
     """Removes user from lobby.
 
     Returns:
-        False if user was not present, otherwise True"""
+        False if user was not present, otherwise True
+    """
     result = users.pop(user_id, None)
 
     if result is None:

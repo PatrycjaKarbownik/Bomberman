@@ -1,7 +1,7 @@
 """Id manager is responsible for managing user identification numbers.
 
 Every user has it's own id number. Id is just a number and because we do not want it to grow too large
-without reason incrementing it with every new user would would not do. There could be users with ids 1004, 1323 and
+without reason incrementing it with every new user would not do. There could be users with ids 1004, 1323 and
 34013 while server had max 5 players online.
 
 Id manager is created to be a slightly more useful than this by keeping in mind which ids have not been taken yet and

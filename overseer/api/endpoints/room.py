@@ -14,7 +14,7 @@ ns = api.namespace('room', description='Operating on rooms in lobby')
 class RoomCollection(Resource):
 
     def get(self):
-        """Returns all rooms including their users"""
+        """Returns all rooms including their users usernames"""
         return lobby.get_json_rooms(only_usernames=False), 200
 
 

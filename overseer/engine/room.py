@@ -28,7 +28,7 @@ class Room:
     def remove_user(self, user_id):
         """Removes given user from room
 
-        First there is a check whether user with given id iskk in rum. Then he is removed from list of users
+        First there is a check whether user with given id is in room. Then he is removed from list of users
         and his state is changed to IN_LOBBY.
 
         Args:
