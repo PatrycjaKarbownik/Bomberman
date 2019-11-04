@@ -20,10 +20,13 @@
   "ROOM": {
     "TITLE": "Pokój",
     "USERS_LIST": "Lista graczy",
+    "GAME_START_IN": "Gra rozpocznie się za",
+    "SEC": "sek.",
     "REPORT_READINESS": "Zgłoś gotowość do gry",
     "LEGEND": "Legenda",
     "USER_READY": "Gracz zgłosił gotowość do gry",
-    "USER_NOT_READY": "Gracz nie zgłosił gotowości do gry"
+    "USER_NOT_READY": "Gracz nie zgłosił gotowości do gry",
+    "LEAVE_ROOM": "Opuść pokój"
   },
   "EXCEPTION": {
     "UNEXPECTED": "Wystąpił nieoczekiwany błąd"

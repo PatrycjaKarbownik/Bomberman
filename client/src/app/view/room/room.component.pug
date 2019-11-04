@@ -1,21 +1,26 @@
-.ml-5
-  .col-sm-12.py-4.d-flex.flex-column
-    bomb-page-header([title]="('ROOM.TITLE' | translate) + ' ' + room.id")
+.col-sm-12.py-4.d-flex.flex-column
+  bomb-page-header([title]="('ROOM.TITLE' | translate) + ' ' + room.id")
 
-    .row.mt-5.users-list-header
-      span(translate) ROOM.USERS_LIST
-      button.ml-5.button-primary(translate) ROOM.REPORT_READINESS
+  .row.mt-5.users-list-header
+    span(translate) ROOM.USERS_LIST
+    div.d-flex.flex-column
+      span {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
+      button.mt-1.button-primary(translate) ROOM.REPORT_READINESS
 
-    .row.mt-5.users-list
-      div.d-flex.align-items-center(*ngFor="let user of room.users")
-        span.dot([ngClass]="{'readyToGame': user.readyToGame}")
-        span {{ user.nickname }}
+  .users-box
+    .row.mt-5
+      .users-list
+        div.d-flex.align-items-center(*ngFor="let user of room.users")
+          span.dot([ngClass]="{'readyToGame': user.readyToGame}")
+          span {{ user.nickname }}
+    .row.mt-5
+      button.button-primary(translate) ROOM.LEAVE_ROOM
 
-    .row.legend
-      span.mb-2(translate) ROOM.LEGEND
-      div
-        span.dot([ngClass]="{'readyToGame': true}")
-        span(translate) ROOM.USER_READY
-      div
-        span.dot
-        span(translate) ROOM.USER_NOT_READY
+  .row.legend
+    span.mb-2(translate) ROOM.LEGEND
+    div
+      span.dot([ngClass]="{'readyToGame': true}")
+      span(translate) ROOM.USER_READY
+    div
+      span.dot
+      span(translate) ROOM.USER_NOT_READY

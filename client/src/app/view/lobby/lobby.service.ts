@@ -63,34 +63,6 @@ export class LobbyService {
     }, {
       id: 351,
       users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }, {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }, {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }, {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }, {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
     }
   ];
 }
