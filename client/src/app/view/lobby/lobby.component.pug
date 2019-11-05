@@ -3,7 +3,7 @@
 
   .row.mt-5.rooms-list-header
     span(translate) LOBBY.ROOMS_LIST
-    button.ml-5.button-primary(translate, (click)="createAndEntryRoom()") LOBBY.ADD_AND_ENTRY
+    button.ml-5.button-primary(translate, (click)="createAndEnterRoom()") LOBBY.ADD_AND_ENTRY
 
 
   .row.mt-5.justify-content-center
@@ -13,4 +13,4 @@
           span.header {{ room.id }}
           div.users(*ngFor="let user of room.users")
             span {{ user }}
-          span.next(*ngIf="room.users.length < 4", translate, (click)="navigateToRoom(room.id)") LOBBY.ENTRY_ROOM
+          span.next(*ngIf="room.users.length < maxUsersInRoom", translate, (click)="navigateToRoom(room.id)") LOBBY.ENTRY_ROOM

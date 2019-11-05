@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
-import { RoomWithNicknamesModel } from '@app/view/lobby/models/room-with-nicknames.model';
+import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
 import { LobbyService } from '@app/view/lobby/lobby.service';
 import { ViewModel } from '@app/core/navigation/view.model';
 
@@ -16,8 +16,10 @@ import { ViewModel } from '@app/core/navigation/view.model';
 })
 export class LobbyComponent implements OnInit {
 
+  private readonly maxUsersInRoom = 4;
+
   // room with users' nicknames only (we needn't other info about users)
-  private rooms$: Observable<RoomWithNicknamesModel[]>;
+  private rooms$: Observable<RoomWithUsernamesModel[]>;
 
   constructor(private lobbyService: LobbyService, private router: Router) { }
 
@@ -32,7 +34,7 @@ export class LobbyComponent implements OnInit {
   }
 
   // creates room and navigate user to it
-  createAndEntryRoom() {
+  createAndEnterRoom() {
     this.lobbyService.addRoom()
       .subscribe(response => this.navigateToRoom(response));
   }
