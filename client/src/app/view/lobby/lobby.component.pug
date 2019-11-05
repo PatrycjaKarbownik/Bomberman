@@ -1,9 +1,9 @@
 .col-sm-12.py-4.d-flex.flex-column
   bomb-page-header([title]="'LOBBY.TITLE' | translate")
 
-  .row.mt-5.ml-3.room-list
-    span(translate) LOBBY.ROOM_LIST
-    button.ml-5.button-primary(translate) LOBBY.ADD_AND_ENTRY
+  .row.mt-5.rooms-list-header
+    span(translate) LOBBY.ROOMS_LIST
+    button.ml-5.button-primary(translate, (click)="createAndEnterRoom()") LOBBY.ADD_AND_ENTRY
 
 
   .row.mt-5.justify-content-center
@@ -13,5 +13,4 @@
           span.header {{ room.id }}
           div.users(*ngFor="let user of room.users")
             span {{ user }}
-          //a.active([routerLink]="'/' + View.PLANS")
-          span(*ngIf="room.users.length < 4").next(translate) LOBBY.ENTRY_ROOM
+          span.next(*ngIf="room.users.length < maxUsersInRoom", translate, (click)="navigateToRoom(room.id)") LOBBY.ENTRY_ROOM

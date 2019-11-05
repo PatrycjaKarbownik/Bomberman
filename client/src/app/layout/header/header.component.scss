@@ -2,32 +2,15 @@
 
 nav {
   background-color: $bomb-primary;
+  height: 5vh;
+  font-size: 2rem;
 }
 
 a, label {
-  color: white !important;
+  color: $bomb-primary-font !important;
+  font-size: 2rem;
 }
 
 .nav-item {
   transition: all .3s;
 }
-
-.nav-item:hover {
-  transform: translateY(-2px);
-  //background-color: $bomb-primary-darker;
-}
-
-.user-icon {
-  background-color: white;
-  border-radius: 50%;
-
-  width: 25px;
-  height: 25px;
-}
-
-.dropdown-toggle::after {
-  display: none;
-}
-
-
-
