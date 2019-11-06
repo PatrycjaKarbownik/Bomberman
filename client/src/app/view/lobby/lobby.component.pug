@@ -5,11 +5,10 @@
     span(translate) LOBBY.ROOMS_LIST
     button.ml-5.button-primary(translate, (click)="createAndEnterRoom()") LOBBY.ADD_AND_ENTRY
 
-
   .row.mt-5.justify-content-center
     div(*ngFor="let room of (rooms$ | async)")
       .row
-        div.tile([ngClass]="{'canEntry': !(room.users.length < 4)}")
+        div.tile([ngClass]="{'canEntry': !(room.users.length < maxUsersInRoom)}")
           span.header {{ room.id }}
           div.users(*ngFor="let user of room.users")
             span {{ user }}
