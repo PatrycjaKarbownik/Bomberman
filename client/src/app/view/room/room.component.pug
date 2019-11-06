@@ -7,14 +7,17 @@
       span {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
       button.mt-1.button-primary(translate) ROOM.REPORT_READINESS
 
-  .users-box
-    .row.mt-5
-      .users-list
-        div.d-flex.align-items-center(*ngFor="let user of room.users")
-          span.dot([ngClass]="{'readyToGame': user.readyToGame}")
-          span {{ user.nickname }}
-    .row.mt-5
-      button.button-primary(translate) ROOM.LEAVE_ROOM
+  div.d-flex.flex-row
+    .users-box
+      .row.mt-5
+        .users-list
+          div.d-flex.align-items-center(*ngFor="let user of room.users")
+            span.dot([ngClass]="{'readyToGame': user.readyToGame}")
+            span {{ user.nickname }}
+      .row.mt-5
+        button.button-primary(translate) ROOM.LEAVE_ROOM
+
+    img(src="/assets/images/smiley-bomb.png")
 
   .row.legend
     span.mb-2(translate) ROOM.LEGEND
