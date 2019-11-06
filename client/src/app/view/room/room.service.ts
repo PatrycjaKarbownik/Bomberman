@@ -21,19 +21,19 @@ export class RoomService {
       id: 123,
       users: [{
         id: 1,
-        nickname: 'Pati',
+        username: 'Pati',
         readyToGame: true
       }, {
         id: 2,
-        nickname: 'Tromba',
+        username: 'Tromba',
         readyToGame: false
       }, {
         id: 3,
-        nickname: 'Mops',
+        username: 'Mops',
         readyToGame: true
       }, {
         id: 4,
-        nickname: 'Tadzik',
+        username: 'Tadzik',
         readyToGame: true
       }]
     },
@@ -41,11 +41,11 @@ export class RoomService {
       id: 234,
       users: [{
         id: 5,
-        nickname: 'Kowal',
+        username: 'Kowal',
         readyToGame: false
       }, {
         id: 6,
-        nickname: 'Piter',
+        username: 'Piter',
         readyToGame: true
       }]
     },
@@ -53,15 +53,15 @@ export class RoomService {
       id: 351,
       users: [{
         id: 7,
-        nickname: 'Gracz1',
+        username: 'Gracz1',
         readyToGame: false
       }, {
         id: 8,
-        nickname: 'Gracz2',
+        username: 'Gracz2',
         readyToGame: false
       }, {
         id: 9,
-        nickname: 'Gracz3',
+        username: 'Gracz3',
         readyToGame: false
       }]
     },
@@ -69,11 +69,11 @@ export class RoomService {
       id: 666,
       users: [{
         id: 10,
-        nickname: 'Monkey',
+        username: 'Monkey',
         readyToGame: true
       }, {
         id: 11,
-        nickname: 'Pig',
+        username: 'Pig',
         readyToGame: true
       }]
     }

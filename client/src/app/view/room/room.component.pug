@@ -13,7 +13,7 @@
         .users-list
           div.d-flex.align-items-center(*ngFor="let user of room.users")
             span.dot([ngClass]="{'readyToGame': user.readyToGame}")
-            span {{ user.nickname }}
+            span {{ user.username }}
       .row.mt-5
         button.button-primary(translate) ROOM.LEAVE_ROOM
 

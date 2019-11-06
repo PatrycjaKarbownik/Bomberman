@@ -1,5 +1,5 @@
 export class UserModel {
   id: number;
-  nickname: string;
+  username: string;
   readyToGame: boolean;
 }
