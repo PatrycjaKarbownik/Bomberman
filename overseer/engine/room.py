@@ -7,6 +7,7 @@ class Room:
     def __init__(self):
         self.id = -1
         self.users = list()
+        self.users.append(User())
 
     def add_user(self, user):
         """Add given user to room
@@ -57,9 +58,9 @@ class Room:
             as standard object including all their data like id or theirs room id.
         """
         if only_usernames:
-            users_list = [user.serialize() for user in self.users]
-        else:
             users_list = [user.name for user in self.users]
+        else:
+            users_list = [user.serialize() for user in self.users]
 
         return {
             'id': self.id,
