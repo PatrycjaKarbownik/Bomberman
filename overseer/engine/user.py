@@ -21,6 +21,6 @@ class User:
         return {
             'name': self.name,
             'id': self.id,
-            'state': str(self.state),
+            'state': self.state,
             'room': self.room
         }
