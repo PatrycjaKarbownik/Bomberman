@@ -7,6 +7,7 @@ class Room:
     def __init__(self):
         self.id = -1
         self.users = list()
+        self.in_game = False
 
     def add_user(self, user):
         """Add given user to room
@@ -63,5 +64,6 @@ class Room:
 
         return {
             'id': self.id,
+            'in_game': self.in_game,
             'users': users_list
         }
