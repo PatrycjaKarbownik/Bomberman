@@ -7,7 +7,6 @@ class Room:
     def __init__(self):
         self.id = -1
         self.users = list()
-        self.users.append(User())
 
     def add_user(self, user):
         """Add given user to room
