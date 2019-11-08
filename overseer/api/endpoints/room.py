@@ -18,6 +18,18 @@ class RoomCollection(Resource):
         return lobby.get_json_rooms(only_usernames=False), 200
 
 
+@ns.route('/<int:room_id>')
+class RoomSpecific(Resource):
+
+    def get(self, room_id):
+        """Returns room with data specific data about its users"""
+        room = lobby.rooms.get(room_id, None)
+        if room is None:
+            return None, 400
+
+        return room.serialize(only_usernames=True), 200
+
+
 @ns.route('/add/')
 class RoomCreating(Resource):
 
