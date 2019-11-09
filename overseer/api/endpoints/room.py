@@ -2,6 +2,7 @@ import logging
 
 from flask_restplus import Resource
 
+import api.models as models
 import engine.lobby as lobby
 from api.restful import api
 
@@ -13,6 +14,7 @@ ns = api.namespace('room', description='Operating on rooms in lobby')
 @ns.route('/')
 class RoomCollection(Resource):
 
+    @api.marshal_list_with(models.room_with_usernames_model)
     def get(self):
         """Returns all rooms including their users usernames"""
         return lobby.get_json_rooms(only_usernames=True), 200

@@ -71,4 +71,4 @@ def get_json_rooms(only_usernames=True):
         only as their names and not as a whole objects (they won't have their id or theirs room id)
     """
     test = [room.serialize(only_usernames) for room in rooms.values()]
-    return str(test)
+    return test
