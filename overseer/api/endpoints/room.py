@@ -22,7 +22,7 @@ class RoomCollection(Resource):
 class RoomSpecific(Resource):
 
     def get(self, room_id):
-        """Returns room by id with data specific data about its users"""
+        """Returns room by id with specific data about its users"""
         room = lobby.rooms.get(room_id)
         if room is None:
             return None, 400
