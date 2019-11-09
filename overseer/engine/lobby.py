@@ -37,7 +37,7 @@ def remove_user(user_id):
     Returns:
         False if user was not present, otherwise True
     """
-    result = users.pop(user_id, None)
+    result = users.pop(user_id)
 
     if result is None:
         return False
@@ -55,7 +55,7 @@ def create_room():
 
 def remove_room(room_id):
     """Removes room with given id, if present returns True, otherwise False"""
-    room = rooms.pop(room_id, None)
+    room = rooms.pop(room_id)
 
     if room is None:
         return False
