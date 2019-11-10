@@ -13,8 +13,9 @@ app = Flask(__name__)
 
 
 def configure_app(flask_app):
-    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = 'list'
-    flask_app.config['RESTPLUS_MASK_SWAGGER'] = False
+    flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = settings.SWAGGER_UI_DOC_EXPANSION
+    flask_app.config['RESTPLUS_MASK_SWAGGER'] = settings.RESTPLUS_MASK_SWAGGER
+    flask_app.config['JWT_SECRET_KEY'] = settings.JWT_SECRET_KEY
 
 
 def initialize_app(flask_app):
