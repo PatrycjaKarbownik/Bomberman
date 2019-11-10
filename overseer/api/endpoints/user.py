@@ -3,19 +3,21 @@ import logging
 from flask_restplus import Resource
 
 import engine.lobby as lobby
+from api import models
 from api.restful import api
 
 logger = logging.getLogger(__name__)
 
-ns = api.namespace('user', description='Showing users and adding them :)')
+ns = api.namespace('user', description='Showing users and adding them')
 
 
 @ns.route('/')
 class UserCollection(Resource):
 
+    @api.marshal_list_with(models.user_model)
     def get(self):
         """Returns list of users"""
-        return lobby.users, 200
+        return [user.serialize() for user in lobby.users.values()], 200
 
 
 @ns.route('/exists/<string:username>')

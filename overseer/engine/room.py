@@ -64,6 +64,6 @@ class Room:
 
         return {
             'id': self.id,
-            'in_game': self.in_game,
+            'inGame': self.in_game,
             'users': users_list
         }
