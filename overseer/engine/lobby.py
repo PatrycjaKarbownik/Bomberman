@@ -72,3 +72,22 @@ def get_json_rooms(only_usernames=True):
         only as their names and not as a whole objects (they won't have their id or theirs room id)
     """
     return [room.serialize(only_usernames) for room in rooms.values()]
+
+# TODO Test data delete later
+
+add_user("Jack")
+add_user("Matty")
+add_user("Patrice")
+add_user("Bastian")
+add_user("GuyWhoKnowsAGuy")
+add_user("xXx__DeStRoYeR_PL__xXx")
+
+create_room()
+create_room()
+
+roomA = rooms.get(0)
+roomB = rooms.get(1)
+
+roomA.add_user(users.get(0))
+roomA.add_user(users.get(2))
+roomB.add_user(users.get(3))

@@ -6,13 +6,12 @@ from api.restful import api
 room_with_usernames_model = api.model('RoomWithUsernamesModel', {
     'id': fields.Integer,
     'inGame': fields.Boolean,
-    'users': fields.List(fields.String),
+    'users': fields.List(fields.String)
 })
 
 user_model = api.model('UserModel', {
     'name': fields.String,
-    'id': fields.Integer,
-    'room': fields.Integer,
+    'id': fields.Integer
 })
 
 room_model = api.model('RoomModel', {

@@ -8,12 +8,6 @@ class Room:
         self.id = -1
         self.users = list()
         self.in_game = False
-        user = User()
-        user2 = User()
-        user.name = 'Abdul'
-        user2.name = 'Frankiewicz'
-        self.users.append(user)
-        self.users.append(user2)
 
     def add_user(self, user):
         """Add given user to room

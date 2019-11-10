@@ -18,6 +18,5 @@ class User:
     def serialize(self):
         return {
             'name': self.name,
-            'id': self.id,
-            'room': self.room
+            'id': self.id
         }
