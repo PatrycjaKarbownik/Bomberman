@@ -32,7 +32,7 @@ class RoomSpecific(Resource):
         return room.serialize(only_usernames=False), 200
 
 
-@ns.route('/add/')
+@ns.route('/add')
 class RoomCreating(Resource):
 
     def post(self):
