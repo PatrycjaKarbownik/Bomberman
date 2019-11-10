@@ -1,7 +1,5 @@
 from enum import Enum
 
-from flask import jsonify
-
 
 class UserState(Enum):
     IN_GAME = "in_game"
@@ -21,6 +19,5 @@ class User:
         return {
             'name': self.name,
             'id': self.id,
-            'state': str(self.state),
             'room': self.room
         }
