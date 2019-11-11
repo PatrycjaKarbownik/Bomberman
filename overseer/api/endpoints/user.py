@@ -26,3 +26,12 @@ class UserExists(Resource):
     def get(self, username):
         """Check whether user exists"""
         return lobby.user_exists(username), 200
+
+
+@ns.route('/login')
+class UserLogin(Resource):
+
+    @api.expect(models.login_model)
+    def post(self):
+        username = api.payload['username']
+        return username, 200
