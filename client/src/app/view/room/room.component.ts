@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 
 import { RoomService } from '@app/view/room/room.service';
 import { RoomModel } from '@app/view/room/models/room.model';
@@ -12,16 +11,18 @@ import { RoomModel } from '@app/view/room/models/room.model';
 })
 export class RoomComponent implements OnInit {
 
-  room: RoomModel;
-  remainingTime: number
+  roomId: number;
+  room: RoomModel = new RoomModel();
+  remainingTime: number;
 
   constructor(private roomService: RoomService,
               private route: ActivatedRoute) { }
 
   // get room to which user has entered
   ngOnInit() {
+    this.roomId = this.route.snapshot.params.roomId;
     this.remainingTime = 60;
-    this.roomService.getRoomById(this.route.snapshot.params.roomId)
+    this.roomService.getRoomById(this.roomId)
       .subscribe(response => {
         this.room = response;
       });

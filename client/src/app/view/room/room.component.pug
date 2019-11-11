@@ -1,11 +1,13 @@
 .col-sm-12.py-4.d-flex.flex-column
-  bomb-page-header([title]="('ROOM.TITLE' | translate) + ' ' + room.id")
+  bomb-page-header([title]="('ROOM.TITLE' | translate) + ' #' + roomId")
 
   .row.mt-5.users-list-header
-    span(translate) ROOM.USERS_LIST
-    div.d-flex.flex-column
+    span {{ ('ROOM.USERS_LIST' | translate) + ' (' + room.users.length + ')' }}
+    div.d-flex.flex-column(*ngIf="!room.inGame")
       span {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
       button.mt-1.button-primary(translate) ROOM.REPORT_READINESS
+    div.d-flex.flex-column(*ngIf="room.inGame")
+      span(translate) ROOM.GAME_RUNS
 
   div.d-flex.flex-row
     .users-box
@@ -13,7 +15,7 @@
         .users-list
           div.d-flex.align-items-center(*ngFor="let user of room.users")
             span.dot([ngClass]="{'readyToGame': user.readyToGame}")
-            span {{ user.username }}
+            span {{ user.name }}
       .row.mt-5
         button.button-primary(translate) ROOM.LEAVE_ROOM
 
