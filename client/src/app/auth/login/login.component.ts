@@ -1,10 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, NgModel, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
-
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { AuthService } from '@app/auth/auth.service';
@@ -19,74 +15,72 @@ import { AuthService } from '@app/auth/auth.service';
 export class LoginComponent implements OnInit {
 
   private static readonly USER_EXISTS_ERR_CODE = 'USER_EXISTS';
+  private static readonly MIN_USERNAME_LENGTH = 3;
 
   @AuthToken()
   private authToken: string;
-  // @ViewChild('login') loginModel: NgModel;
-  // @ViewChild('loginForm')
-  myForm: FormGroup = this.buildForm();
+  loginModel: FormGroup = this.buildLoginForm();
+  username: AbstractControl;
 
-  debouncer: any;
-
-  username: string = null;
-  userExistsErrorMessage: string;
+  private debouncer: any;
 
   constructor(private authService: AuthService,
               private formBuilder: FormBuilder, private router: Router) {
-    // this.buildForm();
   }
 
   ngOnInit() {
-    this.myForm = this.buildForm();
+    this.loginModel = this.buildLoginForm();
+    this.username = this.loginModel.get('username');
   }
 
   // execute after login button click
   // send log in request to overseer
   // check errors in response
   // and navigate to lobby view, when receive auth token
-  onSubmit(/*form: NgForm*/) {
-    //if (this.form.invalid) return;
+  onSubmit() {
+    if (this.loginModel.invalid) return;
 
-    this.username = this.myForm.get('username').value;
-
-    this.authService.login(this.username)
-      .pipe(
-        catchError((err: HttpErrorResponse) => {
-          if (err.error.code === LoginComponent.USER_EXISTS_ERR_CODE) {
-            // this.loginModel.control.setErrors({userExists: true});
-            this.myForm.get('username').setErrors({userExists: true});
-            this.userExistsErrorMessage = err.error.message;
-          }
-          return throwError(err);
-        })
-      )
-      .subscribe(() => {
-        if (this.authToken) {
-          this.router.navigateByUrl('');
-        }/* else {
-          this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
-        }*/
-      });
+    // todo: uncomment and change this, when login with token will be available
+    // this.authService.login(this.username.value)
+    //   .pipe(
+    //     catchError((err: HttpErrorResponse) => {
+    //       if (err.error.code === LoginComponent.USER_EXISTS_ERR_CODE) {
+    //         // this.loginModel.control.setErrors({userExists: true});
+    //         this.username.setErrors({userExists: true});
+    //         this.userExistsErrorMessage = err.error.message;
+    //       }
+    //       return throwError(err);
+    //     })
+    //   )
+    //   .subscribe(() => {
+    //     if (this.authToken) {
+    //       this.router.navigateByUrl('');
+    //     }/* else {
+    //       this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
+    //     }*/
+    //   });
   }
 
-  private buildForm(): FormGroup {
+  // creates form to login;
+  // checks if typed username exists (in real-time)
+  private buildLoginForm(): FormGroup {
     return this.formBuilder.group({
       'username': ['', [
         Validators.required,
-        Validators.minLength(3)
+        Validators.minLength(LoginComponent.MIN_USERNAME_LENGTH)
       ],
         this.isUsernameUnique.bind(this) // async Validator passed as 3rd parameter
       ]
     });
   }
 
+  // username exists validator
   private isUsernameUnique(control: AbstractControl) {
     clearTimeout(this.debouncer);
 
     return new Promise((resolve, reject) => {
       this.debouncer = setTimeout(() => {
         this.authService.ifUsernameExists(control.value).subscribe(exists => {
-          console.log('check');
           if (!exists) {
             resolve(null);
           } else {
