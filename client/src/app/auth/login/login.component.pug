@@ -4,13 +4,11 @@
       h1.text-danger.mt-5.mb-5.text-center Bomberman
 
       .container.col-3.p-5.justify-content-center
-        form(id="loginForm", name="loginForm", #loginForm="ngForm", (ngSubmit)="onSubmit(loginForm)")
+        form([formGroup]="myForm", (ngSubmit)="onSubmit()")
           .form-group
-            label.required(for="login", translate) AUTH.LOGIN
-            input#login.form-control(name="login", [(ngModel)]="username", #login="ngModel", required)
-            bomb-validation-errors([for]="login")
-              bomb-validation-error(name="required") {{ 'VALIDATION.REQUIRED' | translate }}
-              bomb-validation-error(name="userExists") {{ userExistsErrorMessage }}
+            label.required(for="username", translate) AUTH.LOGIN
+            input#username.form-control(formControlName="username")
+            span.error(*ngIf="myForm.get('username').hasError('usernameExists')", translate) AUTH.USERNAME_EXISTS
 
           button.btn.btn-primary.btn-block.mt-5(type="submit", translate) AUTH.SIGN_IN
 
