@@ -35,6 +35,9 @@ class UserLogin(Resource):
     def post(self):
         username = api.payload['username']
         if lobby.user_exists(username):
-            return -1, 200
+            return {
+                'type': 'error',
+                'errorCode': 'login-already-used'
+            }, 401
         user_id = lobby.add_user(username)
         return user_id, 200
