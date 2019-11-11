@@ -23,8 +23,8 @@ export class LobbyComponent implements OnInit {
 
   constructor(private lobbyService: LobbyService, private router: Router) { }
 
-  // execute on create component
-  // get rooms which will be shown on view
+  // executes on create component
+  // gets rooms which will be shown on view
   ngOnInit() {
     this.rooms$ = this.lobbyService.getRooms();
   }

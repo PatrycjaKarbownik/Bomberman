@@ -4,6 +4,7 @@ from flask import Flask, Blueprint
 import settings
 from api.endpoints.user import ns as user_ns
 from api.endpoints.room import ns as room_ns
+from api.endpoints.authorization import ns as auth_ns
 from api.restful import api
 
 logging.config.fileConfig('logging.conf')
@@ -25,6 +26,7 @@ def initialize_app(flask_app):
     api.init_app(blueprint)
     api.add_namespace(user_ns)
     api.add_namespace(room_ns)
+    api.add_namespace(auth_ns)
     flask_app.register_blueprint(blueprint)
 
 

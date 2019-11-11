@@ -12,6 +12,8 @@ Web application for Bomberman game - server using C++ and Python 3, web client u
 #### Dependencies
 * Flask
 * Flask-restplus
+* Flask-JWT-Extended
+* passlib
 
 #### Tests
 * [Swagger](https://swagger.io/)

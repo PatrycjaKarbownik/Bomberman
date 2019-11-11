@@ -19,3 +19,7 @@ room_model = api.model('RoomModel', {
     'inGame': fields.Boolean,
     'users': fields.List(fields.Nested(user_model))
 })
+
+login_model = api.model('LoginModel', {
+    'username': fields.String
+})

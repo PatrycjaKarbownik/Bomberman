@@ -30,6 +30,7 @@ def add_user(username):
     new_user.id = user_id_manager.get_id()
     new_user.state = UserState.IN_LOBBY
     users[new_user.id] = new_user
+    return new_user.id
 
 
 def remove_user(user_id):
