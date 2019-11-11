@@ -11,7 +11,6 @@ import { RoomModel } from '@app/view/room/models/room.model';
 })
 export class RoomComponent implements OnInit {
 
-  roomId: number;
   room: RoomModel = new RoomModel();
   remainingTime: number;
 
@@ -20,9 +19,8 @@ export class RoomComponent implements OnInit {
 
   // get room to which user has entered
   ngOnInit() {
-    this.roomId = this.route.snapshot.params.roomId;
     this.remainingTime = 60;
-    this.roomService.getRoomById(this.roomId)
+    this.roomService.getRoomById(this.route.snapshot.params.roomId)
       .subscribe(response => {
         this.room = response;
       });

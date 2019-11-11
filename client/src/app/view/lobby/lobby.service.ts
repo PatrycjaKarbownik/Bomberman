@@ -20,6 +20,7 @@ export class LobbyService {
 
   // gets all rooms with their state and users (only usernames)
   getRooms(): Observable<RoomWithUsernamesModel[]> {
+    // todo: change to websocket
     return this.httpClient.get<RoomWithUsernamesModel[]>(`${LobbyService.roomUrl}`)
       .pipe(first());
   }

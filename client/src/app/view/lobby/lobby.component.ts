@@ -27,7 +27,6 @@ export class LobbyComponent implements OnInit {
   // gets rooms which will be shown on view
   ngOnInit() {
     this.rooms$ = this.lobbyService.getRooms();
-    this.rooms$.subscribe(resp => console.log(resp))
   }
 
   navigateToRoom(id: number) {
