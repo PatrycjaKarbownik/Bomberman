@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
 
@@ -12,57 +14,20 @@ import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernam
 })
 export class LobbyService {
 
-  constructor() { }
+  private static readonly roomUrl = 'room';
 
+  constructor(private httpClient: HttpClient) { }
+
+  // gets all rooms with their state and users (only usernames)
   getRooms(): Observable<RoomWithUsernamesModel[]> {
     // todo: change to websocket
-    return of(this.rooms);
+    return this.httpClient.get<RoomWithUsernamesModel[]>(`${LobbyService.roomUrl}`)
+      .pipe(first());
   }
 
+  // adds new room and gets its id
   addRoom(): Observable<number> {
-    // todo: change to http request
-    return of(this.newRoom.id);
+    return this.httpClient.post<number>(`${LobbyService.roomUrl}/add`, null)
+      .pipe(first());
   }
-
-  private newRoom: RoomWithUsernamesModel = {
-    id: 666,
-    users: ['Monkey', 'Pig']
-  };
-
-  private rooms: RoomWithUsernamesModel[] = [
-    {
-      id: 123,
-      users: ['Pati', 'Tromba', 'Mops', 'Tadzik']
-    },
-    {
-      id: 234,
-      users: ['Kowal', 'Piter']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    },
-    {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }, {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }, {
-      id: 351,
-      users: ['Gracz1', 'Gracz2', 'Gracz3']
-    }
-  ];
 }

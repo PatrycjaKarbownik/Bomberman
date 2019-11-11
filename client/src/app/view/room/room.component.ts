@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 
 import { RoomService } from '@app/view/room/room.service';
 import { RoomModel } from '@app/view/room/models/room.model';
@@ -12,8 +11,8 @@ import { RoomModel } from '@app/view/room/models/room.model';
 })
 export class RoomComponent implements OnInit {
 
-  room: RoomModel;
-  remainingTime: number
+  room: RoomModel = new RoomModel();
+  remainingTime: number;
 
   constructor(private roomService: RoomService,
               private route: ActivatedRoute) { }

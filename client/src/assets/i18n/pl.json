@@ -8,8 +8,9 @@
     "BACK": "Wróć"
   },
   "AUTH": {
-    "LOGIN": "Login",
-    "SIGN_IN": "Zaloguj"
+    "LOGIN": "Podaj swój pseudonim",
+    "SIGN_IN": "Zaloguj",
+    "USERNAME_EXISTS": "Nazwa użytkownika już istnieje"
   },
   "LOBBY": {
     "TITLE": "Lobby",
@@ -21,6 +22,7 @@
     "TITLE": "Pokój",
     "USERS_LIST": "Lista graczy",
     "GAME_START_IN": "Gra rozpocznie się za",
+    "GAME_RUNS": "Gra trwa",
     "SEC": "sek.",
     "REPORT_READINESS": "Zgłoś gotowość do gry",
     "LEGEND": "Legenda",
