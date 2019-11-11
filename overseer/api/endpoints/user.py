@@ -34,4 +34,7 @@ class UserLogin(Resource):
     @api.expect(models.login_model)
     def post(self):
         username = api.payload['username']
-        return username, 200
+        if lobby.user_exists(username):
+            return -1, 200
+        user_id = lobby.add_user(username)
+        return user_id, 200
