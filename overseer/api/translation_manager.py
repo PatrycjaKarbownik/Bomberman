@@ -14,11 +14,11 @@ languages[Language.POLISH] = lang_pl
 
 
 def translate(message_code, lang):
-    # get dictionary of specified language, if given language is not present then use 'pl' as a default
+    # get dictionary of specified language, if given language is not present then use POLISH as a default
     if lang in languages:
         dictionary = languages[lang]
     else:
         dictionary = languages[Language.POLISH]
 
-    # return translation or error message if no translation is avaible
+    # return translation or error message if no translation is available
     return dictionary.get(message_code, 'No translation presented')
