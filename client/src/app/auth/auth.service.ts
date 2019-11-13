@@ -9,6 +9,7 @@ import { AuthToken } from '@app/core/storages/auth-token.storage';
 // service using to login to app
 @Injectable()
 export class AuthService {
+  private static readonly userUrl = 'user';
 
   @AuthToken() private authToken: string;
 
@@ -17,9 +18,15 @@ export class AuthService {
   // send log in request
   // set auth token, which receives in response
   login(username: string): Observable<any> {
-    return this.httpClient.post('auth/login', username, { observe: 'response' }).pipe(
-      first(),
-      tap(resp => this.authToken = resp.headers.get('authorization')),
-    );
+    return this.httpClient.post('auth/login', username, {observe: 'response'})
+      .pipe(
+        first(),
+        tap(resp => this.authToken = resp.headers.get('authorization')),
+      );
+  }
+
+  ifUsernameExists(username: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${AuthService.userUrl}/exists/${username}`)
+      .pipe(first());
   }
 }
