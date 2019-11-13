@@ -20,7 +20,6 @@ export class LoginComponent implements OnInit {
   @AuthToken()
   private authToken: string;
   loginModel: FormGroup = this.buildLoginForm();
-  username: AbstractControl;
 
   private debouncer: any;
 
@@ -30,7 +29,6 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.loginModel = this.buildLoginForm();
-    this.username = this.loginModel.get('username');
   }
 
   // execute after login button click
@@ -61,11 +59,15 @@ export class LoginComponent implements OnInit {
     //   });
   }
 
+  get username(): AbstractControl {
+    return this.loginModel.get('username');
+  }
+
   // creates form to login;
   // checks if typed username exists (in real-time)
   private buildLoginForm(): FormGroup {
     return this.formBuilder.group({
-      'username': ['', [
+      username: ['', [
         Validators.required,
         Validators.minLength(LoginComponent.MIN_USERNAME_LENGTH)
       ],
