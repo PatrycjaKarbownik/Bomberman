@@ -1,5 +1,6 @@
 import logging
 
+from flask_jwt_extended import create_refresh_token, create_access_token
 from flask_restplus import Resource
 
 import engine.lobby as lobby
@@ -17,7 +18,7 @@ ns = api.namespace('auth', description='Authorization actions')
 @ns.route('/login')
 class AuthLogin(Resource):
 
-    @api.expect(models.login_model)
+    @api.expect(models.login_body_model)
     def post(self):
         username = api.payload['username']
         if lobby.user_exists(username):
@@ -25,5 +26,10 @@ class AuthLogin(Resource):
                        'type': 'error',
                        'errorMessage': tr(message.error_login_already_used, Language.POLISH)
                    }, 401
+
         user_id = lobby.add_user(username)
-        return user_id, 200
+        return {
+                   'user_id': user_id,
+                   'access_token': create_access_token(identity=user_id),
+                   'refresh_token': create_refresh_token(identity=user_id)
+               }, 200

@@ -1,10 +1,12 @@
 import logging.config
 
 from flask import Flask, Blueprint
+from flask_jwt_extended import JWTManager
+
 import settings
-from api.endpoints.user import ns as user_ns
-from api.endpoints.room import ns as room_ns
 from api.endpoints.authorization import ns as auth_ns
+from api.endpoints.room import ns as room_ns
+from api.endpoints.user import ns as user_ns
 from api.restful import api
 
 logging.config.fileConfig('logging.conf')
@@ -32,4 +34,5 @@ def initialize_app(flask_app):
 
 if __name__ == '__main__':
     initialize_app(app)
+    jwt = JWTManager(app)
     app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE)
