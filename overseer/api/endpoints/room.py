@@ -1,5 +1,6 @@
 import logging
 
+from flask_jwt_extended import jwt_required
 from flask_restplus import Resource
 
 import api.models as models
@@ -35,6 +36,7 @@ class RoomSpecific(Resource):
 @ns.route('/add')
 class RoomCreating(Resource):
 
+    @jwt_required
     def post(self):
         room_id = lobby.create_room()
         return room_id, 200

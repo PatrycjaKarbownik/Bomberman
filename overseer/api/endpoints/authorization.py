@@ -1,6 +1,6 @@
 import logging
 
-from flask_jwt_extended import create_refresh_token, create_access_token
+from flask_jwt_extended import create_refresh_token, create_access_token, get_jwt_identity
 from flask_restplus import Resource
 
 import engine.lobby as lobby
@@ -32,4 +32,16 @@ class AuthLogin(Resource):
                    'user_id': user_id,
                    'access_token': create_access_token(identity=user_id),
                    'refresh_token': create_refresh_token(identity=user_id)
+               }, 200
+
+
+@ns.route('/refresh')
+class AuthRefresh(Resource):
+
+    @api.expect(models.refresh_body_model)
+    def post(self):
+        username_id = get_jwt_identity()
+
+        return {
+                   'access_token': create_access_token(identity=username_id)
                }, 200
