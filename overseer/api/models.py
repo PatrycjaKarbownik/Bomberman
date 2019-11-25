@@ -25,11 +25,11 @@ login_body_model = api.model('LoginBodyModel', {
 })
 
 refresh_body_model = api.model('RefreshBodyModel', {
-    'refresh_token': fields.String
+    'refreshToken': fields.String
 })
 
 login_response_model = api.model('LoginResponseModel', {
-    'user_id': fields.Integer,
-    'access_token': fields.String,
-    'refresh_token': fields.String
+    'userId': fields.Integer,
+    'accessToken': fields.String,
+    'refreshToken': fields.String
 })
