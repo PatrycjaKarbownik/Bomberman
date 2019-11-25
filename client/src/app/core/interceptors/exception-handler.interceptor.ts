@@ -23,8 +23,8 @@ export class ExceptionHandlerInterceptor implements HttpInterceptor {
         catchError((response: HttpErrorResponse) => {
           if (response.status === 401) {
             this.router.navigateByUrl('auth');
-            this.toastr.error(this.translate.instant(response.error.message));
-          } else if (!response.error.message) {
+            this.toastr.error(response.error.errorMessage);
+          } else if (!response.error.errorMessage) {
             this.toastr.error(this.translate.instant('EXCEPTION.UNEXPECTED'));
           } else {
               this.toastr.error(response.error.message);

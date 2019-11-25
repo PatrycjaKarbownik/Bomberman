@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { AuthService } from '@app/auth/auth.service';
@@ -14,7 +18,6 @@ import { AuthService } from '@app/auth/auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  private static readonly USER_EXISTS_ERR_CODE = 'USER_EXISTS';
   private static readonly MIN_USERNAME_LENGTH = 3;
 
   @AuthToken()
@@ -38,25 +41,20 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginModel.invalid) return;
 
-    // todo: uncomment and change this, when login with token will be available
-    // this.authService.login(this.username.value)
-    //   .pipe(
-    //     catchError((err: HttpErrorResponse) => {
-    //       if (err.error.code === LoginComponent.USER_EXISTS_ERR_CODE) {
-    //         // this.loginModel.control.setErrors({userExists: true});
-    //         this.username.setErrors({userExists: true});
-    //         this.userExistsErrorMessage = err.error.message;
-    //       }
-    //       return throwError(err);
-    //     })
-    //   )
-    //   .subscribe(() => {
-    //     if (this.authToken) {
-    //       this.router.navigateByUrl('');
-    //     }/* else {
-    //       this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
-    //     }*/
-    //   });
+    this.authService.login(this.username.value)
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err.status == 401) {
+            this.username.setErrors({userExists: true});
+          }
+          return throwError(err);
+        })
+      )
+      .subscribe(() => {
+        if (this.authToken) {
+          this.router.navigateByUrl('');
+        }
+      });
   }
 
   get username(): AbstractControl {
