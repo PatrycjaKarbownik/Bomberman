@@ -19,6 +19,7 @@ ns = api.namespace('auth', description='Authorization actions')
 class AuthLogin(Resource):
 
     @api.expect(models.login_body_model)
+    @api.marshal_with(models.login_response_model)
     def post(self):
         username = api.payload['username']
         if lobby.user_exists(username):
