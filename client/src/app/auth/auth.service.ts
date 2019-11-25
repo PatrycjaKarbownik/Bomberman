@@ -30,6 +30,16 @@ export class AuthService {
       );
   }
 
+  renewalToken(): Observable<any> {
+    return this.httpClient.post('auth/refresh', {refreshToken: this.refreshToken}, {observe: 'response'})
+      .pipe(
+        first(),
+        tap(response => {
+          this.authToken = response.body.accessToken;
+        }),
+      );
+  }
+
   ifUsernameExists(username: string): Observable<boolean> {
     return this.httpClient.get<boolean>(`${AuthService.userUrl}/exists/${username}`)
       .pipe(first());
