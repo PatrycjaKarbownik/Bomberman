@@ -5,6 +5,7 @@ import { first, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
+import { RefreshToken } from '@app/core/storages/refresh-token.storage';
 
 // service using to login to app
 @Injectable()
@@ -12,16 +13,20 @@ export class AuthService {
   private static readonly userUrl = 'user';
 
   @AuthToken() private authToken: string;
+  @RefreshToken() private refreshToken: string;
 
   constructor(private httpClient: HttpClient) { }
 
   // send log in request
-  // set auth token, which receives in response
+  // set auth and refresh token, which receives in response
   login(username: string): Observable<any> {
-    return this.httpClient.post('auth/login', username, {observe: 'response'})
+    return this.httpClient.post<LoginResponseModel>('auth/login', {username: username}, {observe: 'response'})
       .pipe(
         first(),
-        tap(resp => this.authToken = resp.headers.get('authorization')),
+        tap(response => {
+          this.authToken = response.body.access_token;
+          this.refreshToken = response.body.refresh_token;
+        }),
       );
   }
 

@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { AuthService } from '@app/auth/auth.service';
+import { catchError } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { throwError } from 'rxjs';
 
 // login view
 // it will be shown when user won't be logged
@@ -39,24 +42,25 @@ export class LoginComponent implements OnInit {
     if (this.loginModel.invalid) return;
 
     // todo: uncomment and change this, when login with token will be available
-    // this.authService.login(this.username.value)
-    //   .pipe(
-    //     catchError((err: HttpErrorResponse) => {
-    //       if (err.error.code === LoginComponent.USER_EXISTS_ERR_CODE) {
-    //         // this.loginModel.control.setErrors({userExists: true});
-    //         this.username.setErrors({userExists: true});
-    //         this.userExistsErrorMessage = err.error.message;
-    //       }
-    //       return throwError(err);
-    //     })
-    //   )
-    //   .subscribe(() => {
-    //     if (this.authToken) {
-    //       this.router.navigateByUrl('');
-    //     }/* else {
-    //       this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
-    //     }*/
-    //   });
+    this.authService.login(this.username.value)
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          console.log(err);
+          if (err.status == 401) {
+            // this.loginModel.get('username').setErrors({userExists: true});
+            this.username.setErrors({userExists: true});
+            // this.userExistsErrorMessage = err.error.message;
+          }
+          return throwError(err);
+        })
+      )
+      .subscribe(() => {
+        if (this.authToken) {
+          this.router.navigateByUrl('');
+        }/* else {
+          this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
+        }*/
+      });
   }
 
   get username(): AbstractControl {

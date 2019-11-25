@@ -10,7 +10,8 @@
   "AUTH": {
     "LOGIN": "Podaj swój pseudonim",
     "SIGN_IN": "Zaloguj",
-    "USERNAME_EXISTS": "Nazwa użytkownika już istnieje"
+    "USERNAME_EXISTS": "Nazwa użytkownika już istnieje",
+    "USER_EXISTS": "Użytkownik o podanej nazwie już istnieje"
   },
   "LOBBY": {
     "TITLE": "Lobby",
