@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { AuthService } from '@app/auth/auth.service';
-import { catchError } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
-import { throwError } from 'rxjs';
 
 // login view
 // it will be shown when user won't be logged
