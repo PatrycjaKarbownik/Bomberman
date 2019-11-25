@@ -20,12 +20,12 @@ export class AuthService {
   // send log in request
   // set auth and refresh token, which receives in response
   login(username: string): Observable<any> {
-    return this.httpClient.post<LoginResponseModel>('auth/login', {username: username}, {observe: 'response'})
+    return this.httpClient.post('auth/login', {username: username}, {observe: 'response'})
       .pipe(
         first(),
         tap(response => {
-          this.authToken = response.body.access_token;
-          this.refreshToken = response.body.refresh_token;
+          this.authToken = response.body.accessToken;
+          this.refreshToken = response.body.refreshToken;
         }),
       );
   }
