@@ -29,9 +29,9 @@ class AuthLogin(Resource):
 
         user_id = lobby.add_user(username)
         return {
-                   'user_id': user_id,
-                   'access_token': create_access_token(identity=user_id),
-                   'refresh_token': create_refresh_token(identity=user_id)
+                   'userId': user_id,
+                   'accessToken': create_access_token(identity=user_id),
+                   'refreshToken': create_refresh_token(identity=user_id)
                }, 200
 
 
@@ -43,5 +43,5 @@ class AuthRefresh(Resource):
         username_id = get_jwt_identity()
 
         return {
-                   'access_token': create_access_token(identity=username_id)
+                   'accessToken': create_access_token(identity=username_id)
                }, 200

@@ -15,6 +15,7 @@ ns = api.namespace('room', description='Operating on rooms in lobby')
 @ns.route('/')
 class RoomCollection(Resource):
 
+    @ns.doc(security="apikey")
     @jwt_required
     @api.marshal_list_with(models.room_with_usernames_model)
     def get(self):
@@ -25,6 +26,7 @@ class RoomCollection(Resource):
 @ns.route('/<int:room_id>')
 class RoomSpecific(Resource):
 
+    @ns.doc(security="apikey")
     @jwt_required
     def get(self, room_id):
         """Returns room by id with specific data about its users"""
@@ -38,6 +40,7 @@ class RoomSpecific(Resource):
 @ns.route('/add')
 class RoomCreating(Resource):
 
+    @ns.doc(security="apikey")
     @jwt_required
     def post(self):
         room_id = lobby.create_room()

@@ -15,6 +15,7 @@ ns = api.namespace('user', description='Showing users and adding them')
 @ns.route('/')
 class UserCollection(Resource):
 
+    @ns.doc(security="apikey")
     @jwt_required
     @api.marshal_list_with(models.user_model)
     def get(self):
