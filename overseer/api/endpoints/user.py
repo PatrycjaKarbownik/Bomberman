@@ -1,5 +1,6 @@
 import logging
 
+from flask_jwt_extended import jwt_required
 from flask_restplus import Resource
 
 import engine.lobby as lobby
@@ -14,6 +15,7 @@ ns = api.namespace('user', description='Showing users and adding them')
 @ns.route('/')
 class UserCollection(Resource):
 
+    @jwt_required
     @api.marshal_list_with(models.user_model)
     def get(self):
         """Returns list of users"""
