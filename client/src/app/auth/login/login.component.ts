@@ -17,7 +17,6 @@ import { throwError } from 'rxjs';
 })
 export class LoginComponent implements OnInit {
 
-  private static readonly USER_EXISTS_ERR_CODE = 'USER_EXISTS';
   private static readonly MIN_USERNAME_LENGTH = 3;
 
   @AuthToken()
@@ -41,15 +40,11 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginModel.invalid) return;
 
-    // todo: uncomment and change this, when login with token will be available
     this.authService.login(this.username.value)
       .pipe(
         catchError((err: HttpErrorResponse) => {
-          console.log(err);
           if (err.status == 401) {
-            // this.loginModel.get('username').setErrors({userExists: true});
             this.username.setErrors({userExists: true});
-            // this.userExistsErrorMessage = err.error.message;
           }
           return throwError(err);
         })
@@ -57,9 +52,7 @@ export class LoginComponent implements OnInit {
       .subscribe(() => {
         if (this.authToken) {
           this.router.navigateByUrl('');
-        }/* else {
-          this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
-        }*/
+        }
       });
   }
 
