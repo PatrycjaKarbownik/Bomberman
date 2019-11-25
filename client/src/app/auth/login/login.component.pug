@@ -8,8 +8,7 @@
           .form-group
             label.required(for="login", translate) AUTH.LOGIN
             input#login.form-control(formControlName="username")
-            span.error(*ngIf="username.invalid && username.touched && !username.hasError('usernameExists') && !username.hasError('userExists')",
-              translate) VALIDATION.REQUIRED
+            span.error(*ngIf="username.value == '' && username.touched", translate) VALIDATION.REQUIRED
             span.error(*ngIf="username.hasError('usernameExists')", translate) AUTH.USERNAME_EXISTS
 
           button.btn.btn-primary.btn-block.mt-5(type="submit", translate) AUTH.SIGN_IN
