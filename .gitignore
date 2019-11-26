@@ -25,3 +25,6 @@
 
 ### VS Code ###
 .vscode/
+
+### QtCreator ###
+*.pro.user
