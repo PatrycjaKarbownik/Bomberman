@@ -1,6 +1,6 @@
 import logging
 
-from flask_jwt_extended import create_refresh_token, create_access_token, get_jwt_identity
+from flask_jwt_extended import create_refresh_token, create_access_token, get_jwt_identity, jwt_refresh_token_required
 from flask_restplus import Resource
 
 import engine.lobby as lobby
@@ -23,7 +23,8 @@ class AuthLogin(Resource):
         username = api.payload['username']
         if lobby.user_exists(username):
             return {
-                       'type': 'error',
+                       'type': 'AUTH',
+                       'code': 'USER_EXISTS',
                        'errorMessage': tr(message.error_login_already_used, Language.POLISH)
                    }, 401
 
@@ -38,6 +39,7 @@ class AuthLogin(Resource):
 @ns.route('/refresh')
 class AuthRefresh(Resource):
 
+    @jwt_refresh_token_required
     @api.expect(models.refresh_body_model)
     def post(self):
         username_id = get_jwt_identity()
