@@ -22,7 +22,7 @@ jwt = JWTManager(app)
 @jwt.expired_token_loader
 def expired_token_callback(expired_token):
     token_type = expired_token['type']
-    if token_type is 'access':
+    if token_type == 'access':
         error_code = 'ACCESS_TOKEN_EXPIRED'
         error_message = tr(message.error_access_token_expired, Language.POLISH)
     else:

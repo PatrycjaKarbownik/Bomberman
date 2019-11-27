@@ -39,8 +39,8 @@ class AuthLogin(Resource):
 @ns.route('/refresh')
 class AuthRefresh(Resource):
 
+    @ns.doc(security="apikey")
     @jwt_refresh_token_required
-    @api.expect(models.refresh_body_model)
     def post(self):
         username_id = get_jwt_identity()
 
