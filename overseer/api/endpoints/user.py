@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 ns = api.namespace('user', description='Showing users and adding them')
 
 
-@ns.route('')
+@ns.route('/')
 class UserCollection(Resource):
 
     @ns.doc(security="apikey")

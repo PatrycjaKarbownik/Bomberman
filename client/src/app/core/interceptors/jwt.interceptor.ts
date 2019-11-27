@@ -9,11 +9,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthToken } from '@app/core/storages/auth-token.storage';
 import { AuthService } from '@app/auth/auth.service';
+import { ErrorType } from '@app/core/error/error-type';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-  private static readonly TOKEN_EXPIRED_EMPLOYEE_ERR_CODE = 'EMPLOYEE_PRIVILEGES';
+  private static readonly AUTH_TOKEN_EXPIRED_ERR_CODE = 'ACCESS_TOKEN_EXPIRED';
 
   @AuthToken() private authToken: string;
 
@@ -27,10 +28,8 @@ export class JwtInterceptor implements HttpInterceptor {
     return next.handle(this.addAuthToken(req))
       .pipe(
         catchError((response: HttpErrorResponse) => {
-          // todo: change error.code to error.type
-          // it doesn't work
-          if (response.error.code === 401) {
-            if (response.error.code === JwtInterceptor.TOKEN_EXPIRED_EMPLOYEE_ERR_CODE) {
+          if (response.error.type === ErrorType.AUTH) {
+            if (response.error.code === JwtInterceptor.AUTH_TOKEN_EXPIRED_ERR_CODE) {
               return this.handleTokenExpiredException(req, next);
             } else {
               return throwError(response);
@@ -44,7 +43,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   private addAuthToken(request: HttpRequest<any>): HttpRequest<any> {
     return request.url.startsWith(this.baseUrl) ?
-      request.clone({ setHeaders: { Authorization: this.authToken || '' } }) : request;
+      request.clone({setHeaders: {Authorization: this.authToken || ''}}) : request;
   }
 
   private handleTokenExpiredException(req: HttpRequest<any>, next: HttpHandler) {
