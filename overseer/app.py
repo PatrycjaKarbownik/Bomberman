@@ -8,11 +8,32 @@ from api.endpoints.authorization import ns as auth_ns
 from api.endpoints.room import ns as room_ns
 from api.endpoints.user import ns as user_ns
 from api.restful import api
+from api.translation_manager import Language
+from api.translation_manager import translate as tr
+from messages import message_codes as message
 
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+jwt = JWTManager(app)
+
+
+@jwt.expired_token_loader
+def expired_token_callback(expired_token):
+    token_type = expired_token['type']
+    if token_type is 'access':
+        error_code = 'ACCESS_TOKEN_EXPIRED'
+        error_message = tr(message.error_access_token_expired, Language.POLISH)
+    else:
+        error_code = 'REFRESH_TOKEN_EXPIRED'
+        error_message = tr(message.error_refresh_token_expired, Language.POLISH)
+        
+    return {
+               'type': 'AUTH',
+               'code': error_code,
+               'errorMessage': error_message
+           }, 401
 
 
 def configure_app(flask_app):
@@ -36,5 +57,4 @@ def initialize_app(flask_app):
 
 if __name__ == '__main__':
     initialize_app(app)
-    jwt = JWTManager(app)
     app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE)
