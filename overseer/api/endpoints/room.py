@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 ns = api.namespace('room', description='Operating on rooms in lobby')
 
 
-@ns.route('')
+@ns.route('/')
 class RoomCollection(Resource):
 
     @ns.doc(security="apikey")

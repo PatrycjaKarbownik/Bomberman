@@ -13,6 +13,7 @@ import { AuthGuard } from '@app/core/guards/auth.guard';
 import { BaseUrlInterceptor } from '@app/core/interceptors/base-url.interceptor';
 import { ExceptionHandlerInterceptor } from '@app/core/interceptors/exception-handler.interceptor';
 import { AuthService } from '@app/auth/auth.service';
+import { JwtInterceptor } from '@app/core/interceptors/jwt.interceptor';
 
 // module including primary modules
 // which have to be imported by app module
@@ -48,6 +49,7 @@ registerLocaleData(localePl, 'pl');
     { provide: 'DATE_FORMAT', useValue: 'YYYY-MM-DD' },
     { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ExceptionHandlerInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'pl' }
   ],
   exports: [
