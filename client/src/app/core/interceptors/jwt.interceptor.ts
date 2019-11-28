@@ -7,16 +7,16 @@ import { catchError, mergeMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { AuthToken } from '@app/core/storages/auth-token.storage';
+import { AccessToken } from '@app/core/storages/access-token.storage';
 import { AuthService } from '@app/auth/auth.service';
 import { ErrorType } from '@app/core/error/error-type';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-  private static readonly AUTH_TOKEN_EXPIRED_ERR_CODE = 'ACCESS_TOKEN_EXPIRED';
+  private static readonly ACCESS_TOKEN_EXPIRED_ERR_CODE = 'ACCESS_TOKEN_EXPIRED';
 
-  @AuthToken() private authToken: string;
+  @AccessToken() private accessToken: string;
 
   constructor(@Inject('BASE_API_URL') private baseUrl: string,
               private toastr: ToastrService,
@@ -29,7 +29,7 @@ export class JwtInterceptor implements HttpInterceptor {
       .pipe(
         catchError((response: HttpErrorResponse) => {
           if (response.error.type === ErrorType.AUTH) {
-            if (response.error.code === JwtInterceptor.AUTH_TOKEN_EXPIRED_ERR_CODE) {
+            if (response.error.code === JwtInterceptor.ACCESS_TOKEN_EXPIRED_ERR_CODE) {
               return this.handleTokenExpiredException(req, next);
             } else {
               return throwError(response);
@@ -42,8 +42,9 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   private addAuthToken(request: HttpRequest<any>): HttpRequest<any> {
-    return request.url.startsWith(this.baseUrl) ?
-      request.clone({setHeaders: {Authorization: this.authToken || ''}}) : request;
+    // check if request is not a auth 'type', because auth requests haven't have an access token
+    return request.url.startsWith(this.baseUrl) && !request.url.startsWith(`${this.baseUrl}/auth`)?
+      request.clone({setHeaders: {Authorization: this.accessToken || ''}}) : request;
   }
 
   private handleTokenExpiredException(req: HttpRequest<any>, next: HttpHandler) {

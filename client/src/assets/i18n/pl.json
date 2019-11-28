@@ -9,6 +9,7 @@
   },
   "AUTH": {
     "LOGIN": "Podaj swój pseudonim",
+    "LOGIN_PLACEHOLDER": "Wpisz min. 3 znaki",
     "SIGN_IN": "Zaloguj",
     "USERNAME_EXISTS": "Nazwa użytkownika już istnieje"
   },

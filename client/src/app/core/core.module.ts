@@ -48,8 +48,8 @@ registerLocaleData(localePl, 'pl');
     { provide: 'BASE_API_URL', useValue: 'api' },
     { provide: 'DATE_FORMAT', useValue: 'YYYY-MM-DD' },
     { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ExceptionHandlerInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'pl' }
   ],
   exports: [

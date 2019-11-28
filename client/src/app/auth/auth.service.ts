@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { first, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { AuthToken } from '@app/core/storages/auth-token.storage';
+import { AccessToken } from '@app/core/storages/access-token.storage';
 import { RefreshToken } from '@app/core/storages/refresh-token.storage';
 
 // service using to login to app
@@ -12,7 +12,7 @@ import { RefreshToken } from '@app/core/storages/refresh-token.storage';
 export class AuthService {
   private static readonly userUrl = 'user';
 
-  @AuthToken() private authToken: string;
+  @AccessToken() private accessToken: string;
   @RefreshToken() private refreshToken: string;
 
   constructor(private httpClient: HttpClient) { }
@@ -24,18 +24,18 @@ export class AuthService {
       .pipe(
         first(),
         tap(response => {
-          this.authToken = response.body.accessToken;
+          this.accessToken = response.body.accessToken;
           this.refreshToken = response.body.refreshToken;
         }),
       );
   }
 
   renewalToken(): Observable<any> {
-    return this.httpClient.post('auth/refresh', {refreshToken: this.refreshToken}, {observe: 'response'})
+    return this.httpClient.post('auth/refresh', null, {headers: {Authorization: this.refreshToken}, observe: 'response'})
       .pipe(
         first(),
         tap(response => {
-          this.authToken = response.body.accessToken;
+          this.accessToken = response.body.accessToken;
         }),
       );
   }

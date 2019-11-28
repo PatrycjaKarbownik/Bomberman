@@ -1,7 +1,7 @@
 // remember authorization token in local storage
-export function AuthToken() {
+export function AccessToken() {
   return (target: any, key: string) => {
-    const tokenKey = 'authToken';
+    const tokenKey = 'accessToken';
 
     Object.defineProperty(target, key, {
       get: () => {

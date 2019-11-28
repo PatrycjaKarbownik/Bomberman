@@ -6,7 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
-import { AuthToken } from '@app/core/storages/auth-token.storage';
+import { AccessToken } from '@app/core/storages/access-token.storage';
 import { AuthService } from '@app/auth/auth.service';
 
 // login view
@@ -20,8 +20,7 @@ export class LoginComponent implements OnInit {
 
   private static readonly MIN_USERNAME_LENGTH = 3;
 
-  @AuthToken()
-  private authToken: string;
+  @AccessToken() private accessToken: string;
   loginModel: FormGroup = this.buildLoginForm();
 
   private debouncer: any;
@@ -51,7 +50,7 @@ export class LoginComponent implements OnInit {
         })
       )
       .subscribe(() => {
-        if (this.authToken) {
+        if (this.accessToken) {
           this.router.navigateByUrl('');
         }
       });
