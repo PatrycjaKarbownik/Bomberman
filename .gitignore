@@ -28,3 +28,4 @@
 
 ### QtCreator ###
 *.pro.user
+*build-*
