@@ -2,6 +2,5 @@ nav.navbar.navbar-expand
   a.navbar-brand Bomberman
 
   div.user-info
-    div.username XXX
+    div.username {{ (getUsername() | async)?.name }}
     div.logout((click)="logout()", translate) AUTH.LOGOUT
-//{{ (getUsername() | async)?.username }}

@@ -15,17 +15,9 @@ export class CurrentUserService {
 
   getCurrentUser(): Observable<CurrentUserModel> {
     if (!this.currentUserCache$) {
-      this.currentUserCache$ = this.httpClient.get<CurrentUserModel>('auth')
+      this.currentUserCache$ = this.httpClient.get<CurrentUserModel>('user/current_user')
         .pipe(shareReplay(1));
     }
     return this.currentUserCache$;
-  }
-
-  isCurrentUserId(id: number): boolean {
-    let result = false;
-    this.getCurrentUser().subscribe(user =>
-      result = (user.id === id)
-    );
-    return result;
   }
 }
