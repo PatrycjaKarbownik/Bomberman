@@ -1,5 +1,7 @@
 nav.navbar.navbar-expand
   a.navbar-brand Bomberman
 
-  label.mr-2 XXX
+  div.user-info
+    div.username XXX
+    div.logout((click)="logout()", translate) AUTH.LOGOUT
 //{{ (getUsername() | async)?.username }}

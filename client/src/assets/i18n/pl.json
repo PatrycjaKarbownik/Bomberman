@@ -11,7 +11,8 @@
     "LOGIN": "Podaj swój pseudonim",
     "LOGIN_PLACEHOLDER": "Wpisz min. 3 znaki",
     "SIGN_IN": "Zaloguj",
-    "USERNAME_EXISTS": "Nazwa użytkownika już istnieje"
+    "USERNAME_EXISTS": "Nazwa użytkownika już istnieje",
+    "LOGOUT": "Wyloguj się"
   },
   "LOBBY": {
     "TITLE": "Lobby",

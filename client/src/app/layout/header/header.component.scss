@@ -4,6 +4,8 @@ nav {
   background-color: $bomb-primary;
   height: 5vh;
   font-size: 2rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 a, label {
@@ -14,3 +16,20 @@ a, label {
 .nav-item {
   transition: all .3s;
 }
+
+.user-info {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.2rem;
+
+  .username {
+    margin-right: 2rem;
+    font-weight: bold;
+  }
+
+  .logout {
+    color: $bomb-yellow;
+  }
+}
+
+
