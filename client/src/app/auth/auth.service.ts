@@ -18,7 +18,7 @@ export class AuthService {
   constructor(private httpClient: HttpClient) { }
 
   // send log in request
-  // set auth and refresh token, which receives in response
+  // set access and refresh token, which receives in response
   login(username: string): Observable<any> {
     return this.httpClient.post('auth/login', {username: username}, {observe: 'response'})
       .pipe(
@@ -30,6 +30,7 @@ export class AuthService {
       );
   }
 
+  // renew access token when expired
   renewalToken(): Observable<any> {
     return this.httpClient.post('auth/refresh', null, {headers: {Authorization: this.refreshToken}, observe: 'response'})
       .pipe(

@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
   // execute after login button click
   // send log in request to overseer
   // check errors in response
-  // and navigate to lobby view, when receive auth token
+  // and navigate to lobby view, when receive access token
   onSubmit() {
     if (this.loginModel.invalid) return;
 

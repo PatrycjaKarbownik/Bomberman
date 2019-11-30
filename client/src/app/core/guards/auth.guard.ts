@@ -11,6 +11,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(private router: Router) { }
 
+  // check if user has a valid token, otherwise navigate him to login view
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> | boolean {
     if (this.token) return true;
 
