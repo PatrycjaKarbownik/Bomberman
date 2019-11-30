@@ -19,9 +19,11 @@ class HostManager:
         self.s.bind((TCP_IP, port))
         self.s.listen(1)
 
+        subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games)])
+        self.conn, self.addr = self.s.accept()
+
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
-        subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games)])
 
     def create_room(self):
         pass
@@ -33,12 +35,12 @@ class HostManager:
         self.thread.join()
 
     def run(self):
-        conn, addr = self.s.accept()
-        print('Someone connected, ip: ' + str(addr))
+        print('Someone connected, ip: ' + str(self.addr))
         while True:
-            data = conn.recv(1024)
+            data = self.conn.recv(1024)
             if not data:
                 break
             print("Received data: " + str(data))
-        conn.close()
+            self.conn.send(bytes("asdfghj", 'utf-8'))
+        self.conn.close()
         print("echo")

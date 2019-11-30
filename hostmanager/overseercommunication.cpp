@@ -26,6 +26,7 @@ bool OverseerCommunication::init(const quint16 overseerPort_, const quint32 maxR
 
     m_testTimer.start(1500);
     connect(&m_testTimer, &QTimer::timeout, this, &OverseerCommunication::onTestTimeout);
+    connect(&m_socket, &QTcpSocket::readyRead, this, &OverseerCommunication::onReadyRead);
 
     return true;
 }
@@ -42,4 +43,17 @@ void OverseerCommunication::onTestTimeout()
     obj.insert("Pati", "Skarb");
     obj.insert("Tromba", "Przystojny");
     m_socket.write(QJsonDocument(obj).toJson());
+}
+
+void OverseerCommunication::onReadyRead()
+{
+    if (m_count < 5) {
+        ++m_count;
+        return;
+    }
+
+    m_count = 0;
+    QByteArray data = m_socket.readAll();
+    QByteArray response = "I red " + data;
+    m_socket.write(response);
 }
