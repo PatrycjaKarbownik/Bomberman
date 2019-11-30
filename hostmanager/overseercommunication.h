@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QTimer>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 class OverseerCommunication : public QObject
 {
@@ -15,8 +18,9 @@ public:
      * @brief init: Initialization of communication properties
      * @param overseerPort_: Port for tcp communication with overseer
      * @param maxRooms_: Maximum number of rooms GameHost is allowed to maintain at once
+     * @return true if socket connected to overseer, otherwise false
      */
-    void init(const quint16 overseerPort_, const quint32 maxRooms_);
+    bool init(const quint16 overseerPort_, const quint32 maxRooms_);
 
 signals:
 
@@ -27,10 +31,13 @@ private:
     OverseerCommunication(const OverseerCommunication&) = delete;
     OverseerCommunication& operator=(const OverseerCommunication&) = delete;
 
+    QTimer m_testTimer;
     QTcpSocket m_socket;
     quint16 m_overseerPort {0};
     quint32 m_maxRooms {0};
 
+private slots:
+    void onTestTimeout();
 };
 
 #endif // OVERSEERCOMMUNICATION_H

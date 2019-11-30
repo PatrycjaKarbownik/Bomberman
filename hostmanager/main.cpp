@@ -36,7 +36,12 @@ int main(int argc, char *argv[])
     }
 
     // Initialize singleton at the start
-    OverseerCommunication::getInstance().init(overseerPort, maxGames);
+    bool communicationStarted = OverseerCommunication::getInstance().init(overseerPort, maxGames);
+
+    if (!communicationStarted) {
+        qCritical() << "Communication could not start";
+        return 4;
+    }
 
     return a.exec();
 }
