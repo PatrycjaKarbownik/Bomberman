@@ -9,8 +9,8 @@ import { AuthGuard } from '@app/core/guards/auth.guard';
 // (AuthGuard is to protect against exploring by not logged user)
 const routes: Routes = [
   { path: '',
-    loadChildren: '@app/main.module#MainModule'/*,
-    canActivate: [AuthGuard]*/
+    loadChildren: '@app/main.module#MainModule',
+    canActivate: [AuthGuard]
   },
   { path: 'auth', loadChildren: '@app/auth/auth.module#AuthModule' },
   { path: '**', redirectTo: '' }

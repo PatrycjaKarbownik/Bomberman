@@ -15,6 +15,7 @@ import { ErrorType } from '@app/core/error/error-type';
 export class JwtInterceptor implements HttpInterceptor {
 
   private static readonly ACCESS_TOKEN_EXPIRED_ERR_CODE = 'ACCESS_TOKEN_EXPIRED';
+  private static readonly REFRESH_TOKEN_EXPIRED_ERR_CODE = 'REFRESH_TOKEN_EXPIRED';
 
   @AccessToken() private accessToken: string;
 
@@ -24,13 +25,16 @@ export class JwtInterceptor implements HttpInterceptor {
               private modal: NgbModal,
               private authService: AuthService) { }
 
+  // handle exceptions triggered by tokens expiration
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(this.addAuthToken(req))
       .pipe(
         catchError((response: HttpErrorResponse) => {
           if (response.error.type === ErrorType.AUTH) {
             if (response.error.code === JwtInterceptor.ACCESS_TOKEN_EXPIRED_ERR_CODE) {
-              return this.handleTokenExpiredException(req, next);
+              return this.handleAccessTokenExpiredException(req, next);
+            } else if (response.error.code === JwtInterceptor.REFRESH_TOKEN_EXPIRED_ERR_CODE) {
+              return this.handleRefreshTokenExpiredException(response);
             } else {
               return throwError(response);
             }
@@ -47,10 +51,17 @@ export class JwtInterceptor implements HttpInterceptor {
       request.clone({setHeaders: {Authorization: this.accessToken || ''}}) : request;
   }
 
-  private handleTokenExpiredException(req: HttpRequest<any>, next: HttpHandler) {
+  // when access token expired, try to renew it using refresh token
+  private handleAccessTokenExpiredException(req: HttpRequest<any>, next: HttpHandler) {
     return this.authService.renewalToken()
       .pipe(
         mergeMap(() => next.handle(this.addAuthToken(req)))
       );
+  }
+
+  // when refresh token expired, close all opened modals
+  private handleRefreshTokenExpiredException(response: HttpErrorResponse) {
+    this.modal.dismissAll();
+    return throwError(response);
   }
 }
