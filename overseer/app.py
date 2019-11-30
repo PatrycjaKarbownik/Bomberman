@@ -1,16 +1,19 @@
 import logging.config
 
 from flask import Flask, Blueprint
+
 import settings
-from api.endpoints.user import ns as user_ns
-from api.endpoints.room import ns as room_ns
 from api.endpoints.authorization import ns as auth_ns
+from api.endpoints.room import ns as room_ns
+from api.endpoints.user import ns as user_ns
 from api.restful import api
+from engine.host_manager import HostManager
 
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+host_manager = HostManager(5005, 3)
 
 
 def configure_app(flask_app):
@@ -31,4 +34,6 @@ def initialize_app(flask_app):
 
 if __name__ == '__main__':
     initialize_app(app)
-    app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE)
+    # use_reloader parameter is set to False to prevent flask from starting twice in debug mode
+    app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE, use_reloader=False)
+    host_manager.stop_work()
