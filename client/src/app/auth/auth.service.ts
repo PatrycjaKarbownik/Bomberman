@@ -18,7 +18,7 @@ export class AuthService {
   constructor(private httpClient: HttpClient) { }
 
   // send log in request
-  // set access and refresh token, which receives in response
+  // set access and refresh token received in response
   login(username: string): Observable<any> {
     return this.httpClient.post('auth/login', {username: username}, {observe: 'response'})
       .pipe(
