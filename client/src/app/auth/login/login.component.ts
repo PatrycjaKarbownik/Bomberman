@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
-import { AuthToken } from '@app/core/storages/auth-token.storage';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+
+import { AccessToken } from '@app/core/storages/access-token.storage';
 import { AuthService } from '@app/auth/auth.service';
 
 // login view
@@ -14,11 +18,9 @@ import { AuthService } from '@app/auth/auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  private static readonly USER_EXISTS_ERR_CODE = 'USER_EXISTS';
   private static readonly MIN_USERNAME_LENGTH = 3;
 
-  @AuthToken()
-  private authToken: string;
+  @AccessToken() private accessToken: string;
   loginModel: FormGroup = this.buildLoginForm();
 
   private debouncer: any;
@@ -34,29 +36,24 @@ export class LoginComponent implements OnInit {
   // execute after login button click
   // send log in request to overseer
   // check errors in response
-  // and navigate to lobby view, when receive auth token
+  // and navigate to lobby view, when receive access token
   onSubmit() {
     if (this.loginModel.invalid) return;
 
-    // todo: uncomment and change this, when login with token will be available
-    // this.authService.login(this.username.value)
-    //   .pipe(
-    //     catchError((err: HttpErrorResponse) => {
-    //       if (err.error.code === LoginComponent.USER_EXISTS_ERR_CODE) {
-    //         // this.loginModel.control.setErrors({userExists: true});
-    //         this.username.setErrors({userExists: true});
-    //         this.userExistsErrorMessage = err.error.message;
-    //       }
-    //       return throwError(err);
-    //     })
-    //   )
-    //   .subscribe(() => {
-    //     if (this.authToken) {
-    //       this.router.navigateByUrl('');
-    //     }/* else {
-    //       this.router.navigateByUrl('auth/verify-pin', { state: { credentials: this.credentials } });
-    //     }*/
-    //   });
+    this.authService.login(this.username.value)
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err.status == 401) {
+            this.username.setErrors({userExists: true});
+          }
+          return throwError(err);
+        })
+      )
+      .subscribe(() => {
+        if (this.accessToken) {
+          this.router.navigateByUrl('');
+        }
+      });
   }
 
   get username(): AbstractControl {

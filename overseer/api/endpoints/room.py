@@ -1,5 +1,6 @@
 import logging
 
+from flask_jwt_extended import jwt_required
 from flask_restplus import Resource
 
 import api.models as models
@@ -14,6 +15,8 @@ ns = api.namespace('room', description='Operating on rooms in lobby')
 @ns.route('/')
 class RoomCollection(Resource):
 
+    @ns.doc(security="apikey")
+    @jwt_required
     @api.marshal_list_with(models.room_with_usernames_model)
     def get(self):
         """Returns all rooms including their users usernames"""
@@ -23,6 +26,8 @@ class RoomCollection(Resource):
 @ns.route('/<int:room_id>')
 class RoomSpecific(Resource):
 
+    @ns.doc(security="apikey")
+    @jwt_required
     def get(self, room_id):
         """Returns room by id with specific data about its users"""
         room = lobby.rooms.get(room_id)
@@ -35,6 +40,8 @@ class RoomSpecific(Resource):
 @ns.route('/add')
 class RoomCreating(Resource):
 
+    @ns.doc(security="apikey")
+    @jwt_required
     def post(self):
         room_id = lobby.create_room()
         return room_id, 200
