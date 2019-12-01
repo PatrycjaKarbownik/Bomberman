@@ -7,13 +7,12 @@ from api.endpoints.authorization import ns as auth_ns
 from api.endpoints.room import ns as room_ns
 from api.endpoints.user import ns as user_ns
 from api.restful import api
-from engine.host_manager import HostManager
+from engine.host_manager import host_manager
 
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-host_manager = HostManager(5005, 3)
 
 
 def configure_app(flask_app):

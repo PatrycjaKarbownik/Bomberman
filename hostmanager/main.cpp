@@ -11,12 +11,13 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription("Game host for bomberman servers");
     parser.addPositionalArgument("OverseerPort", "Port for communicating with overseer");
     parser.addPositionalArgument("MaxGames", "Maximum number of games application is allowed to start");
+    parser.addPositionalArgument("GameHostPath", "Path to the game host application");
 
     parser.process(a);
 
     const QStringList args = parser.positionalArguments();
 
-    if (args.size() < 2) {
+    if (args.size() < 3) {
         qCritical() << "Not all positional arguments were provided";
         return 1;
     }
@@ -35,12 +36,18 @@ int main(int argc, char *argv[])
         return 3;
     }
 
+    QString gameHostPath = args.at(2);
+    if (gameHostPath.isEmpty()) {
+        qCritical() << "MaxGames is not provided";
+        return 4;
+    }
+
     // Initialize singleton at the start
     bool communicationStarted = OverseerCommunication::getInstance().init(overseerPort, maxGames);
 
     if (!communicationStarted) {
         qCritical() << "Communication could not start";
-        return 4;
+        return 5;
     }
 
     return a.exec();

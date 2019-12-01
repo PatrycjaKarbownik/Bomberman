@@ -1,6 +1,7 @@
 """ HostManager is responsible for communicating with host manager c++ application
 
-Docs will go there
+HostManager class on initialization starts an host manager application with arguments given in constructor.
+It then estabilishes tcp communication between overseer and host manager.
 
 """
 
@@ -20,14 +21,18 @@ class HostManager:
         self.s.bind((TCP_IP, port))
         self.s.listen(1)
 
-        subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games)])
+        # Start a host manager application
+        subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games), settings.GAME_HOST_PATH])
         self.conn, self.addr = self.s.accept()
 
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
 
     def create_room(self):
-        pass
+        create_room_message = {
+            "type": "CREATE_ROOM",
+        }
+        self.conn.send(bytes(str(create_room_message)))
 
     def _create_host(self):
         pass
@@ -45,3 +50,5 @@ class HostManager:
             self.conn.send(bytes("asdfghj", 'utf-8'))
         self.conn.close()
         print("echo")
+
+host_manager = HostManager(settings.HOST_MANAGER_PORT, settings.MAX_GAMES_PER_HOST)
