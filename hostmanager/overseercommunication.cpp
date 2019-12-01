@@ -40,13 +40,17 @@ OverseerCommunication::OverseerCommunication(QObject *parent)
 void OverseerCommunication::onTestTimeout()
 {
     QJsonObject obj;
-    obj.insert("Pati", "Skarb");
-    obj.insert("Tromba", "Przystojny");
+    obj.insert("KeyA", "RandomValue");
+    obj.insert("KeyB", "AnotherValue");
     m_socket.write(QJsonDocument(obj).toJson());
 }
 
 void OverseerCommunication::onReadyRead()
 {
+    // NOTE This for causes host manager to react only after 5 received messages
+    // In communication test overseer send message everytime host manager sends a message,
+    // therefore without this respond-every-5-message condition overseer and host manager
+    // would loop each other
     if (m_count < 5) {
         ++m_count;
         return;
@@ -54,6 +58,6 @@ void OverseerCommunication::onReadyRead()
 
     m_count = 0;
     QByteArray data = m_socket.readAll();
-    QByteArray response = "I red " + data;
+    QByteArray response = "I read " + data;
     m_socket.write(response);
 }

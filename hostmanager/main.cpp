@@ -3,6 +3,7 @@
 
 #include "overseercommunication.h"
 
+// TODO Remove parsing arguments from main to shorten it
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -11,6 +12,8 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription("Game host for bomberman servers");
     parser.addPositionalArgument("OverseerPort", "Port for communicating with overseer");
     parser.addPositionalArgument("MaxGames", "Maximum number of games application is allowed to start");
+
+    // NOTE for test purposes GameHostPath is an argument, it is later to decide if it has to be moved to config
     parser.addPositionalArgument("GameHostPath", "Path to the game host application");
 
     parser.process(a);
