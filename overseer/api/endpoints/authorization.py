@@ -3,11 +3,11 @@ import logging
 from flask_jwt_extended import create_refresh_token, create_access_token, get_jwt_identity, jwt_refresh_token_required
 from flask_restplus import Resource
 
-import engine.lobby as lobby
 from api import models
 from api.restful import api
 from api.translation_manager import Language
 from api.translation_manager import translate as tr
+from engine.lobby import lobby
 from messages import message_codes as message
 
 logger = logging.getLogger(__name__)
