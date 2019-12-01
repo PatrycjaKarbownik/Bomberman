@@ -1,6 +1,9 @@
+import logging
+
 from engine.user import *
 
 MAX_USERS = 4  # Max number of users in room
+logger = logging.getLogger(__name__)
 
 
 class Room:
@@ -67,3 +70,11 @@ class Room:
             'inGame': self.in_game,
             'users': users_list
         }
+
+    def enter_game(self):
+        """Initiaties a communication between client and game host using HostManager instance
+
+        """
+        if self.in_game:
+            logger.warning("Tried to enter game in room that already is in game")
+            return
