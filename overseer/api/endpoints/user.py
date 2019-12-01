@@ -3,9 +3,9 @@ import logging
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restplus import Resource
 
-import engine.lobby as lobby
 from api import models
 from api.restful import api
+from engine.lobby import lobby
 
 logger = logging.getLogger(__name__)
 
