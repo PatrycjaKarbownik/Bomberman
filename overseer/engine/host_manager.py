@@ -22,7 +22,14 @@ class HostManager:
         self.s.listen(1)
 
         # Start a host manager application
-        subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games), settings.GAME_HOST_PATH])
+        try:
+            subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games), settings.GAME_HOST_PATH])
+        except FileNotFoundError:
+            # TODO logg information about file not found
+            print("Wrong path to hostmanager")
+            print("Given path: ", settings.HOST_MANAGER_PATH)
+            exit(1)
+
         self.conn, self.addr = self.s.accept()
 
         self.thread = threading.Thread(target=self.run)
