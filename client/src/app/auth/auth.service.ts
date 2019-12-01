@@ -4,24 +4,40 @@ import { HttpClient } from '@angular/common/http';
 import { first, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { AuthToken } from '@app/core/storages/auth-token.storage';
+import { AccessToken } from '@app/core/storages/access-token.storage';
+import { RefreshToken } from '@app/core/storages/refresh-token.storage';
 
 // service using to login to app
 @Injectable()
 export class AuthService {
   private static readonly userUrl = 'user';
 
-  @AuthToken() private authToken: string;
+  @AccessToken() private accessToken: string;
+  @RefreshToken() private refreshToken: string;
 
   constructor(private httpClient: HttpClient) { }
 
   // send log in request
-  // set auth token, which receives in response
+  // set access and refresh token received in response
   login(username: string): Observable<any> {
-    return this.httpClient.post('auth/login', username, {observe: 'response'})
+    return this.httpClient.post('auth/login', {username: username}, {observe: 'response'})
       .pipe(
         first(),
-        tap(resp => this.authToken = resp.headers.get('authorization')),
+        tap(response => {
+          this.accessToken = response.body.accessToken;
+          this.refreshToken = response.body.refreshToken;
+        }),
+      );
+  }
+
+  // renew access token when expired
+  renewalToken(): Observable<any> {
+    return this.httpClient.post('auth/refresh', null, {headers: {Authorization: this.refreshToken}, observe: 'response'})
+      .pipe(
+        first(),
+        tap(response => {
+          this.accessToken = response.body.accessToken;
+        }),
       );
   }
 

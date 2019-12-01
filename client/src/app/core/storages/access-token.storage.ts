@@ -1,14 +1,14 @@
-// remember token in local storage
-export function AuthToken() {
+// remember authorization token in local storage
+export function AccessToken() {
   return (target: any, key: string) => {
-    const tokenKey = 'authToken';
+    const tokenKey = 'accessToken';
 
     Object.defineProperty(target, key, {
       get: () => {
         return JSON.parse(localStorage.getItem(tokenKey));
       },
       set: (token: string) => {
-        localStorage.setItem(tokenKey, JSON.stringify(token));
+        localStorage.setItem(tokenKey, JSON.stringify("Bearer " + token));
       }
     });
   };

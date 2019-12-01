@@ -20,6 +20,16 @@ room_model = api.model('RoomModel', {
     'users': fields.List(fields.Nested(user_model))
 })
 
-login_model = api.model('LoginModel', {
+login_body_model = api.model('LoginBodyModel', {
     'username': fields.String
+})
+
+refresh_body_model = api.model('RefreshBodyModel', {
+    'refreshToken': fields.String
+})
+
+login_response_model = api.model('LoginResponseModel', {
+    'userId': fields.Integer,
+    'accessToken': fields.String,
+    'refreshToken': fields.String
 })
