@@ -19,11 +19,11 @@ Web application for Bomberman game - server using C++ and Python 3, web client u
 * [Swagger](https://swagger.io/)
 * Standard Python unit tests
 
-### Game server
+### Host manager & Game host
 ...
 #### Development
-* C++
-* QT
+* C++17
+* QT 5.13.2
 
 #### Tests
 
@@ -39,4 +39,4 @@ Web application for Bomberman game - server using C++ and Python 3, web client u
 
 # 2. Starting project
 - Frontend: In `client` directory execute `npm install` and next `npm start`
-- Backend: In `overseer` directory type `python3 app.py`
+- Backend: In `overseer` directory type `python3 app.py`. Compiled executables of host manager and game host are required
