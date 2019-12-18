@@ -37,7 +37,9 @@
     "RESULT": {
       "LIST": "Lista wyników:",
       "WIN": "Wygrałeś! Gratulacje!",
-      "LOSE": "Przegrałeś."
+      "LOSE": "Przegrałeś",
+      "TRY_AGAIN": "Zagraj ponownie",
+      "RETURN_TO_LOBBY": "Wróć do lobby"
     }
   },
 

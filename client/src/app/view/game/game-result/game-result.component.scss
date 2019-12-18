@@ -1,10 +1,6 @@
 @import "~styles/shared";
 
 .result-info {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-
   font-size: 9rem;
 
   .win {
@@ -39,6 +35,15 @@
         color: silver;
       }
     }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      margin-top: 30rem;
+    }
+
+    button {
+      width: 20rem;
+    }
   }
 }
-
