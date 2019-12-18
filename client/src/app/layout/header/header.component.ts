@@ -23,6 +23,7 @@ export class HeaderComponent {
   constructor(private router: Router, private modal: NgbModal, private currentUserService: CurrentUserService) { }
 
   logout() {
+    // todo: send info to overseer about logout
     this.accessToken = null;
     this.refreshToken = null;
     this.router.navigateByUrl('auth').then(() => location.reload());

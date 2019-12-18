@@ -6,14 +6,15 @@
       .container.col-3.p-5.justify-content-center
         form([formGroup]="loginModel", (ngSubmit)="onSubmit()")
           .form-group
-            label.required(for="login", translate) AUTH.LOGIN
-            input#login.form-control(
-              formControlName="username",
-              autocomplete='off',
-              placeholder="{{ 'AUTH.LOGIN_PLACEHOLDER' | translate }}",
-            )
-            span.error(*ngIf="username.value == '' && username.touched", translate) VALIDATION.REQUIRED
-            span.error(*ngIf="username.hasError('usernameExists')", translate) AUTH.USERNAME_EXISTS
+            div.login-input-container
+              label.required(for="login", translate) AUTH.LOGIN
+              input#login.form-control(
+                formControlName="username",
+                autocomplete='off',
+                placeholder="{{ 'AUTH.LOGIN_PLACEHOLDER' | translate }}",
+              )
+              span.error(*ngIf="username.value == '' && username.touched", translate) VALIDATION.REQUIRED
+              span.error(*ngIf="username.hasError('usernameExists')", translate) AUTH.USERNAME_EXISTS
 
           button.btn.btn-primary.btn-block.mt-5(type="submit", translate) AUTH.SIGN_IN
 
