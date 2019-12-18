@@ -1,0 +1,18 @@
+div.d-flex.flex-row.justify-content-center
+  div.d-flex.flex-column
+    div.result-info
+      span.win(*ngIf="game_result[0].place === 1 && game_result[0].username === (getUsername() | async)?.name", translate)
+        | GAME.RESULT.WIN
+      span.lose(*ngIf="game_result[0].place !== 1 || game_result[0].username !== (getUsername() | async)?.name", translate)
+        | GAME.RESULT.LOSE
+
+    div.flex-container.mt-lg-5
+      div.result-list
+        span(translate) GAME.RESULT.LIST
+        div.user(*ngFor="let user of game_result",
+          [ngClass]="{'first-place': user.place === 1, 'second-place': user.place === 2}" )
+          span {{ user.place + '. ' + user.username }}
+
+        div.buttons
+          button.button-primary((click)="tryAgain()" translate) GAME.RESULT.TRY_AGAIN
+          button.mt-2.button-outline-primary((click)="returnToLobby()" translate) GAME.RESULT.RETURN_TO_LOBBY

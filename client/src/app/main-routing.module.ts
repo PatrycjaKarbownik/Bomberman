@@ -16,6 +16,10 @@ const routes: Routes = [
       {
         path: ViewModel.ROOM + '/:roomId',
         loadChildren: '@app/view/room/room.module#RoomModule',
+      },
+      {
+        path: ViewModel.GAME,
+        loadChildren: '@app/view/game/game.module#GameModule',
       }
     ]
   }
