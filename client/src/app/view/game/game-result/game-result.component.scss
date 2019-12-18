@@ -1,0 +1,44 @@
+@import "~styles/shared";
+
+.result-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  font-size: 9rem;
+
+  .win {
+    color: $bomb-red;
+  }
+
+  .lose {
+    color: $bomb-primary-dark;
+  }
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .result-list {
+    display: flex;
+    flex-direction: column;
+    font-size: 3rem;
+
+    .user {
+      font-size: 2rem;
+
+      &.first-place {
+        font-size: 2.75rem;
+        color: gold;
+      }
+
+      &.second-place {
+        font-size: 2.5rem;
+        color: silver;
+      }
+    }
+  }
+}
+

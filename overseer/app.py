@@ -8,7 +8,7 @@ from api.endpoints.authorization import ns as auth_ns
 from api.endpoints.room import ns as room_ns
 from api.endpoints.user import ns as user_ns
 from api.restful import api
-from engine.host_manager import host_manager
+# from engine.host_manager import host_manager
 from api.translation_manager import Language
 from api.translation_manager import translate as tr
 from messages import message_codes as message
@@ -60,4 +60,4 @@ if __name__ == '__main__':
     initialize_app(app)
     # use_reloader parameter is set to False to prevent flask from starting twice in debug mode
     app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE, use_reloader=False)
-    host_manager.stop_work()
+    # host_manager.stop_work()

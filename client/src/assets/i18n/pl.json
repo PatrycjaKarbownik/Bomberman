@@ -33,6 +33,14 @@
     "USER_NOT_READY": "Gracz nie zgłosił gotowości do gry",
     "LEAVE_ROOM": "Opuść pokój"
   },
+  "GAME": {
+    "RESULT": {
+      "LIST": "Lista wyników:",
+      "WIN": "Wygrałeś! Gratulacje!",
+      "LOSE": "Przegrałeś."
+    }
+  },
+
   "EXCEPTION": {
     "UNEXPECTED": "Wystąpił nieoczekiwany błąd"
   },
