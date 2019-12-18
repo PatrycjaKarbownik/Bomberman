@@ -23,6 +23,7 @@
   "ROOM": {
     "TITLE": "Pokój",
     "USERS_LIST": "Lista graczy",
+    "WAITING_FOR_USERS": "Oczekiwanie na pozostałych graczy",
     "GAME_START_IN": "Gra rozpocznie się za",
     "GAME_RUNS": "Gra trwa",
     "SEC": "sek.",
