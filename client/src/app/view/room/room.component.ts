@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { RoomService } from '@app/view/room/room.service';
 import { RoomModel } from '@app/view/room/models/room.model';
@@ -15,7 +15,7 @@ export class RoomComponent implements OnInit {
   remainingTime: number;
 
   constructor(private roomService: RoomService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute, private router: Router) { }
 
   // get room to which user has entered
   ngOnInit() {
@@ -24,6 +24,13 @@ export class RoomComponent implements OnInit {
       .subscribe(response => {
         this.room = response;
       });
+  }
+
+  reportReadiness() {
+    // todo
+
+    // to testing game-result-view
+    this.router.navigateByUrl('game/result');
   }
 
 }

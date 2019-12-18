@@ -7,7 +7,7 @@
       span(*ngIf="room.users.length < 2", translate) ROOM.WAITING_FOR_USERS
       span(*ngIf="room.users.length >= 2")
         | {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
-      button.mt-1.button-primary(translate) ROOM.REPORT_READINESS
+      button.mt-1.button-primary((click)="reportReadiness()", translate) ROOM.REPORT_READINESS
     div.d-flex.flex-column(*ngIf="room.inGame")
       span(translate) ROOM.GAME_RUNS
 

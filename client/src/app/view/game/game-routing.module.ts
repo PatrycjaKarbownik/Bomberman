@@ -5,8 +5,7 @@ import { GameComponent } from '@app/view/game/game/game.component';
 import { GameResultComponent } from '@app/view/game/game-result/game-result.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: ViewModel.GAME, pathMatch: 'full' },
-  { path: ViewModel.GAME, component: GameComponent },
+  { path: '', component: GameComponent },
   { path: ViewModel.GAME_RESULT, component: GameResultComponent },
 ];
 
