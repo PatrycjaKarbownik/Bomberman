@@ -60,6 +60,7 @@ class Lobby:
         new_room = Room()
         new_room.id = self.room_id_manager.get_id()
         self.rooms[new_room.id] = new_room
+        new_room.subscribe(self)
         return new_room.id
 
     def remove_room(self, room_id):
@@ -70,6 +71,17 @@ class Lobby:
             return False
 
         return True
+
+    def notify(self, class_notifying, class_instance):
+        """Used to notify lobby about events by classes which it subscribed
+
+        """
+        if class_notifying is Room:
+            self._check_empty_room(class_instance)
+
+    def _check_empty_room(self, room):
+        if room.empty():
+            self.remove_room(room.id)
 
     def get_json_rooms(self, only_usernames=True):
         """Returns JSON string with all rooms
