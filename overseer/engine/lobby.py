@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 class Lobby:
 
     def __init__(self):
-        self.users = dict()
-        self.rooms = dict()
+        self.users = dict()  # Dict of User objects
+        self.rooms = dict()  # Dict of Room objects
         self.user_id_manager = IdManager()
         self.room_id_manager = IdManager()
 
@@ -19,6 +19,14 @@ class Lobby:
         """Return True if username is taken, otherwise False"""
         for user in self.users.values():
             if user.name == username:
+                return True
+
+        return False
+
+    def room_exists(self, room_id):
+        """Return True if room with given id exists, otherwise False"""
+        for room in self.rooms.values():
+            if room.id == room_id:
                 return True
 
         return False

@@ -2,6 +2,8 @@ import logging
 
 from engine.user import *
 
+# TODO Add notifying lobby about
+
 MAX_USERS = 4  # Max number of users in room
 logger = logging.getLogger(__name__)
 

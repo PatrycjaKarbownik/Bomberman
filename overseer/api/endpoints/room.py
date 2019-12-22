@@ -59,16 +59,23 @@ class RoomLeave(Resource):
         user_id = get_jwt_identity()
         user = lobby.users[user_id]
 
+        if user is None:
+            return {
+                       'type': 'AUTH',
+                       'code': 'JWT_USER_ID_NON_EXISTENT',
+                       'errorMessage': tr(message.error_user_id_non_existent, Language.POLISH)
+                   }, 400
+
         if user.room is not None:
             return {
-                       'type': 'ROOM',
+                       'type': 'BUSINESS',
                        'code': 'USER_ALREADY_IN_ROOM',
                        'errorMessage': tr(message.error_user_already_in_room, Language.POLISH)
                    }, 400
 
-        if user_id not in lobby.rooms:
+        if not lobby.room_exists(room_id):
             return {
-                       'type': 'ROOM',
+                       'type': 'SYSTEM',
                        'code': 'ROOM_NON_EXISTENT',
                        'errorMessage': tr(message.error_room_does_not_exist, Language.POLISH)
                    }, 400
@@ -78,7 +85,7 @@ class RoomLeave(Resource):
         # >= instead of == just in case if for example some uknown race condition would let 5 people in
         if len(room.users) >= 4:
             return {
-                       'type': 'ROOM',
+                       'type': 'BUSINESS',
                        'code': 'ROOM_FULL',
                        'errorMessage': tr(message.error_full_room, Language.POLISH)
                    }, 400
@@ -94,4 +101,25 @@ class RoomLeave(Resource):
     @ns.doc(security='apikey')
     @jwt_required
     def put(self):
-        pass
+        user_id = get_jwt_identity()
+        user = lobby.users[user_id]
+
+        if user is None:
+            return {
+                       'type': 'AUTH',
+                       'code': 'JWT_USER_ID_NON_EXISTENT',
+                       'errorMessage': tr(message.error_user_id_non_existent, Language.POLISH)
+                   }, 400
+
+        # TODO Maybe we should throw some error when user's room is none or user's room is not none but doesn't exist
+        if user.room is not None:
+            room = lobby.rooms.get(user.room)
+            user.room = None
+        else:
+            room = None
+
+        if room is None:
+            return 200
+
+        room.remove_user(user_id)
+        return 200
