@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 class Lobby:
 
     def __init__(self):
-        self.users = dict()
-        self.rooms = dict()
+        self.users = dict()  # Dict of User objects
+        self.rooms = dict()  # Dict of Room objects
         self.user_id_manager = IdManager()
         self.room_id_manager = IdManager()
 
@@ -20,6 +20,13 @@ class Lobby:
         for user in self.users.values():
             if user.name == username:
                 return True
+
+        return False
+
+    def room_exists(self, room_id):
+        """Return True if room with given id exists, otherwise False"""
+        if room_id in self.rooms:
+            return True
 
         return False
 
@@ -52,6 +59,7 @@ class Lobby:
         new_room = Room()
         new_room.id = self.room_id_manager.get_id()
         self.rooms[new_room.id] = new_room
+        new_room.subscribe(self)
         return new_room.id
 
     def remove_room(self, room_id):
@@ -62,6 +70,14 @@ class Lobby:
             return False
 
         return True
+
+    def notify(self, class_notifying, class_instance):
+        """Used to notify lobby about events by classes which it subscribed
+
+        """
+        if class_notifying is Room:
+            if class_instance.empty():
+                self.remove_room(class_instance.id)
 
     def get_json_rooms(self, only_usernames=True):
         """Returns JSON string with all rooms

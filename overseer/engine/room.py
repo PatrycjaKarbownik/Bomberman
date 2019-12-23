@@ -11,6 +11,7 @@ class Room:
         self.id = -1
         self.users = list()
         self.in_game = False
+        self.lobby = None
 
     def add_user(self, user):
         """Add given user to room
@@ -52,6 +53,8 @@ class Room:
 
         self.users.remove(user)
         user.state = UserState.IN_LOBBY
+        if self.lobby is not None:
+            self.lobby.notify(Room, self)
 
     def serialize(self, only_usernames=True):
         """Returns serialized room object as a dict
@@ -78,3 +81,12 @@ class Room:
         if self.in_game:
             logger.warning("Tried to enter game in room that already is in game")
             return
+
+    def empty(self):
+        if len(self.users) == 0:
+            return True
+
+        return False
+
+    def subscribe(self, lobby):
+        self.lobby = lobby
