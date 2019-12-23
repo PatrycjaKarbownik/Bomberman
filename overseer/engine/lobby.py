@@ -25,9 +25,8 @@ class Lobby:
 
     def room_exists(self, room_id):
         """Return True if room with given id exists, otherwise False"""
-        for room in self.rooms.values():
-            if room.id == room_id:
-                return True
+        if room_id in self.rooms:
+            return True
 
         return False
 
@@ -77,11 +76,8 @@ class Lobby:
 
         """
         if class_notifying is Room:
-            self._check_empty_room(class_instance)
-
-    def _check_empty_room(self, room):
-        if room.empty():
-            self.remove_room(room.id)
+            if class_instance.empty():
+                self.remove_room(class_instance.id)
 
     def get_json_rooms(self, only_usernames=True):
         """Returns JSON string with all rooms

@@ -51,7 +51,7 @@ class RoomCreating(Resource):
 
 
 @ns.route('/enter/<int:room_id>')
-class RoomLeave(Resource):
+class RoomEnter(Resource):
 
     @ns.doc(security='apikey')
     @jwt_required
@@ -61,7 +61,7 @@ class RoomLeave(Resource):
 
         if user is None:
             return {
-                       'type': 'AUTH',
+                       'type': 'SYSTEM',
                        'code': 'JWT_USER_ID_NON_EXISTENT',
                        'errorMessage': tr(message.error_user_id_non_existent, Language.POLISH)
                    }, 400
@@ -106,7 +106,7 @@ class RoomLeave(Resource):
 
         if user is None:
             return {
-                       'type': 'AUTH',
+                       'type': 'SYSTEM',
                        'code': 'JWT_USER_ID_NON_EXISTENT',
                        'errorMessage': tr(message.error_user_id_non_existent, Language.POLISH)
                    }, 400
