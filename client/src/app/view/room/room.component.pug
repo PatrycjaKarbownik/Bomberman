@@ -19,7 +19,7 @@
             span.dot([ngClass]="{'readyToGame': user.readyToGame}")
             span {{ user.name }}
       .row.mt-5
-        button.button-primary(translate) ROOM.LEAVE_ROOM
+        button.button-primary(type="button", (click)="leaveRoom()", translate) ROOM.LEAVE_ROOM
 
     img(src="/assets/images/smiley-bomb.png")
 

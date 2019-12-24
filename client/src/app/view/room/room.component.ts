@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { ReplaySubject } from 'rxjs';
+
 import { RoomService } from '@app/view/room/room.service';
 import { RoomModel } from '@app/view/room/models/room.model';
-import { ReplaySubject } from 'rxjs';
+import { ViewModel } from '@app/core/navigation/view.model';
 
 @Component({
   selector: 'bomb-room',
@@ -31,6 +33,11 @@ export class RoomComponent implements OnInit {
         this.numberOfUsers$.next(this.room.users.length);
         this.countdown();
       });
+  }
+
+  leaveRoom() {
+    this.roomService.leaveRoom()
+      .subscribe(() => this.router.navigateByUrl(ViewModel.LOBBY));
   }
 
   // initialize timer, which count to game begin

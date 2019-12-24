@@ -24,7 +24,9 @@ export class ExceptionHandlerInterceptor implements HttpInterceptor {
           if (response.status === 401) {
             this.router.navigateByUrl('auth');
             this.toastr.error(response.error.errorMessage);
-          } else if (!response.error.errorMessage) {
+          } else if (response.error.errorMessage) {
+            this.toastr.error(response.error.errorMessage);
+          } else if (!response.error.errorMessage && !response.error.message) {
             this.toastr.error(this.translate.instant('EXCEPTION.UNEXPECTED'));
           } else {
               this.toastr.error(response.error.message);

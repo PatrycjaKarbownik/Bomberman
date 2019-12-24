@@ -29,14 +29,21 @@ export class LobbyComponent implements OnInit {
     this.rooms$ = this.lobbyService.getRooms();
   }
 
-  navigateToRoom(id: number) {
-    this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
-  }
-
   // creates room and navigate user to it
   createAndEnterRoom() {
     this.lobbyService.addRoom()
-      .subscribe(response => this.navigateToRoom(response));
+      .subscribe(response => this.enterRoom(response));
+  }
+
+  enterRoom(id: number) {
+    this.lobbyService.enterRoom(id)
+      .subscribe(response => {
+        this.navigateToRoom(id);
+      })
+  }
+
+  private navigateToRoom(id: number) {
+    this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
   }
 
 }
