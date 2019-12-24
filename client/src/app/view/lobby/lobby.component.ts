@@ -16,7 +16,8 @@ import { ViewModel } from '@app/core/navigation/view.model';
 })
 export class LobbyComponent implements OnInit {
 
-  private readonly maxUsersInRoom = 4;
+  // todo: revert to 4. 5 it's only for exception tests
+  private readonly maxUsersInRoom = 5;
 
   // room with users' nicknames only (we needn't other info about users)
   private rooms$: Observable<RoomWithUsernamesModel[]>;
@@ -29,14 +30,21 @@ export class LobbyComponent implements OnInit {
     this.rooms$ = this.lobbyService.getRooms();
   }
 
-  navigateToRoom(id: number) {
-    this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
-  }
-
   // creates room and navigate user to it
   createAndEnterRoom() {
     this.lobbyService.addRoom()
-      .subscribe(response => this.navigateToRoom(response));
+      .subscribe(response => this.enterRoom(response));
+  }
+
+  enterRoom(id: number) {
+    this.lobbyService.enterRoom(id)
+      .subscribe(response => {
+        this.navigateToRoom(id);
+      })
+  }
+
+  private navigateToRoom(id: number) {
+    this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
   }
 
 }

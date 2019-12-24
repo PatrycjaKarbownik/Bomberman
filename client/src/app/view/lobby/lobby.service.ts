@@ -30,4 +30,10 @@ export class LobbyService {
     return this.httpClient.post<number>(`${LobbyService.roomUrl}/add`, null)
       .pipe(first());
   }
+
+  // gives possibility to enter room with specific id
+  enterRoom(id: number): Observable<any> {
+    return this.httpClient.put(`${LobbyService.roomUrl}/enter/${id}`, null)
+      .pipe(first());
+  }
 }
