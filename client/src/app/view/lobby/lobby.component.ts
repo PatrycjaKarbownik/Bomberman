@@ -16,8 +16,7 @@ import { ViewModel } from '@app/core/navigation/view.model';
 })
 export class LobbyComponent implements OnInit {
 
-  // todo: revert to 4. 5 it's only for exception tests
-  private readonly maxUsersInRoom = 5;
+  private readonly maxUsersInRoom = 4;
 
   // room with users' nicknames only (we needn't other info about users)
   private rooms$: Observable<RoomWithUsernamesModel[]>;
