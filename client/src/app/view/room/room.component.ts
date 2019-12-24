@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { ReplaySubject } from 'rxjs';
+
 import { RoomService } from '@app/view/room/room.service';
 import { RoomModel } from '@app/view/room/models/room.model';
-import { ReplaySubject } from 'rxjs';
 import { ViewModel } from '@app/core/navigation/view.model';
 
 @Component({

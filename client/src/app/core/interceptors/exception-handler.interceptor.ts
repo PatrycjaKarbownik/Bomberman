@@ -21,7 +21,6 @@ export class ExceptionHandlerInterceptor implements HttpInterceptor {
     return next.handle(req)
       .pipe(
         catchError((response: HttpErrorResponse) => {
-          console.log(response);
           if (response.status === 401) {
             this.router.navigateByUrl('auth');
             this.toastr.error(response.error.errorMessage);
