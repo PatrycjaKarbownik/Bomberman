@@ -17,5 +17,7 @@
               span.error(*ngIf="username.hasError('usernameExists')", translate) AUTH.USERNAME_EXISTS
 
           button.btn.btn-primary.btn-block.mt-5(type="submit", translate) AUTH.SIGN_IN
+          br
+          button.ml-5.button-primary((click)="sendMessage()") SEND
 
 

@@ -6,16 +6,21 @@ import { Observable } from 'rxjs';
 
 import { AccessToken } from '@app/core/storages/access-token.storage';
 import { RefreshToken } from '@app/core/storages/refresh-token.storage';
+import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // service using to login to app
 @Injectable()
 export class AuthService {
   private static readonly userUrl = 'user';
+  messages: Observable<string[]>;
 
   @AccessToken() private accessToken: string;
   @RefreshToken() private refreshToken: string;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private websocketService: WebsocketService) {
+    this.websocketService.messages.subscribe(it =>
+      console.log(it));
+  }
 
   // send log in request
   // set access and refresh token received in response
@@ -44,5 +49,11 @@ export class AuthService {
   ifUsernameExists(username: string): Observable<boolean> {
     return this.httpClient.get<boolean>(`${AuthService.userUrl}/exists/${username}`)
       .pipe(first());
+  }
+
+
+  sendMsg() {
+    console.log('messages', this.messages);
+    this.websocketService.newMessage();
   }
 }
