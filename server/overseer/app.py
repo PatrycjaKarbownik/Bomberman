@@ -2,15 +2,16 @@ import logging.config
 
 from flask import Flask, Blueprint
 from flask_jwt_extended import JWTManager
+from flask_socketio import SocketIO, send, emit
 
 import settings
 from api.endpoints.authorization import ns as auth_ns
 from api.endpoints.room import ns as room_ns
 from api.endpoints.user import ns as user_ns
 from api.restful import api
-from engine.host_manager import host_manager
 from api.translation_manager import Language
 from api.translation_manager import translate as tr
+from engine.host_manager import host_manager
 from messages import message_codes as message
 
 logging.config.fileConfig('logging.conf')
@@ -18,6 +19,29 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 jwt = JWTManager(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
+
+wiadomosci_pati = []
+
+
+@socketio.on('connection')
+def hello_message():
+    print('Some1 connected')
+
+
+@socketio.on('getMessages')
+def handle_message():
+    global wiadomosci_pati
+    print('Received message! ', str())
+    emit('getMessages', str(wiadomosci_pati))
+
+
+@socketio.on('sendMessage')
+def handle_json_message(json):
+    global wiadomosci_pati
+    print('Received json message! ', str(json))
+    wiadomosci_pati.append(str(str(json) + 'doklejone'))
+    emit('getMessages', str(wiadomosci_pati))
 
 
 @jwt.expired_token_loader
@@ -29,7 +53,7 @@ def expired_token_callback(expired_token):
     else:
         error_code = 'REFRESH_TOKEN_EXPIRED'
         error_message = tr(message.error_refresh_token_expired, Language.POLISH)
-        
+
     return {
                'type': 'AUTH',
                'code': error_code,
@@ -59,5 +83,5 @@ def initialize_app(flask_app):
 if __name__ == '__main__':
     initialize_app(app)
     # use_reloader parameter is set to False to prevent flask from starting twice in debug mode
-    app.run(host=settings.FLASK_IP, debug=settings.DEBUG_MODE, use_reloader=False)
+    socketio.run(app, host=settings.FLASK_IP, debug=settings.DEBUG_MODE, use_reloader=False)
     host_manager.stop_work()
