@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 import { AccessToken } from '@app/core/storages/access-token.storage';
 import { AuthService } from '@app/auth/auth.service';
@@ -19,6 +19,7 @@ import { AuthService } from '@app/auth/auth.service';
 export class LoginComponent implements OnInit {
 
   private static readonly MIN_USERNAME_LENGTH = 3;
+  private messages: Observable<string[]>;
 
   @AccessToken() private accessToken: string;
   loginModel: FormGroup = this.buildLoginForm();
@@ -27,6 +28,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private formBuilder: FormBuilder, private router: Router) {
+
   }
 
   ngOnInit() {
@@ -88,5 +90,10 @@ export class LoginComponent implements OnInit {
         });
       }, 200);
     });
+  }
+
+
+  sendMessage() {
+    this.authService.sendMsg();
   }
 }
