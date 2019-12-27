@@ -92,6 +92,8 @@ class RoomEnter(Resource):
 
         user.room = room_id
         room.add_user(user)
+        lobby.socketio.enter_room('room_{}'.format(room_id), room=user.session_id)
+        lobby.socketio.emit('enter_room', {'username': user.name}, room='room_{}'.format(room_id))
         return 200
 
 
@@ -122,4 +124,7 @@ class RoomLeave(Resource):
             return 200
 
         room.remove_user(user_id)
+        socketio_room_name = 'room_{}'.format(room.id)
+        lobby.socketio.leave_room(socketio_room_name, sid=user.session_id)
+        lobby.socketio.emit('leave_room', {'username': user.name}, room=socketio_room_name)
         return 200

@@ -1,8 +1,8 @@
 import logging.config
 
-from flask import Flask, Blueprint
-from flask_jwt_extended import JWTManager
-from flask_socketio import SocketIO, send, emit
+from flask import Flask, Blueprint, request
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_socketio import SocketIO, emit
 
 import settings
 from api.endpoints.authorization import ns as auth_ns
@@ -12,6 +12,7 @@ from api.restful import api
 from api.translation_manager import Language
 from api.translation_manager import translate as tr
 from engine.host_manager import host_manager
+from engine.lobby import lobby
 from messages import message_codes as message
 
 logging.config.fileConfig('logging.conf')
@@ -24,10 +25,12 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 wiadomosci_pati = []
 
 
-@socketio.on('connection')
-def hello_message():
-    print('Some1 connected')
-
+@socketio.on('connect')
+@jwt_required
+def connect(jwt_token):
+    user_id = get_jwt_identity()
+    user = lobby.users[user_id]
+    user.session_id = request.sid
 
 @socketio.on('getMessages')
 def handle_message():
@@ -78,6 +81,8 @@ def initialize_app(flask_app):
     api.add_namespace(room_ns)
     api.add_namespace(auth_ns)
     flask_app.register_blueprint(blueprint)
+
+    lobby.socketio = socketio
 
 
 if __name__ == '__main__':

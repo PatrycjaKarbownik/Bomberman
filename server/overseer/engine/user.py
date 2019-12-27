@@ -14,6 +14,7 @@ class User:
         self.id = -1
         self.state = UserState.IN_GAME
         self.room = None
+        self.session_id = ''  # Session ID used by socketio
 
     def serialize(self):
         return {
