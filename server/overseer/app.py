@@ -26,9 +26,9 @@ wiadomosci_pati = []
 
 
 @socketio.on('connect')
-@jwt_required
 def connect(jwt_token):
-    user_id = get_jwt_identity()
+    user_id = int(request.args.get('userId'))
+    logger.info("User with id {} connected".format(user_id))
     user = lobby.users[user_id]
     user.session_id = request.sid
 
