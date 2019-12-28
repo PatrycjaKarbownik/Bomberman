@@ -27,12 +27,21 @@ export class RoomComponent implements OnInit {
   ngOnInit() {
     this.remainingTime = this.timerStartingValue;
 
-    this.roomService.getRoomById(this.route.snapshot.params.roomId)
+    this.roomService.getRoom()
+      .subscribe(response => {
+        console.log('response', response);
+        this.room = response;
+        console.log('room', this.room);
+        this.numberOfUsers$.next(this.room.users.length);
+        this.countdown();
+      });
+
+    /*this.roomService.getRoomById(this.route.snapshot.params.roomId)
       .subscribe(response => {
         this.room = response;
         this.numberOfUsers$.next(this.room.users.length);
         this.countdown();
-      });
+      });*/
   }
 
   leaveRoom() {

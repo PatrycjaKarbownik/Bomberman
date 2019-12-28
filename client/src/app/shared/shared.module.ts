@@ -13,7 +13,6 @@ import { ValidationErrorsComponent } from '@app/shared/validation/validation-err
 import { ValidationErrorComponent } from '@app/shared/validation/validation-error.component';
 import { PopupComponent } from '@app/shared/popup/popup.component';
 import { PageHeaderComponent } from '@app/shared/page-header/page-header.component';
-import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 // module which can be imported by another modules
 export const components = [
@@ -22,8 +21,6 @@ export const components = [
   PopupComponent,
   PageHeaderComponent
 ];
-
-const socketConfig: SocketIoConfig = { url: 'http://192.168.1.17:5000', options: {transports: ['websocket', 'polling']} };
 
 @NgModule({
   declarations: [
@@ -37,8 +34,7 @@ const socketConfig: SocketIoConfig = { url: 'http://192.168.1.17:5000', options:
     NgxDatatableModule,
     NgSelectModule,
     TextMaskModule,
-    ReactiveFormsModule,
-    SocketIoModule.forRoot(socketConfig)
+    ReactiveFormsModule
   ],
   exports: [
     CommonModule,

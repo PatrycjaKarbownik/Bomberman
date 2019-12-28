@@ -19,7 +19,6 @@ import { AuthService } from '@app/auth/auth.service';
 export class LoginComponent implements OnInit {
 
   private static readonly MIN_USERNAME_LENGTH = 3;
-  private messages: Observable<string[]>;
 
   @AccessToken() private accessToken: string;
   loginModel: FormGroup = this.buildLoginForm();
@@ -93,7 +92,7 @@ export class LoginComponent implements OnInit {
   }
 
 
-  sendMessage() {
+  /*sendMessage() {
     this.authService.sendMsg();
-  }
+  }*/
 }

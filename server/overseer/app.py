@@ -26,11 +26,16 @@ wiadomosci_pati = []
 
 
 @socketio.on('connect')
-def connect(jwt_token):
+def connect():
     user_id = int(request.args.get('userId'))
     logger.info("User with id {} connected".format(user_id))
     user = lobby.users[user_id]
     user.session_id = request.sid
+    logger.info('wychodze')
+
+@socketio.on('disconnect')
+def disconnect():
+    logger.info('disconnect')
 
 @socketio.on('getMessages')
 def handle_message():

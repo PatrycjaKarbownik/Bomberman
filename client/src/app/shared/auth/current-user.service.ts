@@ -20,4 +20,13 @@ export class CurrentUserService {
     }
     return this.currentUserCache$;
   }
+
+  getCurrentUserId(): number {
+    let id;
+    this.getCurrentUser().subscribe(response => {
+      id = response.id;
+    });
+
+    return id;
+  }
 }

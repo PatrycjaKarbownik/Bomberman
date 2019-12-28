@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
 import { LobbyService } from '@app/view/lobby/lobby.service';
 import { ViewModel } from '@app/core/navigation/view.model';
+import { HttpClient } from '@angular/common/http';
+import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // lobby component
 // show rooms with users, give add and entry room options
@@ -21,7 +23,10 @@ export class LobbyComponent implements OnInit {
   // room with users' nicknames only (we needn't other info about users)
   private rooms$: Observable<RoomWithUsernamesModel[]>;
 
-  constructor(private lobbyService: LobbyService, private router: Router) { }
+  constructor(private lobbyService: LobbyService,
+              private websocketService: WebsocketService, private router: Router) {
+    websocketService.overseerSocket.connect();
+  }
 
   // executes on create component
   // gets rooms which will be shown on view
@@ -46,4 +51,7 @@ export class LobbyComponent implements OnInit {
     this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
   }
 
+  sendMsg() {
+    this.websocketService.newMessage();
+  }
 }
