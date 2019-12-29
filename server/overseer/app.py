@@ -22,6 +22,7 @@ app = Flask(__name__)
 jwt = JWTManager(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
+# TODO Remove this
 wiadomosci_pati = []
 
 
