@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { RoomModel } from '@app/view/room/models/room.model';
@@ -14,23 +14,11 @@ export class RoomService {
 
   private static readonly roomUrl = 'room';
 
-  room: RoomModel;
+  constructor(private httpClient: HttpClient, private websocketService: WebsocketService) { }
 
-  constructor(private httpClient: HttpClient, private websocketService: WebsocketService) {
-    /*websocketService.room.subscribe(response => {
-      console.log('response', response);
-      this.room = response;
-      console.log('room', this.room);
-    })*/
-  }
-
-  // gets details about room with sent id
-  getRoomById(id: number): Observable<RoomModel> {
-    return this.httpClient.get<RoomModel>(`${RoomService.roomUrl}/${id}`);
-  }
-
-  getRoom(): Observable<RoomModel> {
-    return this.websocketService.room;
+  // gets details about room received from server via websocket
+  getRoom(): ReplaySubject<RoomModel> {
+    return this.websocketService.room$;
   }
 
   // gives possibility to leave room

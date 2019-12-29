@@ -1,4 +1,4 @@
-// remember authorization token in local storage
+// remember authorization token in session storage
 export function AccessToken() {
   return (target: any, key: string) => {
     const tokenKey = 'accessToken';

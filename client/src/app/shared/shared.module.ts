@@ -8,7 +8,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { TextMaskModule } from 'angular2-text-mask';
 
 import { BootstrapModule } from '@app/shared/bootstrap.module';
-import { CurrentUserService } from '@app/shared/auth/current-user.service';
 import { ValidationErrorsComponent } from '@app/shared/validation/validation-errors.component';
 import { ValidationErrorComponent } from '@app/shared/validation/validation-error.component';
 import { PopupComponent } from '@app/shared/popup/popup.component';
@@ -48,8 +47,6 @@ export const components = [
 
     ...components
   ],
-  providers: [
-    CurrentUserService
-  ]
+  providers: [ ]
 })
 export class SharedModule { }

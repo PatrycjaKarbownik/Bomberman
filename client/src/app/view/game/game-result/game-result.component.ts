@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+
 import { UserResultModel } from '@app/view/game/models/user-result.model';
-import { CurrentUserModel } from '@app/shared/auth/current-user.model';
-import { CurrentUserService } from '@app/shared/auth/current-user.service';
 import { ViewModel } from '@app/core/navigation/view.model';
+import { Username } from '@app/core/storages/user-details.storage';
 
 @Component({
   selector: 'bomb-game-result',
@@ -12,10 +11,11 @@ import { ViewModel } from '@app/core/navigation/view.model';
   styleUrls: ['./game-result.component.scss']
 })
 export class GameResultComponent implements OnInit {
+  @Username() private username: string;
+
   game_result: UserResultModel[];
 
-  constructor(private currentUserService: CurrentUserService,
-              private router: Router) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     // todo: get game result
@@ -35,10 +35,6 @@ export class GameResultComponent implements OnInit {
     ];
 
     this.game_result.sort((a, b) => a.place - b.place);
-  }
-
-  getUsername(): Observable<CurrentUserModel> {
-    return this.currentUserService.getCurrentUser();
   }
 
   returnToLobby() {
