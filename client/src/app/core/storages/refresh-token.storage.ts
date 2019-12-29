@@ -5,10 +5,10 @@ export function RefreshToken() {
 
     Object.defineProperty(target, key, {
       get: () => {
-        return JSON.parse(localStorage.getItem(tokenKey));
+        return JSON.parse(sessionStorage.getItem(tokenKey));
       },
       set: (token: string) => {
-        localStorage.setItem(tokenKey, JSON.stringify("Bearer " + token));
+        sessionStorage.setItem(tokenKey, JSON.stringify("Bearer " + token));
       }
     });
   };
