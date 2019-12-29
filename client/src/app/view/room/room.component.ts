@@ -23,18 +23,12 @@ export class RoomComponent implements OnInit {
   constructor(private roomService: RoomService,
               private route: ActivatedRoute, private router: Router) { }
 
-  // get room to which user has entered
+  // get room to which user has entered and set countdown to game begin
   ngOnInit() {
     this.remainingTime = this.timerStartingValue;
 
-    this.roomService.getRoom()
-      .subscribe(response => {
-        console.log('response', response);
-        this.room = response;
-        console.log('room', this.room);
-        this.numberOfUsers$.next(this.room.users.length);
-        this.countdown();
-      });
+    this.roomService.getRoom().subscribe(room => this.room = room);
+    // todo: add countdown
 
     /*this.roomService.getRoomById(this.route.snapshot.params.roomId)
       .subscribe(response => {

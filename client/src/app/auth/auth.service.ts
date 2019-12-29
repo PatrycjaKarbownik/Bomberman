@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 import { AccessToken } from '@app/core/storages/access-token.storage';
 import { RefreshToken } from '@app/core/storages/refresh-token.storage';
+import { UserId, Username } from '@app/core/storages/user-details.storage';
 
 // service using to login to app
 @Injectable()
@@ -14,6 +15,8 @@ export class AuthService {
 
   @AccessToken() private accessToken: string;
   @RefreshToken() private refreshToken: string;
+  @Username() private username: string;
+  @UserId() private userId: number;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -26,6 +29,8 @@ export class AuthService {
         tap(response => {
           this.accessToken = response.body.accessToken;
           this.refreshToken = response.body.refreshToken;
+          this.username = response.body.username;
+          this.userId = response.body.userId;
         }),
       );
   }

@@ -1,4 +1,4 @@
-// remember refresh token in local storage
+// remember refresh token in session storage
 export function RefreshToken() {
   return (target: any, key: string) => {
     const tokenKey = 'refreshToken';

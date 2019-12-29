@@ -21,17 +21,16 @@ export class LobbyComponent implements OnInit {
   private readonly maxUsersInRoom = 4;
 
   // room with users' nicknames only (we needn't other info about users)
-  private rooms$: Observable<RoomWithUsernamesModel[]>;
+  private rooms: RoomWithUsernamesModel[];
 
   constructor(private lobbyService: LobbyService,
-              private websocketService: WebsocketService, private router: Router) {
-    websocketService.overseerSocket.connect();
-  }
+              private websocketService: WebsocketService, private router: Router) { }
 
   // executes on create component
   // gets rooms which will be shown on view
   ngOnInit() {
-    this.rooms$ = this.lobbyService.getRooms();
+    this.lobbyService.getRooms().subscribe(rooms =>
+      this.rooms = rooms);
   }
 
   // creates room and navigate user to it
