@@ -1,7 +1,7 @@
 import logging.config
 
 from flask import Flask, Blueprint, request
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO, emit
 
 import settings
@@ -27,21 +27,21 @@ wiadomosci_pati = []
 
 @socketio.on('connect')
 def connect():
-    user_id = int(request.args.get('userId'))
-    logger.info("User with id {} connected".format(user_id))
-    user = lobby.users[user_id]
+    logger.info("User with session id {} connected".format(request.sid))
+
+
+@socketio.on('authorize')
+def handle_authorize(user_id):
+    user = lobby.users.get(int(user_id))
+    if user is None:  # TODO how to handle errors?
+        logger.error("User is none")
+        return -1
+    if user.session_id is not None:
+        logger.error("User already has session id")
+        return -2
+    logger.info("Authorize user {}({}) with session id {}".format(user.id, user.name, request.sid))
     user.session_id = request.sid
-    logger.info('wychodze')
-
-@socketio.on('disconnect')
-def disconnect():
-    logger.info('disconnect')
-
-@socketio.on('getMessages')
-def handle_message():
-    global wiadomosci_pati
-    print('Received message! ', str())
-    emit('getMessages', str(wiadomosci_pati))
+    emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
 
 
 @socketio.on('sendMessage')
@@ -50,6 +50,23 @@ def handle_json_message(json):
     print('Received json message! ', str(json))
     wiadomosci_pati.append(str(str(json) + 'doklejone'))
     emit('getMessages', str(wiadomosci_pati))
+    logger.info('User with session id {} disconnected'.format(request.sid))
+
+
+@socketio.on('disconnect')
+def disconnect():
+    logger.info('User with session id {} disconnected'.format(request.sid))
+    user = None
+    for u in lobby.users:
+        if u.session_id == request.sid:
+            user = u
+            break
+
+    if user is None:
+        return
+
+    lobby.remove_user(user)
+    lobby.socketio.emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
 
 
 @jwt.expired_token_loader

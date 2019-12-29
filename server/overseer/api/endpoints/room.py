@@ -92,8 +92,12 @@ class RoomEnter(Resource):
 
         user.room = room_id
         room.add_user(user)
-        lobby.socketio.enter_room('room_{}'.format(room_id), room=user.session_id)
-        lobby.socketio.emit('room_state_changed', room.serialize(only_usernames=False), room='room_{}'.format(room_id))
+        socketio_room_name = 'room_{}'.format(room_id)
+
+        lobby.socketio.server.enter_room(user.session_id, socketio_room_name)
+        lobby.socketio.emit('room_state_changed', room.serialize(only_usernames=False), room=socketio_room_name)
+        lobby.socketio.emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
+        logger.info("user {} with session id {} joined room {}".format(user_id, user.session_id, socketio_room_name))
         return 200
 
 
@@ -125,6 +129,8 @@ class RoomLeave(Resource):
 
         room.remove_user(user_id)
         socketio_room_name = 'room_{}'.format(room.id)
-        lobby.socketio.leave_room(socketio_room_name, sid=user.session_id)
+        lobby.socketio.server.leave_room(user.session_id, socketio_room_name)
         lobby.socketio.emit('room_state_changed', room.serialize(only_usernames=False), room=socketio_room_name)
+        lobby.socketio.emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
+        logger.info("user {} with session id {} leaves room {}".format(user_id, user.session_id, socketio_room_name))
         return 200

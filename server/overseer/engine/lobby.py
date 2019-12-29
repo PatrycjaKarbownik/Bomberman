@@ -53,6 +53,9 @@ class Lobby:
         if result is None:
             return False
 
+        if result.room is not None:
+            result.room.remove_user(result.id)
+
         return True
 
     def create_room(self):
