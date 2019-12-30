@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AccessToken } from '@app/core/storages/access-token.storage';
 import { RefreshToken } from '@app/core/storages/refresh-token.storage';
 import { Username } from '@app/core/storages/user-details.storage';
+import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // bar on view top -> shows username and gives logout option
 @Component({
@@ -17,10 +18,10 @@ export class HeaderComponent {
   @RefreshToken() private refreshToken: string;
   @Username() private username: string;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private websocketService: WebsocketService) { }
 
   logout() {
-    // todo: send info to overseer about logout
+    this.websocketService.overseerDisconnect();
     this.accessToken = null;
     this.refreshToken = null;
     this.router.navigateByUrl('auth').then(() => location.reload());

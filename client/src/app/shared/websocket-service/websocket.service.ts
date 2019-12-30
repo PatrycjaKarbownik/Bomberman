@@ -22,6 +22,7 @@ export class WebsocketService {
   private counter = 1;
 
   constructor() {
+    console.log('websocket constructor');
     this.overseerConnect();
 
     this.lobbyState$.subscribe(lobbyState => {
@@ -45,5 +46,10 @@ export class WebsocketService {
   overseerConnect() {
     this.overseerSocket.connect();
     this.overseerSocket.emit('authorize', this.userId);
+  }
+
+  overseerDisconnect() {
+    console.log('disconnect');
+    this.overseerSocket.disconnect();
   }
 }
