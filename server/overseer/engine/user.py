@@ -15,11 +15,11 @@ class User:
         self.state = UserState.IN_GAME
         self.room = None
         self.session_id = None  # Session ID used by socketio
-        self.ready = False  # Ready for game
+        self.readyToGame = False  # Ready for game
 
     def serialize(self):
         return {
             'name': self.name,
             'id': self.id,
-            'ready': self.ready
+            'readyToGame': self.readyToGame
         }
