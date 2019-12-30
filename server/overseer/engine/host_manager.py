@@ -53,9 +53,10 @@ class HostManager:
             data = self.conn.recv(1024)
             if not data:
                 break
-            #print("Received data: " + str(data))
+            print("Received data: " + str(data))
             self.conn.send(bytes("asdfghj", 'utf-8'))
         self.conn.close()
         print("echo")
+
 
 host_manager = HostManager(settings.HOST_MANAGER_PORT, settings.MAX_GAMES_PER_HOST)
