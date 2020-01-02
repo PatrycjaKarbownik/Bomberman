@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { ReplaySubject } from 'rxjs';
+import { webSocket } from 'rxjs/webSocket';
 
 import { RoomModel } from '@app/view/room/models/room.model';
 import { OverseerSocket } from '@app/shared/websocket-service/sockets/overseer-socket';
@@ -13,6 +14,7 @@ import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernam
 export class WebsocketService {
   @UserId() private userId: number;
   private overseerSocket = new OverseerSocket();
+  private gamehostSocket = webSocket('ws://192.168.0.121:5002');
   private roomState$ = this.overseerSocket.fromEvent<RoomModel>('room_state_changed');
   private lobbyState$ = this.overseerSocket.fromEvent<RoomWithUsernamesModel[]>('lobby_state_changed');
 
@@ -26,12 +28,10 @@ export class WebsocketService {
     this.overseerConnect();
 
     this.lobbyState$.subscribe(lobbyState => {
-      console.log('response', lobbyState);
       this.lobby$.next(lobbyState);
     });
 
     this.roomState$.subscribe(roomState => {
-      console.log('response', roomState);
       this.room$.next(roomState);
     });
   }
@@ -39,8 +39,12 @@ export class WebsocketService {
   // todo: remove
   newMessage() {
     console.log(this.counter);
-    this.overseerSocket.emit('sendMessage', {msg: `Test message ${this.counter}`});
+    this.gamehostSocket.next({msg: `Test message ${this.counter}`});
     this.counter++;
+  }
+
+  getGamehostSocket() {
+    return this.gamehostSocket;
   }
 
   overseerConnect() {

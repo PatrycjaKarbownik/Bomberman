@@ -13,6 +13,7 @@ import { WebsocketService } from '@app/shared/websocket-service/websocket.servic
 export class RoomService {
 
   private static readonly roomUrl = 'room';
+  private static readonly userUrl = 'user';
 
   constructor(private httpClient: HttpClient, private websocketService: WebsocketService) { }
 
@@ -24,6 +25,12 @@ export class RoomService {
   // gives possibility to leave room
   leaveRoom(): Observable<any> {
     return this.httpClient.put(`${RoomService.roomUrl}/leave`, null)
+      .pipe(first());
+  }
+
+  // gives possibility to change readiness (if user is ready, this request changes his readiness to not ready, and reversely)
+  changeReadiness(): Observable<any> {
+    return this.httpClient.put(`${RoomService.userUrl}/change-readiness`, null)
       .pipe(first());
   }
 }

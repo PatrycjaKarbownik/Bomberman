@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs';
-
 import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
 import { LobbyService } from '@app/view/lobby/lobby.service';
 import { ViewModel } from '@app/core/navigation/view.model';
-import { HttpClient } from '@angular/common/http';
 import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // lobby component
@@ -31,6 +28,7 @@ export class LobbyComponent implements OnInit {
   ngOnInit() {
     this.lobbyService.getRooms().subscribe(rooms =>
       this.rooms = rooms);
+    this.websocketService.getGamehostSocket().asObservable().subscribe(data => console.log(data));
   }
 
   // creates room and navigate user to it
