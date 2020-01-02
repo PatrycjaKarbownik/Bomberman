@@ -59,7 +59,6 @@ def disconnect():
     user = None
     for u in lobby.users.values():
         if u.session_id == request.sid:
-            logger.info('znalazlem {}'.format(u.name))
             user = u
             break
 

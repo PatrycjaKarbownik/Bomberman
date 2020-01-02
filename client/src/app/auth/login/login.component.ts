@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 
 import { AccessToken } from '@app/core/storages/access-token.storage';
 import { AuthService } from '@app/auth/auth.service';
@@ -90,9 +90,4 @@ export class LoginComponent implements OnInit {
       }, 200);
     });
   }
-
-
-  /*sendMessage() {
-    this.authService.sendMsg();
-  }*/
 }
