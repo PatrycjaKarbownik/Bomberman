@@ -66,7 +66,6 @@ class Lobby:
         new_room.id = self.room_id_manager.get_id()
         self.rooms[new_room.id] = new_room
         new_room.subscribe(self)
-        new_room.socketio = self.socketio
         return new_room.id
 
     def remove_room(self, room_id):

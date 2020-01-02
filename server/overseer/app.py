@@ -22,13 +22,10 @@ app = Flask(__name__)
 jwt = JWTManager(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-# TODO Remove this
-wiadomosci_pati = []
-
 
 @socketio.on('connect')
 def connect():
-    logger.info("[CONNECT]User with session id {} connected".format(request.sid))
+    logger.info("[CONNECT] User with session id {} connected".format(request.sid))
 
 
 @socketio.on('authorize')
@@ -40,18 +37,9 @@ def handle_authorize(user_id):
     if user.session_id is not None:
         logger.error("User already has session id")
         return -2
-    logger.info("[AUTHORIZE]Authorize user {}({}) with session id {}".format(user.id, user.name, request.sid))
+    logger.info("[AUTHORIZE] Authorize user {}({}) with session id {}".format(user.id, user.name, request.sid))
     user.session_id = request.sid
     emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
-
-
-@socketio.on('sendMessage')
-def handle_json_message(json):
-    global wiadomosci_pati
-    print('Received json message! ', str(json))
-    wiadomosci_pati.append(str(str(json) + 'doklejone'))
-    emit('getMessages', str(wiadomosci_pati))
-    logger.info('User with session id {} disconnected'.format(request.sid))
 
 
 @socketio.on('disconnect')
