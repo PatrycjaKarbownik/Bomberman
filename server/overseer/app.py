@@ -28,7 +28,7 @@ wiadomosci_pati = []
 
 @socketio.on('connect')
 def connect():
-    logger.info("User with session id {} connected".format(request.sid))
+    logger.info("[CONNECT]User with session id {} connected".format(request.sid))
 
 
 @socketio.on('authorize')
@@ -40,7 +40,7 @@ def handle_authorize(user_id):
     if user.session_id is not None:
         logger.error("User already has session id")
         return -2
-    logger.info("Authorize user {}({}) with session id {}".format(user.id, user.name, request.sid))
+    logger.info("[AUTHORIZE]Authorize user {}({}) with session id {}".format(user.id, user.name, request.sid))
     user.session_id = request.sid
     emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
 
@@ -56,17 +56,19 @@ def handle_json_message(json):
 
 @socketio.on('disconnect')
 def disconnect():
-    logger.info('User with session id {} disconnected'.format(request.sid))
     user = None
-    for u in lobby.users:
+    for u in lobby.users.values():
         if u.session_id == request.sid:
+            logger.info('znalazlem {}'.format(u.name))
             user = u
             break
 
     if user is None:
+        logger.info("[DISCONNECT] Unknown user with session id {} disconnected".format(user.id, user.name, request.sid))
         return
 
-    lobby.remove_user(user)
+    logger.info("[DISCONNECT] User {}({}) with session id {} disconnected".format(user.id, user.name, request.sid))
+    lobby.remove_user(user.id)
     lobby.socketio.emit('lobby_state_changed', lobby.get_json_rooms(only_usernames=True))
 
 

@@ -48,13 +48,15 @@ class Lobby:
         Returns:
             False if user was not present, otherwise True
         """
-        result = self.users.pop(user_id)
+        user = self.users.pop(user_id)
 
-        if result is None:
+        if user is None:
             return False
 
-        if result.room is not None:
-            result.room.remove_user(result.id)
+        if user.room is not None:
+            room = lobby.rooms.get(user.room)
+            if room is not None:
+                room.remove_user(user.id)
 
         return True
 
