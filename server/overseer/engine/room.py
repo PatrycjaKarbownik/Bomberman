@@ -25,6 +25,7 @@ class Room:
         if len(self.users) == MAX_USERS:
             return False
 
+        user.readyToGame = False
         self.users.append(user)
         user.room = self.id
         user.state = UserState.IN_ROOM
