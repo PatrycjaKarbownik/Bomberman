@@ -5,7 +5,7 @@ export class OverseerSocket extends Socket {
     super({
       url: 'http://localhost:5000',
       options: {
-        transports: [/*'websocket', */'polling'],
+        transports: [/*'websocket', */'polling'], // todo: do websocket transport working
         autoConnect: false
       }
     });
