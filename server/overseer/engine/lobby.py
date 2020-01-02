@@ -14,6 +14,7 @@ class Lobby:
         self.rooms = dict()  # Dict of Room objects
         self.user_id_manager = IdManager()
         self.room_id_manager = IdManager()
+        self.socketio = None
 
     def user_exists(self, username):
         """Return True if username is taken, otherwise False"""
@@ -47,10 +48,15 @@ class Lobby:
         Returns:
             False if user was not present, otherwise True
         """
-        result = self.users.pop(user_id)
+        user = self.users.pop(user_id)
 
-        if result is None:
+        if user is None:
             return False
+
+        if user.room is not None:
+            room = lobby.rooms.get(user.room)
+            if room is not None:
+                room.remove_user(user.id)
 
         return True
 

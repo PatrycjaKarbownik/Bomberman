@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
+import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // lobby service
 // communicate with overseer
@@ -16,13 +17,11 @@ export class LobbyService {
 
   private static readonly roomUrl = 'room';
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private websocketService: WebsocketService) { }
 
-  // gets all rooms with their state and users (only usernames)
-  getRooms(): Observable<RoomWithUsernamesModel[]> {
-    // todo: change to websocket
-    return this.httpClient.get<RoomWithUsernamesModel[]>(`${LobbyService.roomUrl}`)
-      .pipe(first());
+  // gets all rooms with their state and users (only usernames) received from server via websocket
+  getRooms(): ReplaySubject<RoomWithUsernamesModel[]> {
+    return this.websocketService.lobby$;
   }
 
   // adds new room and gets its id

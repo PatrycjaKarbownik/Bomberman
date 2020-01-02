@@ -58,4 +58,5 @@ class HostManager:
         self.conn.close()
         print("echo")
 
+
 host_manager = HostManager(settings.HOST_MANAGER_PORT, settings.MAX_GAMES_PER_HOST)

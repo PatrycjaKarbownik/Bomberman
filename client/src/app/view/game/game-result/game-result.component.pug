@@ -1,9 +1,9 @@
 div.d-flex.flex-row.justify-content-center
   div.d-flex.flex-column
     div.result-info
-      span.win(*ngIf="game_result[0].place === 1 && game_result[0].username === (getUsername() | async)?.name", translate)
+      span.win(*ngIf="game_result[0].place === 1 && game_result[0].username === username", translate)
         | GAME.RESULT.WIN
-      span.lose(*ngIf="game_result[0].place !== 1 || game_result[0].username !== (getUsername() | async)?.name", translate)
+      span.lose(*ngIf="game_result[0].place !== 1 || game_result[0].username !== username", translate)
         | GAME.RESULT.LOSE
 
     div.flex-container.mt-lg-5
