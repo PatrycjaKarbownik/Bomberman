@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
     QString gameHostPath = args.at(2);
     if (gameHostPath.isEmpty()) {
-        qCritical() << "MaxGames is not provided";
+        qCritical() << "Game host path is not provided";
         return 4;
     }
 
