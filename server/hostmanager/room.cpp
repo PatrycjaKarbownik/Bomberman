@@ -31,6 +31,14 @@ bool Room::addPlayer(Player *player)
 
     m_players.push_back(player);
     connect(player, &Player::disconnected, this, &Room::onPlayerDisconnected);
+    // TODO Remove/change welcome message
+    QString expectedPlayers;
+    for (const QString username : m_expectedPlayers) {
+        expectedPlayers.append(username);
+    }
+    QString welcomeMessage =
+            QString("[TEST MESSAGE] You entered room game! Your teammates will be %1").arg(expectedPlayers);
+    player->getSocket()->sendTextMessage(welcomeMessage);
     return true;
 }
 

@@ -8,7 +8,7 @@ class GameMap : public QObject
     Q_OBJECT
 public:
     explicit GameMap(QObject *parent = nullptr);
-    void generate()
+    void generate();
 
 signals:
 

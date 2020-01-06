@@ -51,7 +51,7 @@ private:
     // Key is a pair of jwt token and player's username
     std::map<std::pair<QString, QString>, Player*> m_unauthorizedPlayers;
     // Vectors of sockets that haven't send credentials yet
-    std::vector<QWebSocket*> m_unknownSockets;
+    std::vector<QWebSocket*> m_anonymousSockets;
     std::vector<Room*> m_rooms;
     QWebSocketServer m_server;
     const quint16 m_port;

@@ -12,6 +12,8 @@ public:
     ~Player();
 
     QString getUsername() const;
+    QWebSocket *getSocket() const;
+
 signals:
     void disconnected();
 

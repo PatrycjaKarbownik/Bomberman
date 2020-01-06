@@ -27,14 +27,40 @@ quint16 GameHost::port() const
     return m_port;
 }
 
+// TODO Remove code duplication
 void GameHost::onAuthorizationFailed(const QString &jwtToken_, const QString &username_)
 {
+    auto mapKey = std::make_pair(jwtToken_, username_);
+    auto playerIt = m_unauthorizedPlayers.find(mapKey);
+    if (playerIt == m_unauthorizedPlayers.end()) {
+        return;
+    }
 
+    Player* player = playerIt->second;
+    player->getSocket()->close(QWebSocketProtocol::CloseCodeNormal, "Authorization failed");
 }
 
 void GameHost::onAuthorizationSucceed(const QString &jwtToken_, const QString &username_)
 {
+    auto mapKey = std::make_pair(jwtToken_, username_);
+    auto playerIt = m_unauthorizedPlayers.find(mapKey);
+    if (playerIt == m_unauthorizedPlayers.end()) {
+        return;
+    }
 
+    Player* player = playerIt->second;
+    for (auto room : m_rooms) {
+        if (!room->expectsPlayer(username_)) {
+            continue;
+        }
+        room->addPlayer(player);
+        disconnect(player->getSocket(), &QWebSocket::textMessageReceived, this, &GameHost::onReceivedTextMessage);
+        disconnect(player->getSocket(), &QWebSocket::disconnected, this, &GameHost::onSocketDisckonnect);
+        return;
+    }
+
+    // If player is not expected on any of rooms
+    player->getSocket()->close(QWebSocketProtocol::CloseCodeNormal, "Player not expected in any of rooms");
 }
 
 void GameHost::onIncomingConnection()
@@ -47,6 +73,7 @@ void GameHost::onIncomingConnection()
     }
 }
 
+// TODO Shorten this function
 void GameHost::onReceivedTextMessage(const QString &message_)
 {
     qDebug() << "Received message " << message_;
@@ -82,6 +109,29 @@ void GameHost::onReceivedTextMessage(const QString &message_)
         return;
     }
 
+    QWebSocket *socket = dynamic_cast<QWebSocket*>(sender());
+    if (!socket) {
+        return;
+    }
+
+    Player *newUnauthorizedPlayer = new Player(socket, username.toString(), this);
+
+    // Remove socket from anonymous sockets as player just introduced itself
+    auto socketIt = std::find(m_anonymousSockets.begin(), m_anonymousSockets.end(), socket);
+    if (socketIt == m_anonymousSockets.end()) {
+        return;
+    }
+    m_anonymousSockets.erase(socketIt);
+
+    // Put Player in m_unauthorizedPlayers untill authorization response from overseer comes up
+    auto mapKey = std::make_pair(jwtToken.toString(), username.toString());
+    // If there already is unauthorized player with given mapKey then remove him
+    if (m_unauthorizedPlayers.find(mapKey) != m_unauthorizedPlayers.end()) {
+        m_unauthorizedPlayers[mapKey]->getSocket()->close();
+        m_unauthorizedPlayers[mapKey]->deleteLater();
+    }
+
+    m_unauthorizedPlayers[mapKey] = newUnauthorizedPlayer;
     emit authorizationRequired(jwtToken.toString(), username.toString());
 }
 
@@ -102,5 +152,25 @@ void GameHost::onLeftRoom(Room *emptyRoom_)
 
 void GameHost::onSocketDisckonnect()
 {
+    auto *socket = dynamic_cast<QWebSocket*>(sender());
+    // Check if socket was awaiting
+    for (auto i = m_anonymousSockets.begin(); i != m_anonymousSockets.end(); ++i) {
+        if ((*i) == socket) {
+            m_anonymousSockets.erase(i);
+            socket->deleteLater();
+            return;
+        }
+    }
 
+    // Check if one of unauthorized players didn't get bored
+    for (auto i = m_unauthorizedPlayers.begin(); i != m_unauthorizedPlayers.end(); ++i) {
+        if ((i->second)->getSocket() == socket) {
+            m_unauthorizedPlayers.erase(i);
+            socket->deleteLater();
+            return;
+        }
+    }
+
+    // Delete this socket anyway just to be sure
+    socket->deleteLater();
 }

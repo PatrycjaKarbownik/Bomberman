@@ -19,3 +19,8 @@ QString Player::getUsername() const
 {
     return m_username;
 }
+
+QWebSocket *Player::getSocket() const
+{
+    return m_socket;
+}

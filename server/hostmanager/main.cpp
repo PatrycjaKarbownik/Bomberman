@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     // Initialize singleton at the start
     OverseerCommunication *overseerCommunication = new OverseerCommunication(overseerPort, &a);
-    GameHostsHub gameHostsHub(overseerCommunication, &a);
+    GameHostsHub gameHostsHub(overseerCommunication, maxGames, &a);
 
     if (overseerCommunication->isCommunicationWorking()) {
         qCritical() << "Communication could not start";
