@@ -3,11 +3,13 @@
 
   .row.mt-5.users-list-header
     span {{ ('ROOM.USERS_LIST' | translate) + ' (' + room.users.length + ')' }}
-    div.d-flex.flex-column(*ngIf="!room.inGame")
+    div(*ngIf="!room.inGame")
       span(*ngIf="room.users.length < 2", translate) ROOM.WAITING_FOR_USERS
-      span(*ngIf="room.users.length >= 2")
-        | {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
-      button.mt-1.button-primary((click)="reportReadiness()", translate) ROOM.REPORT_READINESS
+      div(*ngIf="room.users.length >= 2")
+        span(*ngIf="remainingTime === 0 || areAllUsersReady()", translate) ROOM.GAME_IS_STARTING
+        div.d-flex.flex-column(*ngIf="remainingTime !== 0 && !areAllUsersReady()")
+          span {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
+          button.mt-1.button-primary((click)="changeReadiness()", translate) ROOM.CHANGE_READINESS
     div.d-flex.flex-column(*ngIf="room.inGame")
       span(translate) ROOM.GAME_RUNS
 
