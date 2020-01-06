@@ -12,34 +12,40 @@ class OverseerCommunication : public QObject
 {
     Q_OBJECT
 public:
-    static OverseerCommunication &getInstance();
+    explicit OverseerCommunication(const quint16 overseerPort_, QObject *parent = nullptr);
 
     /**
-     * @brief init: Initialization of communication properties
-     * @param overseerPort_: Port for tcp communication with overseer
-     * @param maxRooms_: Maximum number of rooms GameHost is allowed to maintain at once
-     * @return true if socket connected to overseer, otherwise false
+     * @brief isCommunicationWorking: checks communication with overseer
+     * @return True if communication tcp socket used for communication is connected
      */
-    bool init(const quint16 overseerPort_, const quint32 maxRooms_);
+    bool isCommunicationWorking() const;
+
+    /**
+     * @brief sendRoomReadyResponse: sends information to overseer that given players are expected at given port
+     * @param expectedPlayers_: list of expected players
+     * @param port_: port at which players should connect
+     */
+    void sendRoomReadyResponse(const QStringList& expectedPlayers_, quint16 port_);
+
+    void sendAuthorizationRequest(const QString& jwtToken_, const QString& username_);
 
 signals:
+    void roomRequest(const QStringList& expectedPlayers);
+    void authorizationSucceed(const QString& jwtToken, const QString& username);
+    void authorizationFailed(const QString& jwtToken, const QString& username);
 
 public slots:
 
 private:
-    explicit OverseerCommunication(QObject *parent = nullptr);
-    OverseerCommunication(const OverseerCommunication&) = delete;
-    OverseerCommunication& operator=(const OverseerCommunication&) = delete;
-
-    QTimer m_testTimer;
     QTcpSocket m_socket;
-    quint16 m_overseerPort {0};
+    const quint16 m_overseerPort {0};
     quint16 m_count {0};
     quint32 m_maxRooms {0};
 
 private slots:
-    void onTestTimeout();
     void onReadyRead();
+    void handleAuthorizationMessage(const QJsonObject& content_);
+    void handleRoomRequestMessage(const QJsonObject& content_);
 };
 
 #endif // OVERSEERCOMMUNICATION_H
