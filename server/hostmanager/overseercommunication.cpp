@@ -42,7 +42,7 @@ void OverseerCommunication::sendRoomReadyResponse(const QStringList &expectedPla
     response.insert("content", content);
 
     QJsonDocument doc(response);
-    m_socket.write(doc.toJson());
+    m_socket.write(doc.toJson(QJsonDocument::Compact).append('\n'));
 }
 
 void OverseerCommunication::sendAuthorizationRequest(const QString &jwtToken_, const QString &username_)
@@ -56,7 +56,7 @@ void OverseerCommunication::sendAuthorizationRequest(const QString &jwtToken_, c
     request.insert("content", content);
 
     QJsonDocument doc(request);
-    m_socket.write(doc.toJson());
+    m_socket.write(doc.toJson(QJsonDocument::Compact).append('\n'));
 }
 
 void OverseerCommunication::onReadyRead()
@@ -67,12 +67,14 @@ void OverseerCommunication::onReadyRead()
 
         QJsonDocument doc = QJsonDocument::fromJson(message);
         if (doc.isEmpty()) {
+            qWarning() << "Parsing of message unsuccesfull";
             continue;
         }
 
         QJsonValue messageType = doc["messageType"];
         QJsonValue content = doc["content"];
         if (!messageType.isString() || !content.isObject()) {
+            qDebug() << "problem with content";
             continue;
         }
 
@@ -81,6 +83,7 @@ void OverseerCommunication::onReadyRead()
         }
 
         if (messageType.toString() == "roomRequest") {
+            qDebug() << "roomRequest";
             handleRoomRequestMessage(content.toObject());
         }
 
@@ -112,6 +115,7 @@ void OverseerCommunication::handleRoomRequestMessage(const QJsonObject &content_
 {
     QJsonArray expectedPlayers = content_["expectedPlayers"].toArray();
     if (expectedPlayers.isEmpty()) {
+        qWarning() << "No expected players";
         return;
     }
 
@@ -123,5 +127,6 @@ void OverseerCommunication::handleRoomRequestMessage(const QJsonObject &content_
         expectedPlayersList.push_back(username.toString());
     }
 
+    qDebug() << "emitting room request";
     emit roomRequest(expectedPlayersList);
 }

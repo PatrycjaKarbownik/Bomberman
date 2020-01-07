@@ -17,6 +17,15 @@ class User:
         self.session_id = None  # Session ID used by socketio
         self.ready_to_game = False  # Ready for game
 
+        # Using flask-jwt-extended was not as good idea as we first thought. It became a little problematic when we
+        # tried to introduce websockets and tcpsockets and authorize those using jwt tokens. As far as I know there
+        # is no good way of authorizing it using flask-jwt-extended outsite of http requests (like mentioned sockets)
+        # therefore we'll stick for now with temporary solution which is just keeping actual tokens inside of User
+        # object and checking if they match with what user sends us through socket
+        # TODO Check expiration date of tokens when using them
+        self.access_token = None
+        self.refresh_token = None
+
     def serialize(self):
         return {
             'name': self.name,

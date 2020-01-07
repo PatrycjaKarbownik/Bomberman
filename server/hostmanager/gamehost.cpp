@@ -13,7 +13,7 @@ GameHost::GameHost(const quint16 port_)
 
 void GameHost::createRoom(const QStringList &expectedPlayerUsernames_)
 {
-    Room *newRoom = new Room(expectedPlayerUsernames_, this);
+    Room *newRoom = new Room(expectedPlayerUsernames_);
     m_rooms.push_back(newRoom);
 }
 
@@ -114,7 +114,7 @@ void GameHost::onReceivedTextMessage(const QString &message_)
         return;
     }
 
-    Player *newUnauthorizedPlayer = new Player(socket, username.toString(), this);
+    Player *newUnauthorizedPlayer = new Player(socket, username.toString());
 
     // Remove socket from anonymous sockets as player just introduced itself
     auto socketIt = std::find(m_anonymousSockets.begin(), m_anonymousSockets.end(), socket);

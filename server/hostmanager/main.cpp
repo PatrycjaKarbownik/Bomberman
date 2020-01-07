@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Game host for bomberman servers");
+    parser.setApplicationDescription("Host manager for bomberman servers");
     parser.addPositionalArgument("OverseerPort", "Port for communicating with overseer");
     parser.addPositionalArgument("MaxGames", "Maximum number of games application is allowed to start");
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     const QStringList args = parser.positionalArguments();
 
-    if (args.size() < 3) {
+    if (args.size() < 2) {
         qCritical() << "Not all positional arguments were provided";
         return 1;
     }
@@ -34,12 +34,6 @@ int main(int argc, char *argv[])
     if (!parsingResult) {
         qCritical() << "MaxGames is not a number!";
         return 3;
-    }
-
-    QString gameHostPath = args.at(2);
-    if (gameHostPath.isEmpty()) {
-        qCritical() << "Game host path is not provided";
-        return 4;
     }
 
     // Initialize singleton at the start

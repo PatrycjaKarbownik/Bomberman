@@ -14,6 +14,8 @@ GameHostsHub::GameHostsHub(OverseerCommunication *overseer_, quint32 maxGames_, 
         m_freePorts.insert(i);
     }
 
+    connect(overseer_, &OverseerCommunication::roomRequest, this, &GameHostsHub::onRoomRequest);
+
 }
 
 void GameHostsHub::onRoomRequest(const QStringList &expectedPlayers_)
@@ -51,14 +53,16 @@ void GameHostsHub::onRoomRequest(const QStringList &expectedPlayers_)
 
     connect(m_OverseerCom, &OverseerCommunication::authorizationFailed,
             newGameHost.get(), &GameHost::onAuthorizationFailed);
+
     connect(m_OverseerCom, &OverseerCommunication::authorizationSucceed,
             newGameHost.get(), &GameHost::onAuthorizationSucceed);
+
     connect(newGameHost.get(), &GameHost::authorizationRequired,
             this, &GameHostsHub::onAuthorizationRequired);
 
-    m_gameHosts.push_back(std::move(newGameHost));
     newGameHost->createRoom(expectedPlayers_);
     m_OverseerCom->sendRoomReadyResponse(expectedPlayers_, newGameHost->port());
+    m_gameHosts.push_back(std::move(newGameHost));
 }
 
 void GameHostsHub::onAuthorizationRequired(const QString &jwtToken_, const QString &username_)
