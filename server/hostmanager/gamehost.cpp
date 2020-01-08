@@ -76,36 +76,38 @@ void GameHost::onIncomingConnection()
 // TODO Shorten this function
 void GameHost::onReceivedTextMessage(const QString &message_)
 {
-    qDebug() << "Received message " << message_;
+    qDebug() << "[Websocket]Received message " << message_;
     QJsonDocument messageDoc = QJsonDocument::fromJson(message_.toUtf8());
 
     if (messageDoc.isEmpty()) {
-        qWarning() << "Parsing of message failed";
+        qWarning() << "[Parsing JSON message]Parsing of message failed";
         return;
     }
 
     QJsonValue messageType = messageDoc["messageType"];
     if (!messageType.isString()) {
-        qWarning() << "Received message does not contain \"messageType\" field or it has wrong type (not string)";
+        qWarning() << "[Parsing JSON message]Received message does not contain \"messageType\" field "
+                      "or it has wrong type (not string)";
         return;
     }
 
     if (messageType.toString() != "authorization") {
-        qWarning() << "Received message was not of type authorization";
+        qWarning() << "[Parsing JSON message]Received message was not of type authorization";
         return;
     }
 
     QJsonValue credentialsObject = messageDoc["content"];
     if (!credentialsObject.isObject()) {
-        qWarning() << "Received message does not contain \"content\" field or it has wrong type (not JSON object)";
+        qWarning() << "[Parsing JSON message]Received message does not contain \"content\" field "
+                      "or it has wrong type (not JSON object)";
         return;
     }
 
     QJsonValue jwtToken = credentialsObject["jwtToken"];
     QJsonValue username = credentialsObject["username"];
     if (!jwtToken.isString() || !username.isString()) {
-        qWarning() << "Received message does not contain \"jwtToken\" field or \"username\" field "
-                   << "or they have wrong type (not JSON object)";
+        qWarning() << "[Parsing JSON message]Received message does not contain \"jwtToken\" field or \"username\" "
+                      "field or they have wrong type (not JSON object)";
         return;
     }
 

@@ -37,7 +37,7 @@ void GameHostsHub::onRoomRequest(const QStringList &expectedPlayers_)
     }
 
     if (m_freePorts.size() == 0) {
-        qWarning() << "There was no place for another GameHost!";
+        qWarning() << "[Creating new gamehost]There was no place for another GameHost!";
         // TODO Add some handling like message to overseer
         return;
     }

@@ -67,14 +67,14 @@ void OverseerCommunication::onReadyRead()
 
         QJsonDocument doc = QJsonDocument::fromJson(message);
         if (doc.isEmpty()) {
-            qWarning() << "Parsing of message unsuccesfull";
+            qWarning() << "[Parsing overseer message]Parsing of message unsuccesfull";
             continue;
         }
 
         QJsonValue messageType = doc["messageType"];
         QJsonValue content = doc["content"];
         if (!messageType.isString() || !content.isObject()) {
-            qDebug() << "problem with content";
+            qDebug() << "[Parsing overseer message]Problem with content";
             continue;
         }
 
@@ -83,7 +83,6 @@ void OverseerCommunication::onReadyRead()
         }
 
         if (messageType.toString() == "roomRequest") {
-            qDebug() << "roomRequest";
             handleRoomRequestMessage(content.toObject());
         }
 
@@ -93,7 +92,6 @@ void OverseerCommunication::onReadyRead()
 void OverseerCommunication::handleAuthorizationMessage(const QJsonObject &content_)
 {
     if (!content_["authorized"].isBool()) {
-        qDebug() << "ops";
         return;
     }
 
@@ -106,10 +104,8 @@ void OverseerCommunication::handleAuthorizationMessage(const QJsonObject &conten
     }
 
     if(authorized) {
-        qDebug() << "succeed";
         emit authorizationSucceed(jwtToken, username);
     } else {
-        qDebug() << "failed";
         emit authorizationFailed(jwtToken, username);
     }
 }
@@ -118,7 +114,7 @@ void OverseerCommunication::handleRoomRequestMessage(const QJsonObject &content_
 {
     QJsonArray expectedPlayers = content_["expectedPlayers"].toArray();
     if (expectedPlayers.isEmpty()) {
-        qWarning() << "No expected players";
+        qWarning() << "[Handling room request]No expected players";
         return;
     }
 
@@ -130,6 +126,5 @@ void OverseerCommunication::handleRoomRequestMessage(const QJsonObject &content_
         expectedPlayersList.push_back(username.toString());
     }
 
-    qDebug() << "emitting room request";
     emit roomRequest(expectedPlayersList);
 }
