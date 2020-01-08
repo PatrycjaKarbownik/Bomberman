@@ -60,6 +60,14 @@ class Lobby:
 
         return True
 
+    def get_user_by_name(self, name):
+        """Returns user with given name or None"""
+        for user in self.users.values():
+            if user.name == name:
+                return user
+
+        return None
+
     def create_room(self):
         """Creates room and returns it's id"""
         new_room = Room()

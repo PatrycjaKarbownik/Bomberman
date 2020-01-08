@@ -93,6 +93,7 @@ void OverseerCommunication::onReadyRead()
 void OverseerCommunication::handleAuthorizationMessage(const QJsonObject &content_)
 {
     if (!content_["authorized"].isBool()) {
+        qDebug() << "ops";
         return;
     }
 
@@ -105,8 +106,10 @@ void OverseerCommunication::handleAuthorizationMessage(const QJsonObject &conten
     }
 
     if(authorized) {
+        qDebug() << "succeed";
         emit authorizationSucceed(jwtToken, username);
     } else {
+        qDebug() << "failed";
         emit authorizationFailed(jwtToken, username);
     }
 }

@@ -1,7 +1,7 @@
 import logging
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask_restplus import Resource
+from flask_restplus import Resource, fields
 
 from api import models
 from api.restful import api
@@ -32,6 +32,24 @@ class UserTest(Resource):
 
     def post(self):
         host_manager.send_create_room_request(['abc', 'asderrf', 'PAK'])
+        return 200
+
+
+test_model = api.model('testtest', {
+    'username': fields.String,
+    'jwtToken': fields.String,
+})
+
+
+@ns.route('/test_jwt')
+class UserTest(Resource):
+
+    @api.expect(test_model)
+    def post(self):
+        username = api.payload['username']
+        jwt_token = api.payload['jwtToken']
+
+        host_manager.handle_authorization({'username': username, 'jwtToken': jwt_token})
         return 200
 
 

@@ -5,10 +5,11 @@ It then estabilishes tcp communication between overseer and host manager.
 
 """
 import asyncio
-import subprocess
+import json
 import threading
 
 import settings
+from engine.lobby import lobby
 
 TCP_IP = 'localhost'
 
@@ -37,12 +38,43 @@ class HostManager:
                 'expectedPlayers': expected_players
             }
         }
-        request = str(request)
+        request = json.dumps(request)
         request += '\n'
-        request = request.replace('\'', '"') # Python by default uses ' and qt does not know that
         print('we are sending {}\n'.format(request))
         self.client_writer.write(request.encode())
 
+    def handle_authorization(self, credentials):
+        print('handle')
+        if 'jwtToken' not in credentials and 'username' not in credentials:
+            print('lack of credentials')
+            return
+
+        user = lobby.get_user_by_name(credentials['username'])
+
+        response = {
+            'messageType': 'authorization',
+            'content': {
+                'jwtToken': credentials['jwtToken'],
+                'username': credentials['username'],
+            }
+        }
+
+        if user is None:
+            print('user does not exists')
+            response['content']['authorized'] = False
+        else:
+            if user.access_token == credentials['jwtToken']:
+                response['content']['authorized'] = True
+            else:
+                response['content']['authorized'] = False
+
+        response = json.dumps(response)
+        response += '\n'
+        print('send {}'.format(response))
+        self.client_writer.write(response.encode())
+
+    def handle_room_ready_response(self, message):
+        pass
 
     def stop_work(self):
         self.client_writer.close()
@@ -72,8 +104,17 @@ def handle_message(client_reader, client_writer):
     while True:
         data = yield from asyncio.wait_for(client_reader.readline(), timeout=None)
         print("received data {}".format(data))
-        print(str(data))
-        #client_writer.write("kuku".encode())
+        msg = json.loads(str(data).strip())
+
+        if 'messageType' not in msg and 'content' not in msg:
+            print('Message has no proper structure')
+            continue
+
+        if msg['messageType'] == 'authorization':
+            host_manager.handle_authorization(msg['content'])
+
+        if msg['messageType'] == 'roomReady':
+            host_manager.handle_room_ready_response(msg['content'])
 
 
 loop = asyncio.get_event_loop()
