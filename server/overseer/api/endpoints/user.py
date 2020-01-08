@@ -59,7 +59,7 @@ class UserReady(Resource):
                        'errorMessage': tr(message.error_room_does_not_exist, Language.POLISH)
                    }, 400
 
-        user.ready_to_game = not user.ready_to_game
+        user.switch_readiness()
 
         socketio_room_name = "room_{}".format(room.id)
         lobby.socketio.emit('room_state_changed', room.serialize(only_usernames=False), room=socketio_room_name)

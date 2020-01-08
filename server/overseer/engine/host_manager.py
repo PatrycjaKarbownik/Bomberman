@@ -9,7 +9,6 @@ import json
 import threading
 
 import settings
-from engine.lobby import lobby
 
 TCP_IP = 'localhost'
 
@@ -30,8 +29,15 @@ class HostManager:
         #     exit(1)
 
         self.thread = None
+        self.awaiting_rooms = {}  # TODO Maybe remove after some time rooms from there?
+        # Callback that should accept username and jwt and return true/false depending on if user is authorized
+        self.authorization_callback = None
+        # Callback that should accept Room object and port so given room can be informed where it can connect
+        self.room_ready_callback = None
 
-    def send_create_room_request(self, expected_players):
+    def send_create_room_request(self, expected_players, room):
+        self.awaiting_rooms[expected_players.sort()] = room
+
         request = {
             'messageType': 'roomRequest',
             'content': {
@@ -44,29 +50,19 @@ class HostManager:
         self.client_writer.write(request.encode())
 
     def handle_authorization(self, credentials):
-        print('handle')
         if 'jwtToken' not in credentials and 'username' not in credentials:
             print('lack of credentials')
             return
 
-        user = lobby.get_user_by_name(credentials['username'])
-
+        authorized = self.authorization_callback(credentials['jwtToken'], credentials['username'])
         response = {
             'messageType': 'authorization',
             'content': {
                 'jwtToken': credentials['jwtToken'],
-                'username': credentials['username'],
+                'username': credentials['username']
             }
         }
-
-        if user is None:
-            print('user does not exists')
-            response['content']['authorized'] = False
-        else:
-            if user.access_token == credentials['jwtToken']:
-                response['content']['authorized'] = True
-            else:
-                response['content']['authorized'] = False
+        response['content']['authorized'] = authorized
 
         response = json.dumps(response)
         response += '\n'
@@ -74,7 +70,17 @@ class HostManager:
         self.client_writer.write(response.encode())
 
     def handle_room_ready_response(self, message):
-        pass
+        if 'expectedPlayers' not in message and 'port' not in message:
+            print('missing fields in message')
+            return
+
+        expected_players = message['expectedPlayers'].sort()
+        room = self.awaiting_rooms.pop(expected_players)
+
+        if room is None:
+            return
+
+        self.room_ready_callback(room, message['port'])
 
     def stop_work(self):
         self.client_writer.close()
@@ -103,8 +109,8 @@ def accept_client(client_reader, client_writer):
 def handle_message(client_reader, client_writer):
     while True:
         data = yield from asyncio.wait_for(client_reader.readline(), timeout=None)
-        print("received data {}".format(data))
-        msg = json.loads(str(data).strip())
+        print("received data {}".format(data.decode('utf-8')))
+        msg = json.loads(data.decode('utf-8'))
 
         if 'messageType' not in msg and 'content' not in msg:
             print('Message has no proper structure')

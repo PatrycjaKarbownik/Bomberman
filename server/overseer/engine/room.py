@@ -57,6 +57,8 @@ class Room:
         if self.lobby is not None:
             self.lobby.notify(Room, self)
 
+        self.check_readiness()
+
     def serialize(self, only_usernames=True):
         """Returns serialized room object as a dict
 
@@ -82,6 +84,24 @@ class Room:
         if self.in_game:
             logger.warning("Tried to enter game in room that already is in game")
             return
+
+    def check_readiness(self):
+        if len(self.users) <= 1:
+            return
+
+        for user in self.users:
+            if user.ready_to_game is False:
+                return
+
+        #  All users are ready
+        self.lobby.notify(Room, self)
+
+    def all_ready(self):
+        for user in self.users:
+            if user.ready_to_game is False:
+                return False
+
+        return True
 
     def empty(self):
         if len(self.users) == 0:
