@@ -1,0 +1,47 @@
+@import "~styles/shared";
+
+.map {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+
+  width: 1020px;
+  height: 1020px;
+  border: 10px solid $bomb-light-light-black;
+
+  .tiles {
+    z-index: 1;
+
+    .tile {
+      width: 200px;
+      height: 200px;
+    }
+  }
+
+  .hero {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    z-index: 2;
+
+    &.left-top {
+      top: 0;
+      left: 0;
+    }
+
+    &.right-top{
+      top: 0;
+      left: 800px;
+    }
+
+    &.left-bottom{
+      top: 800px;
+      left: 0;
+    }
+
+    &.right-bottom{
+      top: 800px;
+      left: 800px;
+    }
+  }
+}

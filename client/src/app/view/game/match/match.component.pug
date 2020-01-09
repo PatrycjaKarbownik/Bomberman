@@ -1,2 +1,13 @@
 .col-sm-12.py-4.d-flex.flex-column.align-items-center
-  span SDSDFSDF
+  //todo: maybe remove i = index
+  div.map(*ngFor="let row of map.tiles; let i = index")
+    div.tiles(*ngFor="let tile of row")
+      img.tile(*ngIf="tile.type === TileType.NOTHING",
+        src="/assets/images/grass.png")
+      img.tile(*ngIf="tile.type === TileType.WALL",
+        src="/assets/images/light-wall.png")
+      img.tile(*ngIf="tile.type === TileType.FRAGILE_WALL",
+        src="/assets/images/ice.png")
+
+    img.hero(src="/assets/images/chicken.png",
+      [ngClass]="{'left-top': getCornerType() === CornerType.LEFT_TOP, 'right-top': getCornerType() === CornerType.RIGHT_TOP, 'left-bottom': getCornerType() === CornerType.LEFT_BOTTOM, 'right-bottom': getCornerType() === CornerType.RIGHT_BOTTOM}")
