@@ -1,28 +1,36 @@
 @import "~styles/shared";
+$map-size: 5;
 
 .map {
   display: flex;
   flex-wrap: wrap;
   position: relative;
 
-  width: 1020px;
-  height: 1020px;
-  border: 10px solid $bomb-light-light-black;
+  width: calc(77vh);
+  height: calc(77vh);
+  border: 1vh solid $bomb-light-light-black;
 
   .tiles {
     z-index: 1;
 
     .tile {
-      width: 200px;
-      height: 200px;
+      width: calc(75vh / #{$map-size});
+      height: calc(75vh / #{$map-size});
     }
+  }
+
+  .bomb {
+    position: absolute;
+    width: calc(75vh / #{$map-size});
+    height: calc(75vh / #{$map-size});
+    z-index: 2;
   }
 
   .hero {
     position: absolute;
-    width: 200px;
-    height: 200px;
-    z-index: 2;
+    width: calc(75vh / #{$map-size});
+    height: calc(75vh / #{$map-size});
+    z-index: 3;
 
     &.left-top {
       top: 0;
@@ -31,17 +39,17 @@
 
     &.right-top{
       top: 0;
-      left: 800px;
+      left: calc(75vh - 75vh / #{$map-size});
     }
 
     &.left-bottom{
-      top: 800px;
+      top: calc(75vh - 75vh / #{$map-size});
       left: 0;
     }
 
-    &.right-bottom{
-      top: 800px;
-      left: 800px;
-    }
+    /*&.right-bottom{
+      top: calc(75vh - 75vh / #{$map-size});
+      left: calc(75vh - 75vh / #{$map-size});
+    }*/
   }
 }

@@ -9,5 +9,15 @@
       img.tile(*ngIf="tile.type === TileType.FRAGILE_WALL",
         src="/assets/images/ice.png")
 
-    img.hero(src="/assets/images/chicken.png",
-      [ngClass]="{'left-top': getCornerType() === CornerType.LEFT_TOP, 'right-top': getCornerType() === CornerType.RIGHT_TOP, 'left-bottom': getCornerType() === CornerType.LEFT_BOTTOM, 'right-bottom': getCornerType() === CornerType.RIGHT_BOTTOM}")
+    img.hero(#clientHero,
+      id="clientHero",
+      src="/assets/images/chicken.png",
+      [ngClass]="{'left-top': getCornerType() === CornerType.LEFT_TOP, 'right-top': getCornerType() === CornerType.RIGHT_TOP, 'left-bottom': getCornerType() === CornerType.LEFT_BOTTOM, 'right-bottom': getCornerType() === CornerType.RIGHT_BOTTOM}"
+    )
+
+    div(*ngFor="let bomb of bombs | async")
+      img.bomb(
+      [ngStyle]="{'top': bomb.y + 'px', 'left': bomb.x + 'px'}",
+      src="/assets/images/smiley-bomb.png",
+      )
+  //[@up]="up",
