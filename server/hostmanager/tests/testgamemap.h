@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
+#include <gamemap.h>
 
 
 
@@ -11,9 +12,9 @@ class TestGameMap : public QObject
     Q_OBJECT
 
 private slots:
-    void initTestCase();
-    void testTest();
-    void cleanupTestCase();
+    void indexOperatorWorks();
+    void indexOperatorWorksProperly();
+    void jsonDumpsProperly();
 };
 
 #endif // TESTGAMEMAP_H
