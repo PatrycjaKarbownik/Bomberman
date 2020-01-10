@@ -9,12 +9,6 @@
       img.tile(*ngIf="tile.type === TileType.FRAGILE_WALL",
         src="/assets/images/ice.png")
 
-    //img.hero(#clientHero,
-    //  id="clientHero",
-    //  src="/assets/images/chicken.png",
-    //  [ngClass]="{'left-top': getCornerType() === CornerType.LEFT_TOP, 'right-top': getCornerType() === CornerType.RIGHT_TOP, 'left-bottom': getCornerType() === CornerType.LEFT_BOTTOM, 'right-bottom': getCornerType() === CornerType.RIGHT_BOTTOM}"
-    //)
-
     img.hero(#hero0,
       *ngIf="isHeroWithIdPresent(0)",
       id="hero0",

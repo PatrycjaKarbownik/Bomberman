@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
+
+import { BehaviorSubject } from 'rxjs';
 
 import { MapModel } from '@app/view/game/models/map.model';
 import { GameService } from '@app/view/game/game.service';
 import { TileType } from '@app/view/game/models/tile-type.model';
 import { CornerType } from '@app/view/game/models/corner-type.model';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { BehaviorSubject } from 'rxjs';
 import { BombModel } from '@app/view/game/models/bomb.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
 import { UserId } from '@app/core/storages/user-details.storage';
@@ -39,11 +40,11 @@ export class MatchComponent implements OnInit, AfterViewInit {
   @UserId() userId;
   private mapSize: number = 5;
   private mapHeight = 75;
+  private movingViewPart = 10 * this.mapSize;
 
   private map: MapModel;
   private bombs = new BehaviorSubject<BombModel[]>([]);
   private heroes: HeroModel[];
-  // private clientHeroGameId: number;
 
   private up = 0;
 
@@ -55,7 +56,6 @@ export class MatchComponent implements OnInit, AfterViewInit {
   public clientHero: HeroModel;
 
   TileType = TileType;
-  CornerType = CornerType;
 
   constructor(private gameService: GameService) { }
 
@@ -92,41 +92,18 @@ export class MatchComponent implements OnInit, AfterViewInit {
     console.log('down', event);
   }
 
+  //todo: remove when we remove animations
   @HostListener('document:keyup', ['$event'])
   private handleKeyboardUp(event: KeyboardEvent) {
     if (event.code === 'ArrowUp') {
       this.up = 0;
-      console.log('up', this.up, event);
-      console.log(document.getElementById('clientHero'));
     }
-  }
-
-  private setHeroesPositions() {
-    this.hero0.nativeElement.style.top = 'calc(0vh)';
-    this.hero0.nativeElement.style.left = 'calc(0vh)';
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 0).top = this.hero0.nativeElement.style.top;
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 0).left = this.hero0.nativeElement.style.left;
-
-    this.hero1.nativeElement.style.top = 'calc(0vh)';
-    this.hero1.nativeElement.style.left = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 1).top = this.hero1.nativeElement.style.top;
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 1).left = this.hero1.nativeElement.style.left;
-
-    this.hero2.nativeElement.style.top = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
-    this.hero2.nativeElement.style.left = 'calc(0vh)';
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 2).top = this.hero2.nativeElement.style.top;
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 2).left = this.hero2.nativeElement.style.left;
-
-    this.hero3.nativeElement.style.top = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
-    this.hero3.nativeElement.style.left = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 3).top = this.hero3.nativeElement.style.top;
-    this.heroes.find(it => this.getCornerType(it.inGameId) === 3).left = this.hero3.nativeElement.style.left;
   }
 
   private moveUp() {
     if (!this.isTopBoundary()) {
       let top = this.clientHeroRef.nativeElement.style.top;
-      this.clientHeroRef.nativeElement.style.top = `calc(${top} - (${this.mapHeight}vh / ${this.mapSize}))`;
+      this.clientHeroRef.nativeElement.style.top = `calc(${top} - (${this.mapHeight}vh / ${this.movingViewPart}))`;
       this.clientHero.top = this.clientHeroRef.nativeElement.style.top;
     }
   }
@@ -134,7 +111,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   private moveDown() {
     if (!this.isBottomBoundary()) {
       let top = this.clientHeroRef.nativeElement.style.top;
-      this.clientHeroRef.nativeElement.style.top = `calc(${top} + (${this.mapHeight}vh / ${this.mapSize}))`;
+      this.clientHeroRef.nativeElement.style.top = `calc(${top} + (${this.mapHeight}vh / ${this.movingViewPart}))`;
       this.clientHero.top = this.clientHeroRef.nativeElement.style.top;
     }
   }
@@ -142,7 +119,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   private moveLeft() {
     if (!this.isLeftBoundary()) {
       let left = this.clientHeroRef.nativeElement.style.left;
-      this.clientHeroRef.nativeElement.style.left = `calc(${left} - (${this.mapHeight}vh / ${this.mapSize}))`;
+      this.clientHeroRef.nativeElement.style.left = `calc(${left} - (${this.mapHeight}vh / ${this.movingViewPart}))`;
       this.clientHero.left = this.clientHeroRef.nativeElement.style.left;
     }
   }
@@ -150,7 +127,7 @@ export class MatchComponent implements OnInit, AfterViewInit {
   private moveRight() {
     if (!this.isRightBoundary()) {
       let left = this.clientHeroRef.nativeElement.style.left;
-      this.clientHeroRef.nativeElement.style.left = `calc(${left} + (${this.mapHeight}vh / ${this.mapSize}))`;
+      this.clientHeroRef.nativeElement.style.left = `calc(${left} + (${this.mapHeight}vh / ${this.movingViewPart}))`;
       this.clientHero.left = this.clientHeroRef.nativeElement.style.left;
     }
   }
@@ -181,6 +158,29 @@ export class MatchComponent implements OnInit, AfterViewInit {
     return this.clientHero.left === `calc(${this.mapHeight - this.mapHeight/this.mapSize}vh)`;
   }
 
+  private setHeroesPositions() {
+    this.hero0.nativeElement.style.top = 'calc(0vh)';
+    this.hero0.nativeElement.style.left = 'calc(0vh)';
+    this.setHeroesPositionAttributes(0, this.hero0.nativeElement.style.top, this.hero0.nativeElement.style.left);
+
+    this.hero1.nativeElement.style.top = 'calc(0vh)';
+    this.hero1.nativeElement.style.left = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
+    this.setHeroesPositionAttributes(1, this.hero1.nativeElement.style.top, this.hero1.nativeElement.style.left);
+
+    this.hero2.nativeElement.style.top = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
+    this.hero2.nativeElement.style.left = 'calc(0vh)';
+    this.setHeroesPositionAttributes(2, this.hero2.nativeElement.style.top, this.hero2.nativeElement.style.left);
+
+    this.hero3.nativeElement.style.top = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
+    this.hero3.nativeElement.style.left = `calc(${this.mapHeight}vh - ${this.mapHeight}vh / ${this.mapSize})`;
+    this.setHeroesPositionAttributes(3, this.hero3.nativeElement.style.top, this.hero3.nativeElement.style.left);
+  }
+
+  private setHeroesPositionAttributes(heroInGameId: number, top: string, left: string) {
+    this.heroes.find(it => this.getCornerType(it.inGameId) === heroInGameId).top = top;
+    this.heroes.find(it => this.getCornerType(it.inGameId) === heroInGameId).left = left;
+  }
+
   private isHeroWithIdPresent(id: number): boolean {
     return this.heroes.find(it => it.inGameId === id) !== undefined;
   }
@@ -202,7 +202,5 @@ export class MatchComponent implements OnInit, AfterViewInit {
     if (this.getCornerType(this.clientHero.inGameId) === CornerType.RIGHT_BOTTOM) {
       this.clientHeroRef = this.hero3;
     }
-
-    console.log(this.clientHero);
   }
 }

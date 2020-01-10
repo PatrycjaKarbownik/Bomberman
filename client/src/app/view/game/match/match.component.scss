@@ -31,25 +31,5 @@ $map-size: 5;
     width: calc(75vh / #{$map-size});
     height: calc(75vh / #{$map-size});
     z-index: 3;
-
-    &.left-top {
-      top: 0;
-      left: 0;
-    }
-
-    &.right-top{
-      top: 0;
-      left: calc(75vh - 75vh / #{$map-size});
-    }
-
-    &.left-bottom{
-      top: calc(75vh - 75vh / #{$map-size});
-      left: 0;
-    }
-
-    /*&.right-bottom{
-      top: calc(75vh - 75vh / #{$map-size});
-      left: calc(75vh - 75vh / #{$map-size});
-    }*/
   }
 }
