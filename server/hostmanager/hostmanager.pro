@@ -3,6 +3,7 @@ QT += network websockets
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
+#CONFIG += testcase # Add ability to use make check
 
 # Enable QT logging
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -12,7 +13,6 @@ SOURCES += \
         gamehost.cpp \
         gamehostshub.cpp \
         gamemap.cpp \
-        main.cpp \
         overseercommunication.cpp \
         player.cpp \
         room.cpp
@@ -28,4 +28,20 @@ HEADERS += \
     gamemap.h \
     overseercommunication.h \
     player.h \
-    room.h
+    room.h \
+
+# Special configuration for tests
+test_conf {
+    TARGET = hostmanager_test
+    QT += testlib
+
+    SOURCES +=  \
+            tests/maintest.cpp \
+            tests/testgamemap.cpp
+
+    HEADERS += \
+            tests/testgamemap.h
+} else {
+
+    SOURCES += main.cpp
+}
