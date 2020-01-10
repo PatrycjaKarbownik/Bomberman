@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MapModel } from '@app/view/game/models/map.model';
 import { TileModel } from '@app/view/game/models/tile.model';
 import { TileType } from '@app/view/game/models/tile-type.model';
+import { HeroModel } from '@app/view/game/models/hero.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,27 @@ import { TileType } from '@app/view/game/models/tile-type.model';
 export class GameService {
 
   constructor() { }
+
+  getHeroes(): HeroModel[] {
+    return [
+      {
+        id: 8,
+        inGameId: 0
+      } as HeroModel,
+      {
+        id: 9,
+        inGameId: 1
+      } as HeroModel,
+      {
+        id: 6,
+        inGameId: 2
+      } as HeroModel,
+      {
+        id: 7,
+        inGameId: 3
+      } as HeroModel,
+    ]
+  }
 
   getMap(): MapModel {
     const tiles: TileModel[][] = [];
