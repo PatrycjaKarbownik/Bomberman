@@ -14,6 +14,7 @@ enum TileType {
 
 enum BonusType {
     IncreaseBombLimit,  DecreaseBombLimit,
+    IncreaseSpeed,      DecreaseSpeed,
     PushBomb,           IncreaseBombRange,
     None
 };
