@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
+
 import { MapModel } from '@app/view/game/models/map.model';
 import { TileModel } from '@app/view/game/models/tile.model';
 import { TileType } from '@app/view/game/models/tile-type.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
+import { UserId } from '@app/core/storages/user-details.storage';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GameService {
+export class GameDetailsService {
+  @UserId() userId;
+  playerCorner: number;
 
-  constructor() { }
+  constructor() {
+    this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
+  }
 
   getHeroes(): HeroModel[] {
     return [
@@ -29,7 +35,7 @@ export class GameService {
         id: 7,
         inGameId: 3
       } as HeroModel,
-    ]
+    ];
   }
 
   getMap(): MapModel {
