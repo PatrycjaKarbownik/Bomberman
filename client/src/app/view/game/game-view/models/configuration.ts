@@ -83,7 +83,79 @@ export class Configuration {
         spriteHeight: 128,
         width: this.tileWidth,
         height: this.tileHeight
-      }
+      },
+      { // range_inc
+        spriteX: 1400,
+        spriteY: 2,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // range_desc
+        spriteX: 1545,
+        spriteY: 2,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // bomb_inc
+        spriteX: 1400,
+        spriteY: 145,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // bomb_desc
+        spriteX: 1545,
+        spriteY: 145,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // speed_inc
+        spriteX: 1400,
+        spriteY: 290,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // speed_desc
+        spriteX: 1545,
+        spriteY: 290,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // push_bomb
+        spriteX: 1400,
+        spriteY: 425,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // fire_horizontal
+        spriteX: 1038,
+        spriteY: 750,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: null,
+        height: null
+      },
+      { // fire_vertical
+        spriteX: 1179,
+        spriteY: 750,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: null,
+        height: null
+      },
     ];
   }
 
