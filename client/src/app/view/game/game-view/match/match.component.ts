@@ -38,6 +38,6 @@ export class MatchComponent implements AfterViewInit {
   }
 
   @HostListener('document:keyup', ['$event']) onKeyupHandler(event: KeyboardEvent) {
-    this.actionService.keyUp();
+    this.actionService.keyUp(event);
   }
 }

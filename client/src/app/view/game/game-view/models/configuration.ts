@@ -2,31 +2,32 @@ import { Injectable } from '@angular/core';
 
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
+import { KeyboardSettings } from '@app/view/game/game-view/models/keyboard-settings.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Configuration {
+  // map configurations
   mapHeight = 700;
   mapWidth = this.mapHeight;
-  backgroundPath = '/assets/images/sprite.png';
-  playerSprites: Sprite[];
-  bombSprite: Sprite;
-  wallSprite: Sprite;
-  fragileWallSprite: Sprite;
-  startPositions: PlayerDetailsModel[];
   mapSize = 5;
   tileHeight = this.mapHeight / this.mapSize;
   tileWidth = this.mapWidth / this.mapSize;
 
+  spritePath = '/assets/images/sprite.png';
+  sprites: Sprite[];
+  startPositions: PlayerDetailsModel[];
+  keyboardsSettings;
+
   constructor() {
-    this.setPlayerSprites();
+    this.setSprites();
     this.setStartPositions();
-    this.setOtherSprites();
+    this.keyboardsSettings = new KeyboardSettings();
   }
 
-  private setPlayerSprites() {
-    this.playerSprites = [
+  private setSprites() {
+    this.sprites = [
       { // TOP LEFT - chicken
         spriteX: 1179,
         spriteY: 2,
@@ -58,6 +59,30 @@ export class Configuration {
         spriteHeight: 128,
         width: 0.70 * this.tileWidth,
         height: 0.70 * this.tileHeight
+      },
+      { // bomb
+        spriteX: 1038,
+        spriteY: 595,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // wall
+        spriteX: 1179,
+        spriteY: 400,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
+      },
+      { // fragile wall
+        spriteX: 1038,
+        spriteY: 400,
+        spriteWidth: 128,
+        spriteHeight: 128,
+        width: this.tileWidth,
+        height: this.tileHeight
       }
     ];
   }
@@ -85,34 +110,5 @@ export class Configuration {
         speed: 2
       }
     ];
-  }
-
-  setOtherSprites() {
-    this.bombSprite = { // bomb
-      spriteX: 1038,
-      spriteY: 595,
-      spriteWidth: 128,
-      spriteHeight: 128,
-      width: this.tileWidth,
-      height: this.tileHeight
-    };
-
-    this.wallSprite = { // wall
-      spriteX: 1179,
-      spriteY: 400,
-      spriteWidth: 128,
-      spriteHeight: 128,
-      width: this.tileWidth,
-      height: this.tileHeight
-    };
-
-    this.fragileWallSprite = { // fragile wall
-      spriteX: 1038,
-      spriteY: 400,
-      spriteWidth: 128,
-      spriteHeight: 128,
-      width: this.tileWidth,
-      height: this.tileHeight
-    };
   }
 }

@@ -1,0 +1,9 @@
+export enum SpriteType {
+  TOP_LEFT,
+  TOP_RIGHT,
+  BOTTOM_LEFT,
+  BOTTOM_RIGHT,
+  BOMB,
+  WALL_SPRITE,
+  FRAGILE_WALL_SPRITE,
+}

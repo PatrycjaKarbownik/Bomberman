@@ -4,6 +4,8 @@ import { GameDetailsService } from '@app/view/game/game-view/game-details.servic
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
 import { Configuration } from '@app/view/game/game-view/models/configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
+import { BombModel } from '@app/view/game/game-view/models/bomb.model';
+import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +14,11 @@ export class GameService {
 
   // view details
   private image: HTMLImageElement = null;
-  private wallImage: HTMLImageElement = null;
-  private fragileWallImage: HTMLImageElement = null;
   private context: CanvasRenderingContext2D;
   private gameLoop = null;
+
+  // other items
+  private bombs: BombModel[] = [];
 
   // player details
   private player: PlayerDetailsModel = null;
@@ -40,7 +43,7 @@ export class GameService {
 
     return new Promise((resolve, reject) => {
       this.image = new Image();
-      this.image.src = this.configuration.backgroundPath;
+      this.image.src = this.configuration.spritePath;
       this.image.width = 2048;
       this.image.height = 1024;
       this.image.onload = () => {
@@ -55,6 +58,7 @@ export class GameService {
       this.clearGround();
       // this.createOpponents();
       // this.moveObstacles();
+      this.createBombs();
       this.createPlayer();
     }, 10);
   }
@@ -77,6 +81,19 @@ export class GameService {
     );
   }
 
+  private createBombs() {
+    let bombSprite = this.configuration.sprites[SpriteType.BOMB];
+    this.bombs.forEach(bomb => {
+      this.context.drawImage(
+        this.image,
+        bombSprite.spriteX, bombSprite.spriteY,
+        bombSprite.spriteWidth, bombSprite.spriteHeight,
+        bomb.x, bomb.y,
+        bombSprite.width, bombSprite.height
+      )
+    })
+  }
+
   private clearGround() {
     this.context.clearRect(0, 0, this.configuration.mapWidth, this.configuration.mapHeight);
   }
@@ -84,7 +101,7 @@ export class GameService {
   private setPlayerDetails() {
     this.playerCorner = this.gameDetailsService.playerCorner;
     this.player = this.configuration.startPositions[this.playerCorner];
-    this.playerSprite = this.configuration.playerSprites[this.playerCorner];
+    this.playerSprite = this.configuration.sprites[this.playerCorner];
   }
 
   private moveUp() {
@@ -116,6 +133,29 @@ export class GameService {
       this.player.x = this.configuration.mapWidth - this.playerSprite.width;
     } else {
       this.player.x += this.player.speed;
+    }
+  }
+
+  setBomb() {
+    let horizontalTileNumber = Math.floor(this.player.x / this.configuration.tileWidth);
+    let leftTile = horizontalTileNumber * this.configuration.tileWidth;
+    let rightTile = (horizontalTileNumber + 1) * this.configuration.tileWidth;
+
+    let verticalTileNumber = Math.floor(this.player.y / this.configuration.tileHeight);
+    let topTile = verticalTileNumber * this.configuration.tileHeight;
+    let bottomTile = (verticalTileNumber + 1) * this.configuration.tileHeight;
+
+    this.bombs.push({
+      x: this.chooseTile(this.player.x, leftTile, rightTile),
+      y: this.chooseTile(this.player.y, topTile, bottomTile)
+    } as BombModel)
+  }
+
+  private chooseTile(playerPosition: number, prevTilePosition: number, nextTilePosition: number): number {
+    if (Math.abs(playerPosition - prevTilePosition) < Math.abs(playerPosition - nextTilePosition)) {
+      return prevTilePosition;
+    } else {
+      return nextTilePosition;
     }
   }
 
