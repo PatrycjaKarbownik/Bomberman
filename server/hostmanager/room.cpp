@@ -58,6 +58,13 @@ void Room::startGame()
 {
     m_map.generate(MAP_SIZE);
     broadcastMap(m_map.dumpMap());
+
+    // Calculate sizes of tiles and players for collision purposes
+    m_tileWidth = static_cast<quint32>(CANVAS_WIDTH / MAP_SIZE);
+    m_playerWidth = static_cast<quint32>(m_tileWidth * 0.70);
+
+    resetPlayers();
+
 }
 
 void Room::sendHelloMessage(Player *player_)
@@ -82,6 +89,36 @@ void Room::broadcastMap(const QJsonArray &map_)
 
     for (const Player* player : m_players) {
         player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
+    }
+}
+
+void Room::broadcastStart()
+{
+    QJsonObject message;
+    message.insert("messageType", "start");
+    message.insert("content", "");
+
+    QJsonDocument doc(message);
+
+    for (const Player* player : m_players) {
+        player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
+    }
+}
+
+void Room::resetPlayers()
+{
+    // Calculate starting positions for players
+    std::list<quint32> posXList {0, CANVAS_WIDTH - m_playerWidth, 0, CANVAS_WIDTH - m_playerWidth};
+    std::list<quint32> posYList {0, CANVAS_WIDTH - m_playerWidth, CANVAS_WIDTH - m_playerWidth, 0};
+    auto posXIter = posXList.begin();
+    auto posYIter = posYList.begin();
+
+    for (Player* player : m_players) {
+        player->setBombLimit(1);
+        player->setPlacedBombs(0);
+        player->setPushBonus(false);
+        player->setPosX(*posXIter++);
+        player->setPosY(*posYIter++);
     }
 }
 

@@ -20,7 +20,8 @@ class Room : public QObject
 public:
     static const quint32 MAX_PLAYERS = 4;
     static const quint32 START_TIMEOUT = 30000; // 30 s of waiting for players to connect
-    static const quint32 MAP_SIZE = 11;
+    static const quint32 MAP_SIZE = 11; // TODO change it so maps can be different
+    static const quint32 CANVAS_WIDTH = 700; // size of client's game window
 
     explicit Room(const QStringList& expectedPlayers_, QObject *parent = nullptr);
     ~Room();
@@ -52,6 +53,8 @@ private:
     void startGame();
     void sendHelloMessage(Player *player_);
     void broadcastMap(const QJsonArray &map_);
+    void broadcastStart();
+    void resetPlayers();
 
     GameMap m_map;
     // Waiting for players to start the game
@@ -59,6 +62,8 @@ private:
     QTimer m_countdownTimer;
     std::vector<Player*> m_players;
     const QStringList m_expectedPlayers;
+    quint32 m_playerWidth;
+    quint32 m_tileWidth;
 
 private slots:
     void onPlayerDisconnected();
