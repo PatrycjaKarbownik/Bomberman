@@ -16,32 +16,32 @@ bool GameMap::generate(quint32 sideN_)
         return false;
     }
 
-    if (!tiles.empty()) {
-        tiles.clear();
+    if (!m_tiles.empty()) {
+        m_tiles.clear();
     }
 
     std::unordered_set<quint16> potentialFragileWalls;
     quint16 id = 0;
     for (quint16 y = 0; y < sideN_; ++y) {
-        tiles.push_back(std::vector<MapTile>());
+        m_tiles.push_back(std::vector<MapTile>());
         for (quint16 x = 0; x < sideN_; ++x) {
-            tiles[y].push_back(MapTile());
-            tiles[y][x].x = x;
-            tiles[y][x].y = y;
-            tiles[y][x].id = id++;
+            m_tiles[y].push_back(MapTile());
+            m_tiles[y][x].x = x;
+            m_tiles[y][x].y = y;
+            m_tiles[y][x].id = id++;
 
             // If both x and y are odd, there should be a wall
             if (x%2 == 1 && y%2 == 1) {
                 continue;
             }
-            potentialFragileWalls.insert(tiles[y][x].id);
+            potentialFragileWalls.insert(m_tiles[y][x].id);
         }
     }
 
     // get starting player points and remove them from list of potential places for fragile walls
     auto startingAreaCoords = generateStartingAreaCoords(sideN_);
     for (auto coordPair : startingAreaCoords) {
-        quint16 id = tiles[coordPair.first][coordPair.second].id;
+        quint16 id = m_tiles[coordPair.first][coordPair.second].id;
         potentialFragileWalls.erase(potentialFragileWalls.find(id));
     }
 
@@ -53,7 +53,7 @@ QJsonArray GameMap::dumpMap()
 {
     QJsonArray map;
 
-    for (auto row : tiles) {
+    for (auto row : m_tiles) {
         for (auto tile : row) {
             QJsonObject jsonTile;
             jsonTile.insert("id", tile.id);
@@ -108,7 +108,7 @@ std::vector<std::pair<quint16, quint16> > GameMap::generateStartingAreaCoords(qu
 
 void GameMap::generateFragileWalls(const std::unordered_set<quint16> &potentialFragileIds_)
 {
-    for (auto row : tiles) {
+    for (auto row : m_tiles) {
         for (auto tile : row) {
             if (potentialFragileIds_.find(tile.id) == potentialFragileIds_.end()) {
                 continue;
