@@ -69,6 +69,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     // this.router.navigateByUrl('game/result');
   }
 
+  gameView() {
+    this.router.navigateByUrl('game/match');
+  }
+
   areAllUsersReady(): boolean {
     return this.room.users.find(user => user.readyToGame === false) === undefined;
   }
