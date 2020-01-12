@@ -36,7 +36,9 @@ class HostManager:
         # Callback that should accept Room object and port so given room can be informed where it can connect
         self.room_ready_callback = None
 
-    def send_create_room_request(self, expected_players, room):
+    def send_create_room_request(self, room):
+        serialized_room = room.serialize(only_usernames=True)
+        expected_players = serialized_room['users']
         self.awaiting_rooms[expected_players.sort()] = room
 
         request = {

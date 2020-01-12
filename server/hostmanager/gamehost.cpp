@@ -9,6 +9,13 @@ GameHost::GameHost(const quint16 port_)
       m_port(port_)
 {
     m_server.listen(QHostAddress::Any, port_);
+    connect(&m_server, &QWebSocketServer::newConnection, this, &GameHost::onIncomingConnection);
+
+    if (m_server.isListening()) {
+        qInfo() << QString("[Gamehost] New gamehost listening on port %1").arg(m_port);
+    } else {
+        qCritical() << QString("[Gamehost] Gamehost failed to listen on port %1").arg(m_port);
+    }
 }
 
 void GameHost::createRoom(const QStringList &expectedPlayerUsernames_)
@@ -65,10 +72,14 @@ void GameHost::onAuthorizationSucceed(const QString &jwtToken_, const QString &u
 
 void GameHost::onIncomingConnection()
 {
+    qDebug() << "[Connection] Incoming connection";
     while(m_server.hasPendingConnections()) {
         QWebSocket *pendingConnection = m_server.nextPendingConnection();
+        qInfo() << "[Connection] Somebody has connected to gamehost with port " << m_port;
         connect(pendingConnection, &QWebSocket::textMessageReceived, this, &GameHost::onReceivedTextMessage);
         connect(pendingConnection, &QWebSocket::disconnected, this, &GameHost::onSocketDisckonnect);
+
+        pendingConnection->sendTextMessage(QString("You just connected to GameHost on port %1").arg(m_port));
         // TODO Add timer to timeout socket after some time
     }
 }

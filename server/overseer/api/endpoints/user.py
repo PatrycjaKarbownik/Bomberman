@@ -60,6 +60,7 @@ class UserReady(Resource):
                    }, 400
 
         user.switch_readiness()
+        room.check_readiness()
 
         socketio_room_name = "room_{}".format(room.id)
         lobby.socketio.emit('room_state_changed', room.serialize(only_usernames=False), room=socketio_room_name)

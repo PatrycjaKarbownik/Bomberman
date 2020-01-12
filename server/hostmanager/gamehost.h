@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QWebSocketServer>
+#include <QTimer>
 
 #include <map>
 
@@ -46,7 +47,7 @@ public slots:
      */
     void onAuthorizationSucceed(const QString& jwtToken_, const QString& username_);
 
-private:    
+private:
     // Map of players that awaits for authorization
     // Key is a pair of jwt token and player's username
     std::map<std::pair<QString, QString>, Player*> m_unauthorizedPlayers;
@@ -82,6 +83,7 @@ private slots:
      */
     void onSocketDisckonnect();
 
+    void onTestTimeout();
 };
 
 #endif // GAMEHOSTINSTANCE_H

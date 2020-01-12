@@ -60,6 +60,8 @@ void GameHostsHub::onRoomRequest(const QStringList &expectedPlayers_)
     connect(newGameHost.get(), &GameHost::authorizationRequired,
             this, &GameHostsHub::onAuthorizationRequired);
 
+    newThread->start();
+
     newGameHost->createRoom(expectedPlayers_);
     m_OverseerCom->sendRoomReadyResponse(expectedPlayers_, newGameHost->port());
     m_gameHosts.push_back(std::move(newGameHost));
