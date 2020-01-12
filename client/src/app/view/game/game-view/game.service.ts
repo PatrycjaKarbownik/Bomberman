@@ -6,8 +6,8 @@ import { Configuration } from '@app/view/game/game-view/models/configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
-import { TileModel } from '@app/view/game/models/tile.model';
-import { TileType } from '@app/view/game/models/tile-type.model';
+import { TileModel } from '@app/view/game/game-view/models/tile.model';
+import { TileType } from '@app/view/game/game-view/models/tile-type.model';
 
 // game service
 // answer for game view dependent on game logic
@@ -174,6 +174,8 @@ export class GameService {
     }
   }
 
+  // returns coordinates of object with witch player collided
+  // if player didn't collide with anything, returns undefined
   private getCollidedObjectCoordinate(moveX: number, moveY: number): [number, number] {
     const supposedLeftSide = this.player.x + moveX;
     const supposedRightSide = this.player.x + moveX + this.playerSprite.width;

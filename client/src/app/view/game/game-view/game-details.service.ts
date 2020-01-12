@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { TileModel } from '@app/view/game/models/tile.model';
-import { TileType } from '@app/view/game/models/tile-type.model';
+import { TileModel } from '@app/view/game/game-view/models/tile.model';
+import { TileType } from '@app/view/game/game-view/models/tile-type.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
 import { UserId } from '@app/core/storages/user-details.storage';
 
@@ -22,6 +22,7 @@ export class GameDetailsService {
     this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
   }
 
+  // todo: remove - it's mock
   getHeroes(): HeroModel[] {
     return [
       {
@@ -43,6 +44,7 @@ export class GameDetailsService {
     ];
   }
 
+  // todo: remove - it's mock
   getWalls(): TileModel[] {
     return [{
       id: 0,
