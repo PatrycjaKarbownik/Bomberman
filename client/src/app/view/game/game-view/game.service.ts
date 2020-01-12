@@ -51,7 +51,7 @@ export class GameService {
     return new Promise((resolve, reject) => {
       this.image = new Image();
       this.image.src = this.configuration.spritePath;
-      this.image.width = 2048;
+      this.image.width = 1048;
       this.image.height = 1024;
       this.image.onload = () => {
         resolve();
@@ -63,8 +63,6 @@ export class GameService {
     this.setPlayerDetails();
     this.gameLoop = setInterval(() => {
       this.clearGround();
-      // this.createOpponents();
-      // this.moveObstacles();
       this.drawTiles();
       this.drawBombs();
       this.drawPlayer();
@@ -80,20 +78,8 @@ export class GameService {
         sprite.spriteWidth, sprite.spriteHeight,
         tile.x, tile.y,
         sprite.width, sprite.height
-      )
+      );
     });
-  }
-
-  private getTileSprite(tileType: TileType): Sprite {
-    if(tileType == TileType.WALL) return this.configuration.sprites[SpriteType.WALL];
-    if(tileType == TileType.FRAGILE) return this.configuration.sprites[SpriteType.FRAGILE];
-    if(tileType == TileType.RANGE_INC) return this.configuration.sprites[SpriteType.RANGE_INC];
-    if(tileType == TileType.RANGE_DESC) return this.configuration.sprites[SpriteType.RANGE_DESC];
-    if(tileType == TileType.BOMB_INC) return this.configuration.sprites[SpriteType.BOMB_INC];
-    if(tileType == TileType.BOMB_DESC) return this.configuration.sprites[SpriteType.BOMB_DESC];
-    if(tileType == TileType.SPEED_INC) return this.configuration.sprites[SpriteType.SPEED_INC];
-    if(tileType == TileType.SPEED_DESC) return this.configuration.sprites[SpriteType.SPEED_DESC];
-    if(tileType == TileType.PUSH_BOMB) return this.configuration.sprites[SpriteType.PUSH_BOMB];
   }
 
   private drawBombs() {
@@ -105,7 +91,7 @@ export class GameService {
         bombSprite.spriteWidth, bombSprite.spriteHeight,
         bomb.x, bomb.y,
         bombSprite.width, bombSprite.height
-      )
+      );
     });
   }
 
@@ -127,7 +113,7 @@ export class GameService {
     );
   }
 
-  // cleans game view. - it's necessary, because next frames will be rendered on previous canvas.
+  // cleans game view - it's necessary, because next frames will be rendered on previous canvas.
   // if we don't want have all of frames on canvas, we have to clean it and render anew
   private clearGround() {
     this.context.clearRect(0, 0, this.configuration.mapWidth, this.configuration.mapHeight);
@@ -180,10 +166,15 @@ export class GameService {
     let topTile = verticalTileNumber * this.configuration.tileHeight;
     let bottomTile = (verticalTileNumber + 1) * this.configuration.tileHeight;
 
-    this.bombs.push({
-      x: this.chooseTile(this.player.x, leftTile, rightTile),
-      y: this.chooseTile(this.player.y, topTile, bottomTile)
-    } as BombModel)
+    let x = this.chooseTile(this.player.x, leftTile, rightTile);
+    let y = this.chooseTile(this.player.y, topTile, bottomTile);
+
+    if (!this.isBombPresentAtTile(x, y)) {
+      this.bombs.push({
+        x: x,
+        y: y
+      } as BombModel);
+    }
   }
 
   // calculates coordinates of e.g. bomb.
@@ -195,6 +186,23 @@ export class GameService {
     } else {
       return nextTilePosition;
     }
+  }
+
+  // checks if bomb can be placed on (x, y) position
+  private isBombPresentAtTile(x: number, y: number): boolean {
+    return this.bombs.find(it => it.x === x && it.y === y) !== undefined;
+  }
+
+  private getTileSprite(tileType: TileType): Sprite {
+    if (tileType === TileType.WALL) return this.configuration.sprites[SpriteType.WALL];
+    if (tileType === TileType.FRAGILE) return this.configuration.sprites[SpriteType.FRAGILE];
+    if (tileType === TileType.RANGE_INC) return this.configuration.sprites[SpriteType.RANGE_INC];
+    if (tileType === TileType.RANGE_DESC) return this.configuration.sprites[SpriteType.RANGE_DESC];
+    if (tileType === TileType.BOMB_INC) return this.configuration.sprites[SpriteType.BOMB_INC];
+    if (tileType === TileType.BOMB_DESC) return this.configuration.sprites[SpriteType.BOMB_DESC];
+    if (tileType === TileType.SPEED_INC) return this.configuration.sprites[SpriteType.SPEED_INC];
+    if (tileType === TileType.SPEED_DESC) return this.configuration.sprites[SpriteType.SPEED_DESC];
+    if (tileType === TileType.PUSH_BOMB) return this.configuration.sprites[SpriteType.PUSH_BOMB];
   }
 
 }

@@ -29,7 +29,7 @@ export class Configuration {
   private setSprites() {
     this.sprites = [
       { // TOP LEFT - chicken
-        spriteX: 1179,
+        spriteX: 179,
         spriteY: 2,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -37,7 +37,7 @@ export class Configuration {
         height: 0.70 * this.tileHeight
       },
       { // TOP RIGHT - pig
-        spriteX: 1038,
+        spriteX: 38,
         spriteY: 145,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -45,7 +45,7 @@ export class Configuration {
         height: 0.70 * this.tileHeight
       },
       { // BOTTOM LEFT - whale
-        spriteX: 1179,
+        spriteX: 179,
         spriteY: 145,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -53,7 +53,7 @@ export class Configuration {
         height: 0.70 * this.tileHeight
       },
       { // BOTTOM RIGHT - chick
-        spriteX: 1038,
+        spriteX: 38,
         spriteY: 2,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -61,7 +61,7 @@ export class Configuration {
         height: 0.70 * this.tileHeight
       },
       { // bomb
-        spriteX: 1038,
+        spriteX: 38,
         spriteY: 595,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -69,7 +69,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // wall
-        spriteX: 1179,
+        spriteX: 179,
         spriteY: 400,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -77,7 +77,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // fragile wall
-        spriteX: 1038,
+        spriteX: 38,
         spriteY: 400,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -85,7 +85,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // range_inc
-        spriteX: 1400,
+        spriteX: 400,
         spriteY: 2,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -93,7 +93,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // range_desc
-        spriteX: 1545,
+        spriteX: 545,
         spriteY: 2,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -101,7 +101,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // bomb_inc
-        spriteX: 1400,
+        spriteX: 400,
         spriteY: 145,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -109,7 +109,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // bomb_desc
-        spriteX: 1545,
+        spriteX: 545,
         spriteY: 145,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -117,7 +117,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // speed_inc
-        spriteX: 1400,
+        spriteX: 400,
         spriteY: 290,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -125,7 +125,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // speed_desc
-        spriteX: 1545,
+        spriteX: 545,
         spriteY: 290,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -133,7 +133,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // push_bomb
-        spriteX: 1400,
+        spriteX: 400,
         spriteY: 425,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -141,7 +141,7 @@ export class Configuration {
         height: this.tileHeight
       },
       { // fire_horizontal
-        spriteX: 1038,
+        spriteX: 38,
         spriteY: 750,
         spriteWidth: 128,
         spriteHeight: 128,
@@ -149,7 +149,7 @@ export class Configuration {
         height: null
       },
       { // fire_vertical
-        spriteX: 1179,
+        spriteX: 179,
         spriteY: 750,
         spriteWidth: 128,
         spriteHeight: 128,
