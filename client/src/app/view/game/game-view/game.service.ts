@@ -6,7 +6,11 @@ import { Configuration } from '@app/view/game/game-view/models/configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
+import { TileModel } from '@app/view/game/models/tile.model';
+import { TileType } from '@app/view/game/models/tile-type.model';
 
+// game service
+// answer for game view dependent on game logic
 @Injectable({
   providedIn: 'root'
 })
@@ -19,6 +23,8 @@ export class GameService {
 
   // other items
   private bombs: BombModel[] = [];
+  private tiles: TileModel[];
+  private bonuses: TileModel[];
 
   // player details
   private player: PlayerDetailsModel = null;
@@ -32,7 +38,8 @@ export class GameService {
   right = false;
 
   constructor(private gameDetailsService: GameDetailsService, private configuration: Configuration) {
-
+    this.tiles = gameDetailsService.getTiles();
+    this.bonuses = gameDetailsService.getBonuses();
   }
 
   loadAssets(canvasElement: HTMLCanvasElement): Promise<void> {
@@ -58,12 +65,51 @@ export class GameService {
       this.clearGround();
       // this.createOpponents();
       // this.moveObstacles();
-      this.createBombs();
-      this.createPlayer();
+      this.drawTiles();
+      this.drawBombs();
+      this.drawPlayer();
     }, 10);
   }
 
-  private createPlayer() {
+  private drawTiles() {
+    this.tiles.concat(this.bonuses).forEach(tile => {
+      let sprite = this.getTileSprite(tile.type);
+      this.context.drawImage(
+        this.image,
+        sprite.spriteX, sprite.spriteY,
+        sprite.spriteWidth, sprite.spriteHeight,
+        tile.x, tile.y,
+        sprite.width, sprite.height
+      )
+    });
+  }
+
+  private getTileSprite(tileType: TileType): Sprite {
+    if(tileType == TileType.WALL) return this.configuration.sprites[SpriteType.WALL];
+    if(tileType == TileType.FRAGILE) return this.configuration.sprites[SpriteType.FRAGILE];
+    if(tileType == TileType.RANGE_INC) return this.configuration.sprites[SpriteType.RANGE_INC];
+    if(tileType == TileType.RANGE_DESC) return this.configuration.sprites[SpriteType.RANGE_DESC];
+    if(tileType == TileType.BOMB_INC) return this.configuration.sprites[SpriteType.BOMB_INC];
+    if(tileType == TileType.BOMB_DESC) return this.configuration.sprites[SpriteType.BOMB_DESC];
+    if(tileType == TileType.SPEED_INC) return this.configuration.sprites[SpriteType.SPEED_INC];
+    if(tileType == TileType.SPEED_DESC) return this.configuration.sprites[SpriteType.SPEED_DESC];
+    if(tileType == TileType.PUSH_BOMB) return this.configuration.sprites[SpriteType.PUSH_BOMB];
+  }
+
+  private drawBombs() {
+    let bombSprite = this.configuration.sprites[SpriteType.BOMB];
+    this.bombs.forEach(bomb => {
+      this.context.drawImage(
+        this.image,
+        bombSprite.spriteX, bombSprite.spriteY,
+        bombSprite.spriteWidth, bombSprite.spriteHeight,
+        bomb.x, bomb.y,
+        bombSprite.width, bombSprite.height
+      )
+    });
+  }
+
+  private drawPlayer() {
     if (this.up) {
       this.moveUp();
     } else if (this.down) {
@@ -81,19 +127,8 @@ export class GameService {
     );
   }
 
-  private createBombs() {
-    let bombSprite = this.configuration.sprites[SpriteType.BOMB];
-    this.bombs.forEach(bomb => {
-      this.context.drawImage(
-        this.image,
-        bombSprite.spriteX, bombSprite.spriteY,
-        bombSprite.spriteWidth, bombSprite.spriteHeight,
-        bomb.x, bomb.y,
-        bombSprite.width, bombSprite.height
-      )
-    })
-  }
-
+  // cleans game view. - it's necessary, because next frames will be rendered on previous canvas.
+  // if we don't want have all of frames on canvas, we have to clean it and render anew
   private clearGround() {
     this.context.clearRect(0, 0, this.configuration.mapWidth, this.configuration.mapHeight);
   }
@@ -151,6 +186,9 @@ export class GameService {
     } as BombModel)
   }
 
+  // calculates coordinates of e.g. bomb.
+  // when player is on two tiles at the same time,
+  // we have to calculate when should be bomb placing - on first or second tile
   private chooseTile(playerPosition: number, prevTilePosition: number, nextTilePosition: number): number {
     if (Math.abs(playerPosition - prevTilePosition) < Math.abs(playerPosition - nextTilePosition)) {
       return prevTilePosition;

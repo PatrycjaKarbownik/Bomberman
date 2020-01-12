@@ -6,12 +6,18 @@ import { TileType } from '@app/view/game/models/tile-type.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
 import { UserId } from '@app/core/storages/user-details.storage';
 
+// game details service
+// connects with gamehost
+// and gets needed initial information
+// like players and map details
 @Injectable({
   providedIn: 'root'
 })
 export class GameDetailsService {
   @UserId() userId;
   playerCorner: number;
+
+  private temporaryTileHeight = 140;
 
   constructor() {
     this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
@@ -38,147 +44,79 @@ export class GameDetailsService {
     ];
   }
 
-  getMap(): MapModel {
-    const tiles: TileModel[][] = [];
-    tiles[0] = [{
+  getTiles(): TileModel[] {
+    return [{
       id: 0,
-      x: 0,
-      y: 0,
-      type: TileType.NOTHING
+      x: 2 * this.temporaryTileHeight,
+      y: 0 * this.temporaryTileHeight,
+      type: TileType.FRAGILE
     } as TileModel, {
       id: 1,
-      x: 1,
-      y: 0,
-      type: TileType.NOTHING
+      x: 1 * this.temporaryTileHeight,
+      y: 1 * this.temporaryTileHeight,
+      type: TileType.WALL
     } as TileModel, {
       id: 2,
-      x: 2,
-      y: 0,
-      type: TileType.FRAGILE_WALL
+      x: 3 * this.temporaryTileHeight,
+      y: 1 * this.temporaryTileHeight,
+      type: TileType.WALL
     } as TileModel, {
       id: 3,
-      x: 3,
-      y: 0,
-      type: TileType.NOTHING
+      x: 4 * this.temporaryTileHeight,
+      y: 2 * this.temporaryTileHeight,
+      type: TileType.FRAGILE
     } as TileModel, {
       id: 4,
-      x: 4,
-      y: 0,
-      type: TileType.NOTHING
+      x: 1 * this.temporaryTileHeight,
+      y: 3 * this.temporaryTileHeight,
+      type: TileType.WALL
+    } as TileModel, {
+      id: 5,
+      x: 3 * this.temporaryTileHeight,
+      y: 3 * this.temporaryTileHeight,
+      type: TileType.WALL
+    } as TileModel
+    ];
+  }
+
+  getBonuses(): TileModel[] {
+    return [{
+      id: 6,
+      x: 2 * this.temporaryTileHeight,
+      y: 1 * this.temporaryTileHeight,
+      type: TileType.PUSH_BOMB
+    } as TileModel,{
+      id: 7,
+      x: 0 * this.temporaryTileHeight,
+      y: 2 * this.temporaryTileHeight,
+      type: TileType.SPEED_INC
+    } as TileModel,{
+      id: 8,
+      x: 1 * this.temporaryTileHeight,
+      y: 2 * this.temporaryTileHeight,
+      type: TileType.RANGE_DESC
+    } as TileModel,{
+      id: 9,
+      x: 2 * this.temporaryTileHeight,
+      y: 2 * this.temporaryTileHeight,
+      type: TileType.SPEED_DESC
+    } as TileModel,{
+      id: 10,
+      x: 3 * this.temporaryTileHeight,
+      y: 2 * this.temporaryTileHeight,
+      type: TileType.BOMB_INC
+    } as TileModel,{
+      id: 11,
+      x: 2 * this.temporaryTileHeight,
+      y: 3 * this.temporaryTileHeight,
+      type: TileType.RANGE_INC
+    } as TileModel,{
+      id: 12,
+      x: 2 * this.temporaryTileHeight,
+      y: 4 * this.temporaryTileHeight,
+      type: TileType.BOMB_DESC
     } as TileModel,
 
-      {
-        id: 5,
-        x: 0,
-        y: 1,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 6,
-        x: 1,
-        y: 1,
-        type: TileType.WALL
-      } as TileModel, {
-        id: 7,
-        x: 2,
-        y: 1,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 8,
-        x: 3,
-        y: 1,
-        type: TileType.WALL
-      } as TileModel, {
-        id: 9,
-        x: 4,
-        y: 1,
-        type: TileType.NOTHING
-      } as TileModel,
-
-      {
-        id: 10,
-        x: 0,
-        y: 2,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 11,
-        x: 1,
-        y: 2,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 12,
-        x: 2,
-        y: 2,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 13,
-        x: 3,
-        y: 2,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 14,
-        x: 4,
-        y: 2,
-        type: TileType.FRAGILE_WALL
-      } as TileModel,
-
-      {
-        id: 15,
-        x: 0,
-        y: 3,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 16,
-        x: 1,
-        y: 3,
-        type: TileType.WALL
-      } as TileModel, {
-        id: 17,
-        x: 2,
-        y: 3,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 18,
-        x: 3,
-        y: 3,
-        type: TileType.WALL
-      } as TileModel, {
-        id: 19,
-        x: 4,
-        y: 3,
-        type: TileType.NOTHING
-      } as TileModel,
-
-      {
-        id: 20,
-        x: 0,
-        y: 4,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 21,
-        x: 1,
-        y: 4,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 22,
-        x: 2,
-        y: 4,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 23,
-        x: 3,
-        y: 4,
-        type: TileType.NOTHING
-      } as TileModel, {
-        id: 24,
-        x: 4,
-        y: 4,
-        type: TileType.NOTHING
-      } as TileModel,
     ];
-
-
-    return {
-      tiles: tiles
-    } as MapModel;
   }
 }

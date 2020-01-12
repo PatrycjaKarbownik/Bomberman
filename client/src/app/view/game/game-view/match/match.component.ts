@@ -3,6 +3,8 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { ActionService } from '@app/view/game/game-view/action.service';
 import { GameService } from '@app/view/game/game-view/game.service';
 
+// component with game
+// inits game start and listens keyboard events
 @Component({
   selector: 'bomb-match',
   template: `
@@ -27,8 +29,8 @@ export class MatchComponent implements AfterViewInit {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.actionService.createPlayGround(canvasEl);
     this.actionService.getImageLoadEmitter()
-      .subscribe(() => {
-        this.showLoader = false;
+      .subscribe(imageLoaded => {
+        this.showLoader = !imageLoaded;
         this.gameService.startGameLoop()
       });
   }

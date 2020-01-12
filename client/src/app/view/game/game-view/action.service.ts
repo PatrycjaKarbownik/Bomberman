@@ -6,16 +6,16 @@ import { Configuration } from '@app/view/game/game-view/models/configuration';
 @Injectable({
   providedIn: 'root'
 })
-export class ActionService {
+export class ActionService { // todo: change service name
 
-  private isImageLoaded: EventEmitter<number> = new EventEmitter();
+  private isImageLoaded: EventEmitter<boolean> = new EventEmitter();
 
   constructor(private gameService: GameService, private configuration: Configuration) { }
 
   createPlayGround(canvasElement): void {
     this.gameService.loadAssets(canvasElement).then(() => {
       setTimeout( () =>{
-        this.isImageLoaded.emit();
+        this.isImageLoaded.emit(true);
       },1000);
     });
   }
