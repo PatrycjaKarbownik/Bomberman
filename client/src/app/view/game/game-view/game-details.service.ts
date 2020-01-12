@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
 import { UserId } from '@app/core/storages/user-details.storage';
+import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // game details service
 // connects with gamehost
@@ -15,11 +18,25 @@ import { UserId } from '@app/core/storages/user-details.storage';
 export class GameDetailsService {
   @UserId() userId;
   playerCorner: number;
+  private gamehostSocket: WebSocketSubject<{}>;
 
   private temporaryTileHeight = 140;
 
-  constructor() {
+  private counter = 1;
+
+  constructor(private websocketService: WebsocketService) {
     this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
+    console.log('port', websocketService.port);
+    this.gamehostSocket = webSocket(`ws://192.168.0.121:${websocketService.port}`);
+
+    this.gamehostSocket.asObservable().subscribe(data => console.log(data));
+  }
+
+  // todo: remove
+  newMessage() {
+    console.log(this.counter);
+    this.gamehostSocket.next({msg: `Test message ${this.counter}`});
+    this.counter++;
   }
 
   // todo: remove - it's mock
