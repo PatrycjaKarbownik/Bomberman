@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { MapModel } from '@app/view/game/models/map.model';
 import { TileModel } from '@app/view/game/models/tile.model';
 import { TileType } from '@app/view/game/models/tile-type.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
@@ -44,7 +43,7 @@ export class GameDetailsService {
     ];
   }
 
-  getTiles(): TileModel[] {
+  getWalls(): TileModel[] {
     return [{
       id: 0,
       x: 2 * this.temporaryTileHeight,

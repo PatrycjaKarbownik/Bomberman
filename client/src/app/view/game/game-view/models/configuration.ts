@@ -164,22 +164,26 @@ export class Configuration {
       { // TOP LEFT - chicken
         x: 0.15 * this.tileWidth,
         y: 0.15 * this.tileHeight,
-        speed: 2
+        speed: 2,
+        bombPusher: false
       },
       { // TOP RIGHT - pig
         x: this.mapWidth - 0.85 * this.tileWidth,
         y: 0.15 * this.tileHeight,
-        speed: 2
+        speed: 2,
+        bombPusher: false
       },
       { // BOTTOM LEFT - whale
         x: 0.15 * this.tileWidth,
         y: this.mapHeight - 0.85 * this.tileHeight,
-        speed: 2
+        speed: 2,
+        bombPusher: false
       },
       { // BOTTOM RIGHT - chick
         x: this.mapWidth - 0.85 * this.tileWidth,
         y: this.mapHeight - 0.85 * this.tileHeight,
-        speed: 2
+        speed: 2,
+        bombPusher: false
       }
     ];
   }

@@ -23,12 +23,16 @@ export class GameService {
 
   // other items
   private bombs: BombModel[] = [];
-  private tiles: TileModel[];
+  // collection of bombs witch player placed but didn't leave tiles with them
+  // it's needed, because player have to leave tiles, where placed bomb
+  // and it's necessary to split them
+  private bombsUnderPlayer: BombModel[] = [];
+  private walls: TileModel[];
   private bonuses: TileModel[];
 
   // player details
   private player: PlayerDetailsModel = null;
-  private playerCorner;
+  private playerCorner; // remember corner where player started - to get correct sprite
   private playerSprite: Sprite;
 
   // player move
@@ -38,7 +42,7 @@ export class GameService {
   right = false;
 
   constructor(private gameDetailsService: GameDetailsService, private configuration: Configuration) {
-    this.tiles = gameDetailsService.getTiles();
+    this.walls = gameDetailsService.getWalls();
     this.bonuses = gameDetailsService.getBonuses();
   }
 
@@ -64,13 +68,14 @@ export class GameService {
     this.gameLoop = setInterval(() => {
       this.clearGround();
       this.drawTiles();
+      this.checkIfPlayerLeavesTilesWithBomb();
       this.drawBombs();
       this.drawPlayer();
     }, 10);
   }
 
   private drawTiles() {
-    this.tiles.concat(this.bonuses).forEach(tile => {
+    this.walls.concat(this.bonuses).forEach(tile => {
       let sprite = this.getTileSprite(tile.type);
       this.context.drawImage(
         this.image,
@@ -84,7 +89,7 @@ export class GameService {
 
   private drawBombs() {
     let bombSprite = this.configuration.sprites[SpriteType.BOMB];
-    this.bombs.forEach(bomb => {
+    this.bombs.concat(this.bombsUnderPlayer).forEach(bomb => {
       this.context.drawImage(
         this.image,
         bombSprite.spriteX, bombSprite.spriteY,
@@ -126,35 +131,80 @@ export class GameService {
   }
 
   private moveUp() {
+    let collidedObjectCoordinate = this.getCollidedObjectCoordinate(0, -this.player.speed);
     if (this.player.y - this.player.speed < 0) {
       this.player.y = 0;
+    } else if (collidedObjectCoordinate != undefined) {
+      this.player.y = collidedObjectCoordinate[1] + this.configuration.tileHeight;
     } else {
       this.player.y -= this.player.speed;
     }
   }
 
   private moveDown() {
+    let collidedObjectCoordinate = this.getCollidedObjectCoordinate(0, +this.player.speed);
     if (this.player.y + this.player.speed + this.playerSprite.height > this.configuration.mapHeight) {
       this.player.y = this.configuration.mapHeight - this.playerSprite.height;
+    } else if (collidedObjectCoordinate != undefined) {
+      this.player.y = collidedObjectCoordinate[1] - 0.7 * this.configuration.tileHeight;
     } else {
       this.player.y += this.player.speed;
     }
   }
 
   private moveLeft() {
+    let collidedObjectCoordinate = this.getCollidedObjectCoordinate(-this.player.speed, 0);
     if (this.player.x - this.player.speed < 0) {
       this.player.x = 0;
+    } else if (collidedObjectCoordinate != undefined) {
+      this.player.x = collidedObjectCoordinate[0] + this.configuration.tileWidth;
     } else {
       this.player.x -= this.player.speed;
     }
   }
 
   private moveRight() {
+    let collidedObjectCoordinate = this.getCollidedObjectCoordinate(this.player.speed, 0);
     if (this.player.x + this.player.speed + this.playerSprite.width > this.configuration.mapWidth) {
       this.player.x = this.configuration.mapWidth - this.playerSprite.width;
+    } else if (collidedObjectCoordinate != undefined) {
+      this.player.x = collidedObjectCoordinate[0] - 0.7 * this.configuration.tileWidth
     } else {
       this.player.x += this.player.speed;
     }
+  }
+
+  private getCollidedObjectCoordinate(moveX: number, moveY: number): [number, number] {
+    const supposedLeftSide = this.player.x + moveX;
+    const supposedRightSide = this.player.x + moveX + this.playerSprite.width;
+    const supposedTopSide = this.player.y + moveY;
+    const supposedBottomSide = this.player.y + moveY + this.playerSprite.height;
+    const tileWidth = this.configuration.tileWidth;
+    const tileHeight = this.configuration.tileHeight;
+
+    let wall = this.walls
+      .find(wall => this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
+        wall.x, wall.x + tileWidth, wall.y, wall.y + tileHeight));
+
+    if (wall !== undefined) {
+      return [wall.x, wall.y];
+    }
+
+    if (!this.player.bombPusher) {
+      let bomb = this.bombs
+        .find(bomb => this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
+          bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight));
+
+      if (bomb !== undefined) {
+        return [bomb.x, bomb.y];
+      }
+    }
+    return undefined;
+  }
+
+  private areCollisionConditionsAchieved(pLeft: number, pRight: number, pTop: number, pBottom: number,
+                                         sLeft: number, sRight: number, sTop: number, sBottom: number): boolean {
+    return (pRight > sLeft && pLeft < sRight) && (pTop < sBottom && pBottom > sTop);
   }
 
   setBomb() {
@@ -170,7 +220,7 @@ export class GameService {
     let y = this.chooseTile(this.player.y, topTile, bottomTile);
 
     if (!this.isBombPresentAtTile(x, y)) {
-      this.bombs.push({
+      this.bombsUnderPlayer.push({
         x: x,
         y: y
       } as BombModel);
@@ -190,7 +240,24 @@ export class GameService {
 
   // checks if bomb can be placed on (x, y) position
   private isBombPresentAtTile(x: number, y: number): boolean {
-    return this.bombs.find(it => it.x === x && it.y === y) !== undefined;
+    return this.bombs.concat(this.bombsUnderPlayer).find(it => it.x === x && it.y === y) !== undefined;
+  }
+
+  private checkIfPlayerLeavesTilesWithBomb() {
+    const supposedLeftSide = this.player.x;
+    const supposedRightSide = this.player.x + this.playerSprite.width;
+    const supposedTopSide = this.player.y;
+    const supposedBottomSide = this.player.y + this.playerSprite.height;
+    const tileWidth = this.configuration.tileWidth;
+    const tileHeight = this.configuration.tileHeight;
+
+    this.bombsUnderPlayer.forEach(bomb => {
+      if(!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
+        bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight)) {
+        this.bombs.push(bomb);
+        this.bombsUnderPlayer.splice(this.bombsUnderPlayer.indexOf(bomb), 1);
+      }
+    })
   }
 
   private getTileSprite(tileType: TileType): Sprite {
