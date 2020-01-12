@@ -75,6 +75,16 @@ void Player::setPushBonus(bool pushBonus_)
     m_pushBonus = pushBonus_;
 }
 
+quint32 Player::getId() const
+{
+    return m_id;
+}
+
+void Player::setId(const quint32 &id)
+{
+    m_id = id;
+}
+
 void Player::onReceivedTextMessage(const QString &message_)
 {
     QStringList message = message_.split("_");

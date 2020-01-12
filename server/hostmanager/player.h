@@ -44,6 +44,9 @@ public:
     bool getPushBonus() const;
     void setPushBonus(bool pushBonus_);
 
+    quint32 getId() const;
+    void setId(const quint32 &id);
+
 signals:
     /**
      * @brief disconnected: signals that player's socket disconnected
@@ -62,6 +65,7 @@ private:
     quint32 m_posY {0};
     quint32 m_bombLimit {0};
     quint32 m_placedBombs {0};
+    quint32 m_id {0};
     bool m_pushBonus {false};
 
 private slots:

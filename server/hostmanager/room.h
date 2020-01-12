@@ -54,6 +54,7 @@ private:
     void sendHelloMessage(Player *player_);
     void broadcastMap(const QJsonArray &map_);
     void broadcastStart();
+    void broadcastPlayerInfo();
     void resetPlayers();
 
     GameMap m_map;

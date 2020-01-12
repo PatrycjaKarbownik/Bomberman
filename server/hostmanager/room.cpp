@@ -64,7 +64,8 @@ void Room::startGame()
     m_playerWidth = static_cast<quint32>(m_tileWidth * 0.70);
 
     resetPlayers();
-
+    broadcastPlayerInfo();
+    broadcastStart();
 }
 
 void Room::sendHelloMessage(Player *player_)
@@ -105,15 +106,35 @@ void Room::broadcastStart()
     }
 }
 
+void Room::broadcastPlayerInfo()
+{
+    QJsonObject message;
+    message.insert("messageType", "playerInfo");
+
+    QJsonArray content;
+    for (const Player* player : m_players) {
+        QJsonObject playerObject;
+        playerObject.insert("username", player->getUsername());
+        playerObject.insert("id", static_cast<qint64>(player->getId()));
+        playerObject.insert("x", static_cast<qint64>(player->getPosX()));
+        playerObject.insert("y", static_cast<qint64>(player->getPosY()));
+    }
+}
+
 void Room::resetPlayers()
 {
     // Calculate starting positions for players
-    std::list<quint32> posXList {0, CANVAS_WIDTH - m_playerWidth, 0, CANVAS_WIDTH - m_playerWidth};
-    std::list<quint32> posYList {0, CANVAS_WIDTH - m_playerWidth, CANVAS_WIDTH - m_playerWidth, 0};
+    quint32 delta = static_cast<quint32>((m_tileWidth - m_playerWidth) / 2);
+    std::list<quint32> posXList {delta, CANVAS_WIDTH - m_playerWidth - delta,
+                delta, CANVAS_WIDTH - m_playerWidth - delta};
+    std::list<quint32> posYList {delta, CANVAS_WIDTH - m_playerWidth - delta,
+                CANVAS_WIDTH - m_playerWidth - delta, delta};
     auto posXIter = posXList.begin();
     auto posYIter = posYList.begin();
 
+    quint32 playerId = 0;
     for (Player* player : m_players) {
+        player->setId(playerId++);
         player->setBombLimit(1);
         player->setPlacedBombs(0);
         player->setPushBonus(false);
