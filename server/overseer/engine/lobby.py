@@ -104,7 +104,7 @@ class Lobby:
             return
 
         socketio_room_name = 'room_{}'.format(room.id)
-        lobby.socketio.emit('port_ready', {'port': port}, room=socketio_room_name)
+        lobby.socketio.emit('port_ready', port, room=socketio_room_name)
         print('sending info of port {} to room {}'.format(port, room.id))
 
     def notify(self, class_notifying, class_instance):
@@ -116,7 +116,7 @@ class Lobby:
                 self.remove_room(class_instance.id)
                 return
             if class_instance.all_ready():
-                host_manager.send_create_room_request(class_instance.serialize(only_usernames=True), class_instance)
+                host_manager.send_create_room_request(class_instance)
                 return
 
     def get_json_rooms(self, only_usernames=True):

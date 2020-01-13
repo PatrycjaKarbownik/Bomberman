@@ -4,5 +4,6 @@ export enum ViewModel {
   LOBBY = 'lobby',
   ROOM = 'room',
   GAME = 'game',
-  GAME_RESULT = 'result'
+  MATCH = 'match',
+  GAME_RESULT = 'result',
 }

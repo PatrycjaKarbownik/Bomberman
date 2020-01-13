@@ -28,8 +28,8 @@ class User:
 
     def switch_readiness(self):
         self.ready_to_game = not self.ready_to_game
-        if self.room is not None:
-            self.room.check_readiness()
+        # if self.room is not None:
+        #    self.room.check_readiness()
 
     def serialize(self):
         return {

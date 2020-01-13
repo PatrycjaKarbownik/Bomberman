@@ -4,10 +4,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-GameMap::GameMap(QObject *parent) : QObject(parent)
-{
-
-}
+GameMap::GameMap(QObject *parent) : QObject(parent) {}
 
 bool GameMap::generate(quint32 sideN_)
 {

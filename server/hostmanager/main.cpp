@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     const QStringList args = parser.positionalArguments();
 
     if (args.size() < 2) {
-        qCritical() << "[Parsing arguments]Not all positional arguments were provided";
+        qCritical() << "[Parsing arguments] Not all positional arguments were provided";
         return 1;
     }
 
@@ -62,13 +62,13 @@ int main(int argc, char *argv[])
 
     auto overseerPort = static_cast<quint16>(args.at(0).toShort(&parsingResult));
     if (!parsingResult) {
-        qCritical() << "[Parsing arguments]Port is not a number!";
+        qCritical() << "[Parsing arguments] Port is not a number!";
         return 2;
     }
 
     auto maxGames = static_cast<quint32>(args.at(1).toInt(&parsingResult));
     if (!parsingResult) {
-        qCritical() << "[Parsing arguments]MaxGames is not a number!";
+        qCritical() << "[Parsing arguments] MaxGames is not a number!";
         return 3;
     }
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     GameHostsHub gameHostsHub(overseerCommunication, maxGames, &a);
 
     if (overseerCommunication->isCommunicationWorking()) {
-        qCritical() << "[Overseer communication]Communication could not start";
+        qCritical() << "[Overseer communication] Communication could not start";
         return 5;
     }
 

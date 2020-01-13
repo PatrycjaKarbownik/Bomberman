@@ -1,3 +1,5 @@
+$body-bg: black;
+
 $bomb-green: #00d800;
 $bomb-very-light-green: #ceffce;
 
@@ -23,7 +25,6 @@ $border-radius: .35rem;
 $primary: $bomb-primary;
 $info: $bomb-primary-font;
 $light: $bomb-very-light-black;
-$body-bg: black;
 
 @import "bootstrap/overrides";
 @import "~bootstrap/scss/functions";

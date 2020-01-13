@@ -14,14 +14,14 @@ import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernam
 export class WebsocketService {
   @UserId() private userId: number;
   private overseerSocket = new OverseerSocket();
-  private gamehostSocket = webSocket('ws://192.168.0.121:5002');
   private roomState$ = this.overseerSocket.fromEvent<RoomModel>('room_state_changed');
   private lobbyState$ = this.overseerSocket.fromEvent<RoomWithUsernamesModel[]>('lobby_state_changed');
+  private portState$ = this.overseerSocket.fromEvent<number>('port_ready');
 
   room$ = new ReplaySubject<RoomModel>();
   lobby$ = new ReplaySubject<RoomWithUsernamesModel[]>();
-
-  private counter = 1;
+  port$ = new ReplaySubject<number>();
+  port: number;
 
   constructor() {
     this.overseerConnect();
@@ -33,17 +33,11 @@ export class WebsocketService {
     this.roomState$.subscribe(roomState => {
       this.room$.next(roomState);
     });
-  }
 
-  // todo: remove
-  newMessage() {
-    console.log(this.counter);
-    this.gamehostSocket.next({msg: `Test message ${this.counter}`});
-    this.counter++;
-  }
-
-  getGamehostSocket() {
-    return this.gamehostSocket;
+    this.portState$.subscribe(portState => {
+      this.port = portState;
+      this.port$.next(portState);
+    });
   }
 
   overseerConnect() {
@@ -52,7 +46,6 @@ export class WebsocketService {
   }
 
   overseerDisconnect() {
-    console.log('disconnect');
     this.overseerSocket.disconnect();
   }
 }
