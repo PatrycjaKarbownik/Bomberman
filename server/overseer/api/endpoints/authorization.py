@@ -31,13 +31,17 @@ class AuthLogin(Resource):
         user_id = lobby.add_user(username)
         # TODO Maybe just return whole user instead of just id?
         user = lobby.users[user_id]
-        user.access_token = create_access_token(identity=user_id)
-        user.refresh_token = create_refresh_token(identity=user_id)
+
+        access_token = create_access_token(identity=user_id)
+        refresh_token = create_refresh_token(identity=user_id)
+        user.access_token = 'Bearer ' + access_token
+        user.refresh_token = 'Bearer ' + refresh_token
+
         return {
                     'userId': user_id,
                     'username': username,
-                    'accessToken': user.access_token,
-                    'refreshToken': user.refresh_token
+                    'accessToken': access_token,
+                    'refreshToken': refresh_token
                }, 200
 
 

@@ -21,24 +21,18 @@ Room::~Room()
 bool Room::addPlayer(Player *player)
 {
     if (!player) {
-        qWarning() << "Room received nullptr instead of player";
+        qWarning() << "[Room] Room received nullptr instead of player";
         return false;
     }
     if (m_players.size() >= MAX_PLAYERS) {
-        qWarning() << "Player " << player->getUsername() << " tried to enter full room";
+        qWarning() << "[Room] Player " << player->getUsername() << " tried to enter full room";
         return false;
     }
 
     m_players.push_back(player);
     connect(player, &Player::disconnected, this, &Room::onPlayerDisconnected);
-    // TODO Remove/change welcome message
-    QString expectedPlayers;
-    for (const QString username : m_expectedPlayers) {
-        expectedPlayers.append(username);
-    }
-    QString welcomeMessage =
-            QString("[TEST MESSAGE] You entered room game! Your teammates will be %1").arg(expectedPlayers);
-    player->getSocket()->sendTextMessage(welcomeMessage);
+
+    qInfo() << "[Room] Added player " << player->getUsername() << " to room";
     return true;
 }
 
@@ -58,7 +52,7 @@ void Room::onPlayerDisconnected()
 
     auto playerIterator = std::find(m_players.begin(), m_players.end(), player);
     if (playerIterator == m_players.end()) {
-        qWarning() << "Disconnected player not present in room";
+        qWarning() << "[Room] Disconnected player not present in room";
     } else {
         m_players.erase(playerIterator);
     }

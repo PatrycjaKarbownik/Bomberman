@@ -70,6 +70,45 @@ void GameHost::onAuthorizationSucceed(const QString &jwtToken_, const QString &u
     player->getSocket()->close(QWebSocketProtocol::CloseCodeNormal, "Player not expected in any of rooms");
 }
 
+std::tuple<QJsonValue, QJsonValue> GameHost::parseAuthorizationMessage(const QString &message_)
+{
+    QJsonDocument messageDoc = QJsonDocument::fromJson(message_.toUtf8());
+
+    if (messageDoc.isEmpty()) {
+        qWarning() << "[Parsing JSON message]Parsing of message failed";
+        return {QJsonValue(QJsonValue::Undefined), QJsonValue(QJsonValue::Undefined)};
+    }
+
+    QJsonValue messageType = messageDoc["messageType"];
+    if (!messageType.isString()) {
+        qWarning() << "[Parsing JSON message]Received message does not contain \"messageType\" field "
+                      "or it has wrong type (not string)";
+        return {QJsonValue(QJsonValue::Undefined), QJsonValue(QJsonValue::Undefined)};
+    }
+
+    if (messageType.toString() != "authorization") {
+        qWarning() << "[Parsing JSON message]Received message was not of type authorization";
+        return {QJsonValue(QJsonValue::Undefined), QJsonValue(QJsonValue::Undefined)};
+    }
+
+    QJsonValue credentialsObject = messageDoc["content"];
+    if (!credentialsObject.isObject()) {
+        qWarning() << "[Parsing JSON message]Received message does not contain \"content\" field "
+                      "or it has wrong type (not JSON object)";
+        return {QJsonValue(QJsonValue::Undefined), QJsonValue(QJsonValue::Undefined)};
+    }
+
+    QJsonValue jwtToken = credentialsObject["jwtToken"];
+    QJsonValue username = credentialsObject["username"];
+    if (!jwtToken.isString() || !username.isString()) {
+        qWarning() << "[Parsing JSON message]Received message does not contain \"jwtToken\" field or \"username\" "
+                      "field or they have wrong type (not JSON object)";
+        return {QJsonValue(QJsonValue::Undefined), QJsonValue(QJsonValue::Undefined)};
+    }
+
+    return {jwtToken, username};
+}
+
 void GameHost::onIncomingConnection()
 {
     qDebug() << "[Connection] Incoming connection";
@@ -79,51 +118,23 @@ void GameHost::onIncomingConnection()
         connect(pendingConnection, &QWebSocket::textMessageReceived, this, &GameHost::onReceivedTextMessage);
         connect(pendingConnection, &QWebSocket::disconnected, this, &GameHost::onSocketDisckonnect);
 
-        pendingConnection->sendTextMessage(QString("You just connected to GameHost on port %1").arg(m_port));
+        // Until socket is not sending credentials we are treating it as an anonymous socket
         // TODO Add timer to timeout socket after some time
+        m_anonymousSockets.push_back(pendingConnection);
     }
 }
 
 // TODO Shorten this function
 void GameHost::onReceivedTextMessage(const QString &message_)
 {
-    qDebug() << "[Websocket]Received message " << message_;
-    QJsonDocument messageDoc = QJsonDocument::fromJson(message_.toUtf8());
+    qDebug() << "[Websocket] Received message " << message_;
 
-    if (messageDoc.isEmpty()) {
-        qWarning() << "[Parsing JSON message]Parsing of message failed";
-        return;
-    }
-
-    QJsonValue messageType = messageDoc["messageType"];
-    if (!messageType.isString()) {
-        qWarning() << "[Parsing JSON message]Received message does not contain \"messageType\" field "
-                      "or it has wrong type (not string)";
-        return;
-    }
-
-    if (messageType.toString() != "authorization") {
-        qWarning() << "[Parsing JSON message]Received message was not of type authorization";
-        return;
-    }
-
-    QJsonValue credentialsObject = messageDoc["content"];
-    if (!credentialsObject.isObject()) {
-        qWarning() << "[Parsing JSON message]Received message does not contain \"content\" field "
-                      "or it has wrong type (not JSON object)";
-        return;
-    }
-
-    QJsonValue jwtToken = credentialsObject["jwtToken"];
-    QJsonValue username = credentialsObject["username"];
-    if (!jwtToken.isString() || !username.isString()) {
-        qWarning() << "[Parsing JSON message]Received message does not contain \"jwtToken\" field or \"username\" "
-                      "field or they have wrong type (not JSON object)";
-        return;
-    }
+    // At this stage of communication we expect only authorization message
+    auto [jwtToken, username] = parseAuthorizationMessage(message_);
 
     QWebSocket *socket = dynamic_cast<QWebSocket*>(sender());
     if (!socket) {
+        qWarning() << "[Websocket] No webSocket associated with sent message";
         return;
     }
 
@@ -132,6 +143,7 @@ void GameHost::onReceivedTextMessage(const QString &message_)
     // Remove socket from anonymous sockets as player just introduced itself
     auto socketIt = std::find(m_anonymousSockets.begin(), m_anonymousSockets.end(), socket);
     if (socketIt == m_anonymousSockets.end()) {
+        qWarning() << "[Websocket] Socket who wanted authorization is not on list of anonymous sockets";
         return;
     }
     m_anonymousSockets.erase(socketIt);

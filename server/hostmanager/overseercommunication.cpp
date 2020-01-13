@@ -57,6 +57,8 @@ void OverseerCommunication::sendAuthorizationRequest(const QString &jwtToken_, c
 
     QJsonDocument doc(request);
     m_socket.write(doc.toJson(QJsonDocument::Compact).append('\n'));
+
+    qDebug() << "[Authorization] Send authorization request to overseer for user " << username_;
 }
 
 void OverseerCommunication::onReadyRead()
