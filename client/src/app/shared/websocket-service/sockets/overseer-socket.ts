@@ -1,5 +1,5 @@
 import { Socket } from 'ngx-socket-io';
-import { overseerIP } from '@app/shared/configuration';
+import { overseerIP } from '@app/shared/ip-configuration';
 
 export class OverseerSocket extends Socket {
   constructor() {

@@ -11,7 +11,7 @@ export class Configuration {
   // map configurations
   mapHeight = 700;
   mapWidth = this.mapHeight;
-  mapSize = 5;
+  mapSize = 11;
   tileHeight = this.mapHeight / this.mapSize;
   tileWidth = this.mapWidth / this.mapSize;
 

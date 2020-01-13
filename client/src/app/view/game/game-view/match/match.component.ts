@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 
 import { ActionService } from '@app/view/game/game-view/action.service';
 import { GameService } from '@app/view/game/game-view/game.service';
+import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
 // component with game
 // inits game start and listens keyboard events
@@ -23,14 +24,16 @@ export class MatchComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef;
   showLoader = true;
 
-  constructor(private actionService: ActionService, private gameService: GameService) { }
+  constructor(private actionService: ActionService, private gameService: GameService,
+              private serverConnectionService: ServerConnectionService) { }
 
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.actionService.createPlayGround(canvasEl);
-    this.actionService.getImageLoadEmitter()
-      .subscribe(imageLoaded => {
-        this.showLoader = !imageLoaded;
+    this.actionService.setConfiguration();
+    this.serverConnectionService.getGameStartedEmitter()
+      .subscribe(gameStarted => {
+        this.showLoader = !(gameStarted === true);
         this.gameService.startGameLoop()
       });
   }

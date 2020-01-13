@@ -43,7 +43,13 @@ export class GameService {
 
   constructor(private gameDetailsService: GameDetailsService, private serverConnectionService: ServerConnectionService,
               private configuration: Configuration) {
-    this.walls = gameDetailsService.getWalls();
+
+    this.gameDetailsService.getConfigurationSetEmitter().subscribe(configurationSet => {
+      if(configurationSet === true) {
+        this.walls = gameDetailsService.getWalls();
+      }
+    });
+
     this.bonuses = gameDetailsService.getBonuses();
   }
 
@@ -62,6 +68,10 @@ export class GameService {
         resolve();
       };
     });
+  }
+
+  loadMap() {
+
   }
 
   startGameLoop() {
