@@ -6,4 +6,6 @@ export enum MessageType {
   OTHER_PLAYER_UPDATE = "otherPlayerUpdate",
   PLAYER_UPDATE = "playerUpdate",
   LAST_REQUEST = "lastReviewedRequestId",
+  BOMB_PLACED = "bombPlaced",
+  BOMB_REJECTED = "bombRejected",
 }

@@ -11,6 +11,7 @@ import { gamehostIP } from '@app/shared/ip-configuration';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
 import { RequestType } from '@app/view/game/game-view/server-connection/request-type';
+import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,8 @@ export class ServerConnectionService {
   private initialPlayersInfoEmitter: EventEmitter<PlayerDetailsModel[]> = new EventEmitter<PlayerDetailsModel[]>();
   private otherPlayerInfoEmitter: EventEmitter<PlayerDetailsModel> = new EventEmitter<PlayerDetailsModel>();
   private playerInfoEmitter: EventEmitter<PlayerDetailsModel> = new EventEmitter<PlayerDetailsModel>();
+  private newBombEmitter: EventEmitter<BombModel> = new EventEmitter<BombModel>();
+  private rejectedBombEmitter: EventEmitter<BombModel> = new EventEmitter<BombModel>();
 
   constructor(private websocketService: WebsocketService) {
     this.gameHostSocket = webSocket(`ws://${gamehostIP}:${websocketService.port}`);
@@ -55,7 +58,10 @@ export class ServerConnectionService {
           this.emitPlayerInfo(messageData.content);
         } else if (messageData.messageType === MessageType.LAST_REQUEST) {
           this.lastReviewedId = messageData.content;
-          console.log('lastReviewed', this.lastReviewedId);
+        } else if (messageData.messageType === MessageType.BOMB_PLACED) {
+          this.emitNewBomb(messageData.content);
+        } else if (messageData.messageType === MessageType.BOMB_REJECTED) {
+          this.emitRejectedBomb(messageData.content);
         }
       }
     );
@@ -113,6 +119,14 @@ export class ServerConnectionService {
     return this.playerInfoEmitter;
   }
 
+  getNewBombEmitter() {
+    return this.newBombEmitter;
+  }
+
+  getRejectedBombEmitter() {
+    return this.rejectedBombEmitter;
+  }
+
   private emitMapInfo(mapInfo: TileModel[]) {
     this.mapInfoEmitter.emit(mapInfo);
   }
@@ -131,5 +145,13 @@ export class ServerConnectionService {
 
   private emitPlayerInfo(playerInfo: PlayerDetailsModel) {
     this.playerInfoEmitter.emit(playerInfo);
+  }
+
+  private emitNewBomb(bomb: BombModel) {
+    this.newBombEmitter.emit(bomb);
+  }
+
+  private emitRejectedBomb(bomb: BombModel) {
+    this.rejectedBombEmitter.emit(bomb);
   }
 }

@@ -23,6 +23,7 @@ export class GameService {
 
   // other items
   private bombs: BombModel[] = [];
+  private playerBombs: BombModel[] = [];
   // collection of bombs witch player placed but didn't leave tiles with them
   // it's needed, because player have to leave tiles, where placed bomb
   // and it's necessary to split them
@@ -70,6 +71,8 @@ export class GameService {
     this.setConfigurationSubscription();
     this.setOtherPlayersUpdateSubscription();
     this.setPlayerUpdateSubscription();
+    this.setNewBombsSubscription();
+    this.setRejectedBombsSubscription();
   }
 
   startGameLoop() {
@@ -99,7 +102,7 @@ export class GameService {
 
   private drawBombs() {
     let bombSprite = this.configuration.sprites[SpriteType.BOMB];
-    this.bombs.concat(this.bombsUnderPlayer).forEach(bomb => {
+    this.bombs.concat(this.bombsUnderPlayer).concat(this.playerBombs).forEach(bomb => {
       this.context.drawImage(
         this.image,
         bombSprite.spriteX, bombSprite.spriteY,
@@ -255,7 +258,8 @@ export class GameService {
     if (!this.isBombPresentAtTile(x, y)) {
       this.bombsUnderPlayer.push({
         x: x,
-        y: y
+        y: y,
+        isPlayersBomb: true
       } as BombModel);
       this.serverConnectionService.sendBombRequest(x, y);
     }
@@ -277,6 +281,24 @@ export class GameService {
     return this.bombs.concat(this.bombsUnderPlayer).find(it => it.x === x && it.y === y) !== undefined;
   }
 
+  private setNotOwnBomb(bomb: BombModel) {
+    bomb.isPlayersBomb = false;
+
+    const supposedLeftSide = this.player.x;
+    const supposedRightSide = this.player.x + this.playerSprite.width;
+    const supposedTopSide = this.player.y;
+    const supposedBottomSide = this.player.y + this.playerSprite.height;
+    const tileWidth = this.configuration.tileWidth;
+    const tileHeight = this.configuration.tileHeight;
+
+    if (!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
+      bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight)) {
+      this.bombs.push(bomb);
+    } else {
+      this.bombsUnderPlayer.push(bomb);
+    }
+  }
+
   private checkIfPlayerLeavesTilesWithBomb() {
     const supposedLeftSide = this.player.x;
     const supposedRightSide = this.player.x + this.playerSprite.width;
@@ -288,7 +310,11 @@ export class GameService {
     this.bombsUnderPlayer.forEach(bomb => {
       if (!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
         bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight)) {
-        this.bombs.push(bomb);
+        if (bomb.isPlayersBomb === true) {
+          this.playerBombs.push(bomb);
+        } else {
+          this.bombs.push(bomb);
+        }
         this.bombsUnderPlayer.splice(this.bombsUnderPlayer.indexOf(bomb), 1);
       }
     });
@@ -330,12 +356,33 @@ export class GameService {
   private setPlayerUpdateSubscription() {
     this.serverConnectionService.getPlayerInfoEmitter()
       .subscribe((playerInfo: PlayerDetailsModel) => {
-        console.log('player info', playerInfo);
         this.player.x = playerInfo.x;
         this.player.y = playerInfo.y;
         this.player.alive = playerInfo.alive;
         this.player.speed = playerInfo.speed;
         this.player.bombPusher = playerInfo.bombPusher;
-      })
+      });
+  }
+
+  private setNewBombsSubscription() {
+    this.serverConnectionService.getNewBombEmitter()
+      .subscribe((bomb: BombModel) => {
+        this.setNotOwnBomb(bomb);
+      });
+  }
+
+  private setRejectedBombsSubscription() {
+    this.serverConnectionService.getRejectedBombEmitter()
+      .subscribe((bomb: BombModel) => {
+        let suspectedBomb = this.bombsUnderPlayer.find(it => it.x === bomb.x && it.y === bomb.y);
+        if (suspectedBomb !== undefined) {
+          this.bombsUnderPlayer.splice(this.bombsUnderPlayer.indexOf(suspectedBomb), 1);
+        } else {
+          suspectedBomb = this.playerBombs.find(it => it.x === bomb.x && it.y === bomb.y);
+          if (suspectedBomb !== undefined) {
+            this.playerBombs.splice(this.bombsUnderPlayer.indexOf(suspectedBomb), 1);
+          }
+        }
+      });
   }
 }
