@@ -1,14 +1,10 @@
-import { Injectable } from '@angular/core';
-
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { EventEmitter, Injectable } from '@angular/core';
 
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
 import { HeroModel } from '@app/view/game/models/hero.model';
-import { UserId, Username } from '@app/core/storages/user-details.storage';
-import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
-import { AccessToken } from '@app/core/storages/access-token.storage';
-import { gamehostIP } from '@app/shared/configuration';
+import { UserId } from '@app/core/storages/user-details.storage';
+import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
 // game details service
 // connects with gamehost
@@ -21,21 +17,29 @@ export class GameDetailsService {
   @UserId() userId;
 
   playerCorner: number;
-  private gamehostSocket: WebSocketSubject<{}>;
+  walls: TileModel[];
+  private mapLoaded = false;
+  private playerLoaded = true; // false
+  private configurationSetEmitter: EventEmitter<boolean> = new EventEmitter();
 
   private temporaryTileHeight = 140;
 
-  constructor(private websocketService: WebsocketService) {
+  constructor(private serverConnectionService: ServerConnectionService) {
     this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
-    console.log('port', websocketService.port);
-    this.gamehostSocket = webSocket(`ws://${gamehostIP}:${websocketService.port}`);
-
-/*
-    this.gamehostSocket.asObservable().subscribe(data => console.log(data));*/
+    this.serverConnectionService.getMapInfoEmitter().subscribe((walls: TileModel[]) => {
+      this.walls = walls.filter(it => it.type !== TileType.NOTHING);
+      console.log(this.walls);
+      this.mapLoaded = true;
+      this.emitConfigurationSet();
+    });
   }
 
-  getGamehostSocket() {
-    return this.gamehostSocket;
+  private emitConfigurationSet() {
+    this.configurationSetEmitter.emit(this.mapLoaded && this.playerLoaded);
+  }
+
+  getConfigurationSetEmitter() {
+    return this.configurationSetEmitter;
   }
 
   // todo: remove - it's mock
@@ -62,7 +66,7 @@ export class GameDetailsService {
 
   // todo: remove - it's mock
   getWalls(): TileModel[] {
-    return [{
+    return this.walls; /*[{
       id: 0,
       x: 2 * this.temporaryTileHeight,
       y: 0 * this.temporaryTileHeight,
@@ -93,7 +97,7 @@ export class GameDetailsService {
       y: 3 * this.temporaryTileHeight,
       type: TileType.WALL
     } as TileModel
-    ];
+    ];*/
   }
 
   getBonuses(): TileModel[] {

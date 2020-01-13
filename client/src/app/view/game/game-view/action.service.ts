@@ -8,44 +8,49 @@ import { Configuration } from '@app/view/game/game-view/models/configuration';
 })
 export class ActionService { // todo: change service name
 
+  private assetsLoaded: boolean = false;
+  private configurationSet: boolean = false;
   private isImageLoaded: EventEmitter<boolean> = new EventEmitter();
 
   constructor(private gameService: GameService, private configuration: Configuration) { }
 
   createPlayGround(canvasElement): void {
-    this.gameService.loadAssets(canvasElement).then(() => {
-      setTimeout( () =>{
-        this.isImageLoaded.emit(true);
-      },1000);
-    });
+    this.gameService.loadAssets(canvasElement).then(/*() => {
+      setTimeout(() => {
+        this.assetsLoaded = true;
+        this.isImageLoaded.emit(this.assetsLoaded && this.configurationSet);
+      }, 1000);
+    }*/);
   }
 
-  getImageLoadEmitter() {
+  setConfiguration() {
+    console.log('set map');
+  }
+
+  getConfigurationSetEmitter() {
     return this.isImageLoaded;
   }
 
   keyDown(event: KeyboardEvent): void {
-    if(event.code === this.configuration.keyboardsSettings.placeBomb) {
+    if (event.code === this.configuration.keyboardsSettings.placeBomb) {
       this.gameService.setBomb();
     }
-    if(event.code === this.configuration.keyboardsSettings.up) {
+    if (event.code === this.configuration.keyboardsSettings.up) {
       this.gameService.up = true;
       this.gameService.down = false;
       this.gameService.left = false;
       this.gameService.right = false;
-    } else if(event.code === this.configuration.keyboardsSettings.down) {
+    } else if (event.code === this.configuration.keyboardsSettings.down) {
       this.gameService.up = false;
       this.gameService.down = true;
       this.gameService.left = false;
       this.gameService.right = false;
-    }
-    else if(event.code === this.configuration.keyboardsSettings.left) {
+    } else if (event.code === this.configuration.keyboardsSettings.left) {
       this.gameService.up = false;
       this.gameService.down = false;
       this.gameService.left = true;
       this.gameService.right = false;
-    }
-    else if(event.code === this.configuration.keyboardsSettings.right) {
+    } else if (event.code === this.configuration.keyboardsSettings.right) {
       this.gameService.up = false;
       this.gameService.down = false;
       this.gameService.left = false;
@@ -54,7 +59,7 @@ export class ActionService { // todo: change service name
   }
 
   keyUp(event: KeyboardEvent): void {
-    switch(event.code) {
+    switch (event.code) {
       case this.configuration.keyboardsSettings.up:
       case this.configuration.keyboardsSettings.down:
       case this.configuration.keyboardsSettings.left:

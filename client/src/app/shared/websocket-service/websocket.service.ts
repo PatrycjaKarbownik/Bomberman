@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { ReplaySubject } from 'rxjs';
-import { webSocket } from 'rxjs/webSocket';
 
 import { RoomModel } from '@app/view/room/models/room.model';
 import { OverseerSocket } from '@app/shared/websocket-service/sockets/overseer-socket';
