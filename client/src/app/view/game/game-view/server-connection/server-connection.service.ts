@@ -10,6 +10,7 @@ import { WebsocketService } from '@app/shared/websocket-service/websocket.servic
 import { gamehostIP } from '@app/shared/ip-configuration';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
+import { RequestType } from '@app/view/game/game-view/server-connection/request-type';
 
 @Injectable({
   providedIn: 'root'
@@ -19,33 +20,22 @@ export class ServerConnectionService {
   @Username() username;
   @AccessToken() accessToken;
 
+  // parameters used to sending request to server
+  private actualRequestId = 0;
+  private lastReviewedId = 0;
+
   private gameHostSocket: WebSocketSubject<{}>;
   private gameStartedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   private mapInfoEmitter: EventEmitter<TileModel[]> = new EventEmitter<TileModel[]>();
-  private playersInfoEmitter: EventEmitter<PlayerDetailsModel[]> = new EventEmitter<PlayerDetailsModel[]>();
+  private initialPlayersInfoEmitter: EventEmitter<PlayerDetailsModel[]> = new EventEmitter<PlayerDetailsModel[]>();
+  private otherPlayerInfoEmitter: EventEmitter<PlayerDetailsModel> = new EventEmitter<PlayerDetailsModel>();
+  private playerInfoEmitter: EventEmitter<PlayerDetailsModel> = new EventEmitter<PlayerDetailsModel>();
 
   constructor(private websocketService: WebsocketService) {
-    console.log('port', websocketService.port);
     this.gameHostSocket = webSocket(`ws://${gamehostIP}:${websocketService.port}`);
 
     this.sendAuthorizationMessage();
     this.listenGameHostSocket();
-  }
-
-  getGameHostSocket() {
-    return this.gameHostSocket;
-  }
-
-  getMapInfoEmitter() {
-    return this.mapInfoEmitter;
-  }
-
-  getPlayersInfoEmitter() {
-    return this.playersInfoEmitter;
-  }
-
-  getGameStartedEmitter() {
-    return this.gameStartedEmitter;
   }
 
   private listenGameHostSocket() {
@@ -55,25 +45,20 @@ export class ServerConnectionService {
 
         if (messageData.messageType === MessageType.MAP_INFO) {
           this.emitMapInfo(messageData.content);
-        } else if (messageData.messageType === MessageType.PLAYER_INFO) {
+        } else if (messageData.messageType === MessageType.INITIAL_PLAYERS_INFO) {
           this.emitPlayersInfo(messageData.content);
         } else if (messageData.messageType === MessageType.START) {
           this.emitStartGame();
+        } else if (messageData.messageType === MessageType.OTHER_PLAYER_UPDATE) {
+          this.emitOtherPlayerInfo(messageData.content);
+        } else if (messageData.messageType === MessageType.PLAYER_UPDATE) {
+          this.emitPlayerInfo(messageData.content);
+        } else if (messageData.messageType === MessageType.LAST_REQUEST) {
+          this.lastReviewedId = messageData.content;
+          console.log('lastReviewed', this.lastReviewedId);
         }
       }
     );
-  }
-
-  private emitMapInfo(mapInfo: TileModel[]) {
-    this.mapInfoEmitter.emit(mapInfo);
-  }
-
-  private emitPlayersInfo(playersInfo: PlayerDetailsModel[]) {
-    this.playersInfoEmitter.emit(playersInfo);
-  }
-
-  private emitStartGame() {
-    this.gameStartedEmitter.emit(true);
   }
 
   private sendAuthorizationMessage() {
@@ -84,5 +69,67 @@ export class ServerConnectionService {
         username: this.username
       }
     } as MessageModel);
+  }
+
+  sendMoveRequest(x: number, y: number) {
+    this.sendRequest(RequestType.MOVE, [`${x}`, `${y}`]);
+  }
+
+  sendBombRequest(x: number, y: number) {
+    this.sendRequest(RequestType.BOMB, [`${x}`, `${y}`]);
+  }
+
+  private sendRequest(requestType: RequestType, additionalInfo: string[]) {
+    let request = `RQ_${requestType}_${this.actualRequestId}_${this.lastReviewedId}`;
+
+    additionalInfo.forEach(it => request = request.concat(`_${it}`));
+    console.log('request', request);
+
+    this.gameHostSocket.next(request);
+    this.actualRequestId += 1;
+  }
+
+  getGameHostSocket() {
+    return this.gameHostSocket;
+  }
+
+  getMapInfoEmitter() {
+    return this.mapInfoEmitter;
+  }
+
+  getInitialPlayersInfoEmitter() {
+    return this.initialPlayersInfoEmitter;
+  }
+
+  getGameStartedEmitter() {
+    return this.gameStartedEmitter;
+  }
+
+  getOtherPlayerInfoEmitter() {
+    return this.otherPlayerInfoEmitter;
+  }
+
+  getPlayerInfoEmitter() {
+    return this.playerInfoEmitter;
+  }
+
+  private emitMapInfo(mapInfo: TileModel[]) {
+    this.mapInfoEmitter.emit(mapInfo);
+  }
+
+  private emitPlayersInfo(playersInfo: PlayerDetailsModel[]) {
+    this.initialPlayersInfoEmitter.emit(playersInfo);
+  }
+
+  private emitStartGame() {
+    this.gameStartedEmitter.emit(true);
+  }
+
+  private emitOtherPlayerInfo(otherPlayerInfo: PlayerDetailsModel) {
+    this.otherPlayerInfoEmitter.emit(otherPlayerInfo);
+  }
+
+  private emitPlayerInfo(playerInfo: PlayerDetailsModel) {
+    this.playerInfoEmitter.emit(playerInfo);
   }
 }

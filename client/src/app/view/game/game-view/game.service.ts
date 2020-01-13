@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { GameDetailsService } from '@app/view/game/game-view/game-details.service';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
-import { Configuration } from '@app/view/game/game-view/models/configuration';
+import { MapConfiguration } from '@app/view/game/game-view/models/map-configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
@@ -42,14 +42,9 @@ export class GameService {
   right = false;
 
   constructor(private gameDetailsService: GameDetailsService, private serverConnectionService: ServerConnectionService,
-              private configuration: Configuration) {
+              private configuration: MapConfiguration) {
 
-    this.gameDetailsService.getConfigurationSetEmitter().subscribe(configurationSet => {
-      if(configurationSet === true) {
-        this.walls = gameDetailsService.getWalls();
-        this.otherPlayers = gameDetailsService.getOtherPlayers();
-      }
-    });
+    this.setServerSubscriptions();
 
     this.bonuses = gameDetailsService.getBonuses();
   }
@@ -69,6 +64,12 @@ export class GameService {
         resolve();
       };
     });
+  }
+
+  setServerSubscriptions() {
+    this.setConfigurationSubscription();
+    this.setOtherPlayersUpdateSubscription();
+    this.setPlayerUpdateSubscription();
   }
 
   startGameLoop() {
@@ -110,16 +111,17 @@ export class GameService {
   }
 
   private drawOtherPlayers() {
-    this.otherPlayers.forEach(player => {
-      let playerSprite = this.configuration.sprites[player.inGameId % 4];
-      this.context.drawImage(
-        this.image,
-        playerSprite.spriteX, playerSprite.spriteY,
-        playerSprite.spriteWidth, playerSprite.spriteHeight,
-        player.x, player.y,
-        playerSprite.width, playerSprite.height,
-      );
-    })
+    this.otherPlayers.filter(it => it.alive === true)
+      .forEach(player => {
+        let playerSprite = this.configuration.sprites[player.inGameId % 4];
+        this.context.drawImage(
+          this.image,
+          playerSprite.spriteX, playerSprite.spriteY,
+          playerSprite.spriteWidth, playerSprite.spriteHeight,
+          player.x, player.y,
+          playerSprite.width, playerSprite.height,
+        );
+      });
   }
 
   private drawPlayer() {
@@ -160,6 +162,8 @@ export class GameService {
     } else {
       this.player.y -= this.player.speed;
     }
+
+    this.serverConnectionService.sendMoveRequest(this.player.x, this.player.y);
   }
 
   private moveDown() {
@@ -171,6 +175,8 @@ export class GameService {
     } else {
       this.player.y += this.player.speed;
     }
+
+    this.serverConnectionService.sendMoveRequest(this.player.x, this.player.y);
   }
 
   private moveLeft() {
@@ -182,6 +188,8 @@ export class GameService {
     } else {
       this.player.x -= this.player.speed;
     }
+
+    this.serverConnectionService.sendMoveRequest(this.player.x, this.player.y);
   }
 
   private moveRight() {
@@ -189,10 +197,12 @@ export class GameService {
     if (this.player.x + this.player.speed + this.playerSprite.width > this.configuration.mapWidth) {
       this.player.x = this.configuration.mapWidth - this.playerSprite.width;
     } else if (collidedObjectCoordinate != undefined) {
-      this.player.x = collidedObjectCoordinate[0] - 0.7 * this.configuration.tileWidth
+      this.player.x = collidedObjectCoordinate[0] - 0.7 * this.configuration.tileWidth;
     } else {
       this.player.x += this.player.speed;
     }
+
+    this.serverConnectionService.sendMoveRequest(this.player.x, this.player.y);
   }
 
   // returns coordinates of object with witch player collided
@@ -227,7 +237,7 @@ export class GameService {
 
   private areCollisionConditionsAchieved(pLeft: number, pRight: number, pTop: number, pBottom: number,
                                          sLeft: number, sRight: number, sTop: number, sBottom: number): boolean {
-    return (pRight > sLeft && pLeft < sRight) && (pTop < sBottom && pBottom > sTop);
+    return pRight > sLeft && pLeft < sRight && pTop < sBottom && pBottom > sTop;
   }
 
   setBomb() {
@@ -247,6 +257,7 @@ export class GameService {
         x: x,
         y: y
       } as BombModel);
+      this.serverConnectionService.sendBombRequest(x, y);
     }
   }
 
@@ -275,12 +286,12 @@ export class GameService {
     const tileHeight = this.configuration.tileHeight;
 
     this.bombsUnderPlayer.forEach(bomb => {
-      if(!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
+      if (!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
         bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight)) {
         this.bombs.push(bomb);
         this.bombsUnderPlayer.splice(this.bombsUnderPlayer.indexOf(bomb), 1);
       }
-    })
+    });
   }
 
   private getTileSprite(tileType: TileType): Sprite {
@@ -295,4 +306,36 @@ export class GameService {
     if (tileType === TileType.PUSH_BOMB) return this.configuration.sprites[SpriteType.PUSH_BOMB];
   }
 
+  private setConfigurationSubscription() {
+    this.gameDetailsService.getConfigurationSetEmitter()
+      .subscribe(configurationSet => {
+        if (configurationSet === true) {
+          this.walls = this.gameDetailsService.getWalls();
+          this.otherPlayers = this.gameDetailsService.getOtherPlayers();
+        }
+      });
+  }
+
+  private setOtherPlayersUpdateSubscription() {
+    this.serverConnectionService.getOtherPlayerInfoEmitter()
+      .subscribe((otherPlayerInfo: PlayerDetailsModel) => {
+        this.otherPlayers.filter(player => player.inGameId === otherPlayerInfo.inGameId).forEach(it => {
+          it.x = otherPlayerInfo.x;
+          it.y = otherPlayerInfo.y;
+          it.alive = otherPlayerInfo.alive;
+        });
+      });
+  }
+
+  private setPlayerUpdateSubscription() {
+    this.serverConnectionService.getPlayerInfoEmitter()
+      .subscribe((playerInfo: PlayerDetailsModel) => {
+        console.log('player info', playerInfo);
+        this.player.x = playerInfo.x;
+        this.player.y = playerInfo.y;
+        this.player.alive = playerInfo.alive;
+        this.player.speed = playerInfo.speed;
+        this.player.bombPusher = playerInfo.bombPusher;
+      })
+  }
 }

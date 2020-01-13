@@ -33,16 +33,16 @@ export class GameDetailsService {
   private listenMapInfo() {
     this.serverConnectionService.getMapInfoEmitter().subscribe((walls: TileModel[]) => {
       this.walls = walls.filter(it => it.type !== TileType.NOTHING);
-      console.log(this.walls);
+      console.log('walls', this.walls);
       this.mapLoaded = true;
       this.emitConfigurationSet();
     });
   }
 
   private listenPlayersInfo() {
-    this.serverConnectionService.getPlayersInfoEmitter().subscribe((players: PlayerDetailsModel[]) => {
+    this.serverConnectionService.getInitialPlayersInfoEmitter().subscribe((players: PlayerDetailsModel[]) => {
       this.otherPlayers = players.filter(it => it.username !== this.username);
-      console.log(this.otherPlayers);
+      console.log('other playaers', this.otherPlayers);
       this.player = players.find(it => it.username === this.username);
       this.playerLoaded = true;
       this.emitConfigurationSet();

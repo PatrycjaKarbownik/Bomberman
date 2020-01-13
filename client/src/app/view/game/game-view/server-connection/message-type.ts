@@ -1,6 +1,9 @@
 export enum MessageType {
   AUTHORIZATION = "authorization",
   MAP_INFO = "mapInfo",
-  PLAYER_INFO = "playerInfo",
+  INITIAL_PLAYERS_INFO = "initialPlayersInfo",
   START = "start",
+  OTHER_PLAYER_UPDATE = "otherPlayerUpdate",
+  PLAYER_UPDATE = "playerUpdate",
+  LAST_REQUEST = "lastReviewedRequestId",
 }

@@ -6,4 +6,5 @@ export interface PlayerDetailsModel {
   y: number;
   speed: number;
   bombPusher: boolean;
+  alive: boolean;
 }

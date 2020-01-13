@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
-import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
 import { KeyboardSettings } from '@app/view/game/game-view/models/keyboard-settings.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class Configuration {
+export class MapConfiguration {
   // map configurations
   mapHeight = 700;
   mapWidth = this.mapHeight;
