@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Observable, ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -15,11 +16,16 @@ export class RoomService {
   private static readonly roomUrl = 'room';
   private static readonly userUrl = 'user';
 
-  constructor(private httpClient: HttpClient, private websocketService: WebsocketService) { }
+  constructor(private httpClient: HttpClient, private websocketService: WebsocketService, private router: Router) { }
 
   // gets details about room received from server via websocket
   getRoom(): ReplaySubject<RoomModel> {
     return this.websocketService.room$;
+  }
+
+  listenPort() {
+    return this.websocketService.port$
+      .subscribe(port => this.router.navigateByUrl('game/match'));
   }
 
   // gives possibility to leave room

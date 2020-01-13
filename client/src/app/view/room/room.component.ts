@@ -30,6 +30,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.getRoom().subscribe(room => {
       this.room = room;
     });
+
+    this.roomService.listenPort();
     // todo: add getting counter state from backend (add maybe 5 seconds on room state change)
       this.counter = of(this.countdown()).subscribe();
   }
@@ -67,6 +69,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.changeReadiness().subscribe();
     // to testing game-result-view
     // this.router.navigateByUrl('game/result');
+  }
+
+  gameView() {
+    this.router.navigateByUrl('game/match');
   }
 
   areAllUsersReady(): boolean {

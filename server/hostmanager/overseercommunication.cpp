@@ -57,6 +57,8 @@ void OverseerCommunication::sendAuthorizationRequest(const QString &jwtToken_, c
 
     QJsonDocument doc(request);
     m_socket.write(doc.toJson(QJsonDocument::Compact).append('\n'));
+
+    qDebug() << "[Authorization] Send authorization request to overseer for user " << username_;
 }
 
 void OverseerCommunication::onReadyRead()
@@ -67,14 +69,14 @@ void OverseerCommunication::onReadyRead()
 
         QJsonDocument doc = QJsonDocument::fromJson(message);
         if (doc.isEmpty()) {
-            qWarning() << "[Parsing overseer message]Parsing of message unsuccesfull";
+            qWarning() << "[Parsing overseer message] Parsing of message unsuccesfull";
             continue;
         }
 
         QJsonValue messageType = doc["messageType"];
         QJsonValue content = doc["content"];
         if (!messageType.isString() || !content.isObject()) {
-            qDebug() << "[Parsing overseer message]Problem with content";
+            qDebug() << "[Parsing overseer message] Problem with content";
             continue;
         }
 
@@ -114,7 +116,7 @@ void OverseerCommunication::handleRoomRequestMessage(const QJsonObject &content_
 {
     QJsonArray expectedPlayers = content_["expectedPlayers"].toArray();
     if (expectedPlayers.isEmpty()) {
-        qWarning() << "[Handling room request]No expected players";
+        qWarning() << "[Handling room request] No expected players";
         return;
     }
 

@@ -4,8 +4,6 @@
   .row.mt-5.rooms-list-header
     span(translate) LOBBY.ROOMS_LIST
     button.ml-5.button-primary(translate, (click)="createAndEnterRoom()") LOBBY.ADD_AND_ENTRY
-    // todo: remove sending msg button
-    button.ml-5.button-primary((click)="sendMsg()") SEND
 
   .row.mt-5.justify-content-center
     div(*ngFor="let room of rooms")

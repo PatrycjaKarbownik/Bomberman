@@ -28,7 +28,6 @@ export class LobbyComponent implements OnInit {
   ngOnInit() {
     this.lobbyService.getRooms().subscribe(rooms =>
       this.rooms = rooms);
-    this.websocketService.getGamehostSocket().asObservable().subscribe(data => console.log(data));
   }
 
   // creates room and navigate user to it
@@ -46,9 +45,5 @@ export class LobbyComponent implements OnInit {
 
   private navigateToRoom(id: number) {
     this.router.navigateByUrl(`${ViewModel.ROOM}/${id}`);
-  }
-
-  sendMsg() {
-    this.websocketService.newMessage();
   }
 }
