@@ -29,11 +29,11 @@ public:
      */
     QWebSocket *getSocket() const;
 
-    quint32 getPosX() const;
-    void setPosX(const quint32 &posX_);
+    double getPosX() const;
+    void setPosX(const double &posX_);
 
-    quint32 getPosY() const;
-    void setPosY(const quint32 &posY_);
+    double getPosY() const;
+    void setPosY(const double &posY_);
 
     quint32 getBombLimit() const;
     void setBombLimit(const quint32 &bombLimit_);
@@ -44,8 +44,11 @@ public:
     bool getPushBonus() const;
     void setPushBonus(bool pushBonus_);
 
-    quint32 getId() const;
-    void setId(const quint32 &id);
+    quint32 getInGameId() const;
+    void setInGameId(const quint32 &id);
+
+    quint32 getLastRejectedRequestId() const;
+    void setLastRejectedRequestId(const quint32 &lastRejectedRequestId);
 
 signals:
     /**
@@ -53,19 +56,22 @@ signals:
      */
     void disconnected();
 
-    void moveRequest(quint32 requestId_, quint32 lastReviewedRequestId_, quint32 x_, quint32 y_);
-    void bombRequest(quint32 requestId_, quint32 lastReviewedRequestId_);
+    void moveRequest(Player* player_, quint32 requestId_, quint32 lastReviewedRequestId_,
+                     double x_, double y_);
+    void bombRequest(Player* player_, quint32 requestId_, quint32 lastReviewedRequestId_,
+                     double x_, double y_);
 
 public slots:
 
 private:
     QWebSocket *m_socket;
     const QString m_username;
-    quint32 m_posX {0};
-    quint32 m_posY {0};
+    double m_posX {0};
+    double m_posY {0};
     quint32 m_bombLimit {0};
     quint32 m_placedBombs {0};
-    quint32 m_id {0};
+    quint32 m_inGameId {0};
+    quint32 m_lastRejectedRequestId {0};
     bool m_pushBonus {false};
 
 private slots:

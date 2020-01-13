@@ -63,13 +63,17 @@ private:
     QTimer m_countdownTimer;
     std::vector<Player*> m_players;
     const QStringList m_expectedPlayers;
-    quint32 m_playerWidth;
-    quint32 m_tileWidth;
+    double m_playerWidth;
+    double m_tileWidth;
 
 private slots:
     void onPlayerDisconnected();
     void onStartTimeout();
     void onEveryoneConnected();
+    void onPlayerMoveRequest(Player* player_, quint32 requestId_, quint32 lastReviewedRequestId_,
+                             double x_, double y_);
+    void onPlayerBombRequest(Player* player_, quint32 requestId_, quint32 lastReviewedRequestId_,
+                             double x_, double y_);
 };
 
 #endif // ROOM_H

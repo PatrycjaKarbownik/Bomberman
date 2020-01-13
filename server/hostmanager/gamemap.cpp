@@ -29,6 +29,7 @@ bool GameMap::generate(quint32 sideN_)
 
             // If both x and y are odd, there should be a wall
             if (x%2 == 1 && y%2 == 1) {
+                m_tiles[y][x].type = TileType::Wall;
                 continue;
             }
             potentialFragileWalls.insert(m_tiles[y][x].id);
@@ -46,16 +47,19 @@ bool GameMap::generate(quint32 sideN_)
     return true;
 }
 
-QJsonArray GameMap::dumpMap()
+QJsonArray GameMap::dumpMap(double tileWidth_)
 {
     QJsonArray map;
+    if (tileWidth_ < 1) {
+        tileWidth_ = 1;
+    }
 
     for (auto row : m_tiles) {
         for (auto tile : row) {
             QJsonObject jsonTile;
             jsonTile.insert("id", tile.id);
-            jsonTile.insert("x", tile.x);
-            jsonTile.insert("y", tile.y);
+            jsonTile.insert("x", static_cast<double>(tile.x) * tileWidth_);
+            jsonTile.insert("y", static_cast<double>(tile.y) * tileWidth_);
             jsonTile.insert("type", "nothing");
 
             if (tile.type == TileType::Wall) {
@@ -105,8 +109,8 @@ std::vector<std::pair<quint16, quint16> > GameMap::generateStartingAreaCoords(qu
 
 void GameMap::generateFragileWalls(const std::unordered_set<quint16> &potentialFragileIds_)
 {
-    for (auto row : m_tiles) {
-        for (auto tile : row) {
+    for (auto &row : m_tiles) {
+        for (auto &tile : row) {
             if (potentialFragileIds_.find(tile.id) == potentialFragileIds_.end()) {
                 continue;
             }

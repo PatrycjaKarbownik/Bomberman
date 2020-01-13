@@ -25,26 +25,24 @@ Room::~Room()
 
 bool Room::addPlayer(Player *player_)
 {
-    if (!player) {
+    if (!player_) {
         qWarning() << "[Room] Room received nullptr instead of player";
         return false;
     }
     if (m_players.size() >= MAX_PLAYERS) {
-        qWarning() << "[Room] Player " << player->getUsername() << " tried to enter full room";
+        qWarning() << "[Room] Player " << player_->getUsername() << " tried to enter full room";
         return false;
     }
 
     m_players.push_back(player_);
     connect(player_, &Player::disconnected, this, &Room::onPlayerDisconnected);
 
-    // TODO Remove/change welcome message
-    sendHelloMessage(player_);
-
     if (m_expectedPlayers.length() == static_cast<int>(m_players.size())) {
+        onEveryoneConnected();
         onStartTimeout();
     }
 
-    qInfo() << "[Room] Added player " << player->getUsername() << " to room";
+    qInfo() << "[Room] Added player " << player_->getUsername() << " to room";
 
     return true;
 }
@@ -56,12 +54,12 @@ bool Room::expectsPlayer(const QString &username_)
 
 void Room::startGame()
 {
-    m_map.generate(MAP_SIZE);
-    broadcastMap(m_map.dumpMap());
-
     // Calculate sizes of tiles and players for collision purposes
-    m_tileWidth = static_cast<quint32>(CANVAS_WIDTH / MAP_SIZE);
-    m_playerWidth = static_cast<quint32>(m_tileWidth * 0.70);
+    m_tileWidth = static_cast<double>(CANVAS_WIDTH) / static_cast<double>(MAP_SIZE);
+    m_playerWidth = m_tileWidth * 0.70;
+
+    m_map.generate(MAP_SIZE);
+    broadcastMap(m_map.dumpMap(m_tileWidth));
 
     resetPlayers();
     broadcastPlayerInfo();
@@ -83,7 +81,7 @@ void Room::sendHelloMessage(Player *player_)
 void Room::broadcastMap(const QJsonArray &map_)
 {
     QJsonObject message;
-    message.insert("messageType", "mapinfo");
+    message.insert("messageType", "mapInfo");
     message.insert("content", map_);
 
     QJsonDocument doc(message);
@@ -115,26 +113,34 @@ void Room::broadcastPlayerInfo()
     for (const Player* player : m_players) {
         QJsonObject playerObject;
         playerObject.insert("username", player->getUsername());
-        playerObject.insert("id", static_cast<qint64>(player->getId()));
-        playerObject.insert("x", static_cast<qint64>(player->getPosX()));
-        playerObject.insert("y", static_cast<qint64>(player->getPosY()));
+        playerObject.insert("inGameId", static_cast<qint64>(player->getInGameId()));
+        playerObject.insert("x", player->getPosX());
+        playerObject.insert("y", player->getPosY());
+        content.append(playerObject);
+    }
+
+    message.insert("content", content);
+    QJsonDocument doc(message);
+
+    for (const Player* player : m_players) {
+        player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
     }
 }
 
 void Room::resetPlayers()
 {
     // Calculate starting positions for players
-    quint32 delta = static_cast<quint32>((m_tileWidth - m_playerWidth) / 2);
-    std::list<quint32> posXList {delta, CANVAS_WIDTH - m_playerWidth - delta,
+    double delta = (m_tileWidth - m_playerWidth) / 2;
+    std::list<double> posXList {delta, CANVAS_WIDTH - m_playerWidth - delta,
                 delta, CANVAS_WIDTH - m_playerWidth - delta};
-    std::list<quint32> posYList {delta, CANVAS_WIDTH - m_playerWidth - delta,
+    std::list<double> posYList {delta, CANVAS_WIDTH - m_playerWidth - delta,
                 CANVAS_WIDTH - m_playerWidth - delta, delta};
     auto posXIter = posXList.begin();
     auto posYIter = posYList.begin();
 
     quint32 playerId = 0;
     for (Player* player : m_players) {
-        player->setId(playerId++);
+        player->setInGameId(playerId++);
         player->setBombLimit(1);
         player->setPlacedBombs(0);
         player->setPushBonus(false);
@@ -182,5 +188,19 @@ void Room::onStartTimeout()
 void Room::onEveryoneConnected()
 {
     m_startTimeout.stop();
+
+}
+
+void Room::onPlayerMoveRequest(Player* player_, quint32 requestId_, quint32 lastReviewedRequestId_,
+                               double x_, double y_)
+{
+    if (lastReviewedRequestId_ <= player_->getLastRejectedRequestId()) {
+        return;
+    }
+}
+
+void Room::onPlayerBombRequest(Player *player_, quint32 requestId_, quint32 lastReviewedRequestId_,
+                               double x_, double y_)
+{
 
 }

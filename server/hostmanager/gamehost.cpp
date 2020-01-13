@@ -56,7 +56,7 @@ void GameHost::onAuthorizationSucceed(const QString &jwtToken_, const QString &u
     }
 
     Player* player = playerIt->second;
-    for (auto room : m_rooms) {
+    for (const auto &room : m_rooms) {
         if (!room->expectsPlayer(username_)) {
             continue;
         }

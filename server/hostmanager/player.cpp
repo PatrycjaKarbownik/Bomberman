@@ -25,22 +25,22 @@ QWebSocket *Player::getSocket() const
     return m_socket;
 }
 
-quint32 Player::getPosX() const
+double Player::getPosX() const
 {
     return m_posX;
 }
 
-void Player::setPosX(const quint32 &posX_)
+void Player::setPosX(const double &posX_)
 {
     m_posX = posX_;
 }
 
-quint32 Player::getPosY() const
+double Player::getPosY() const
 {
     return m_posY;
 }
 
-void Player::setPosY(const quint32 &posY_)
+void Player::setPosY(const double &posY_)
 {
     m_posY = posY_;
 }
@@ -75,21 +75,31 @@ void Player::setPushBonus(bool pushBonus_)
     m_pushBonus = pushBonus_;
 }
 
-quint32 Player::getId() const
+quint32 Player::getInGameId() const
 {
-    return m_id;
+    return m_inGameId;
 }
 
-void Player::setId(const quint32 &id)
+void Player::setInGameId(const quint32 &id)
 {
-    m_id = id;
+    m_inGameId = id;
+}
+
+quint32 Player::getLastRejectedRequestId() const
+{
+    return m_lastRejectedRequestId;
+}
+
+void Player::setLastRejectedRequestId(const quint32 &lastRejectedRequestId)
+{
+    m_lastRejectedRequestId = lastRejectedRequestId;
 }
 
 void Player::onReceivedTextMessage(const QString &message_)
 {
     QStringList message = message_.split("_");
     auto messageIter = message.begin();
-    if (message.length() < 4) {
+    if (message.length() < 6) {
         return;
     }
     if (*messageIter++ != "RQ") {
@@ -109,15 +119,6 @@ void Player::onReceivedTextMessage(const QString &message_)
         return;
     }
 
-    if (requestType == "BM") {
-        emit bombRequest(requestId, lastRequestId);
-        return;
-    }
-
-    if (requestType != "MV" || message.length() < 6) {
-        return;
-    }
-
     quint32 posX = (*messageIter++).toUInt(&parseResult);
     if (!parseResult) {
         return;
@@ -128,6 +129,11 @@ void Player::onReceivedTextMessage(const QString &message_)
         return;
     }
 
-    emit moveRequest(requestId, lastRequestId, posX, posY);
+    if (requestType == "BM") {
+        emit bombRequest(this, requestId, lastRequestId, posX, posY);
+    }
 
+    if (requestType != "MV") {
+        emit moveRequest(this, requestId, lastRequestId, posX, posY);
+    }
 }
