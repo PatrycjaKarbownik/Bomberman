@@ -27,21 +27,21 @@ signals:
      * @param jwtToken: JWT Token which is an authorization method used by Overseer
      * @param username: Username of user
      *
-     * Whenever an user tries to connect to the game GameHost first waits for credentials
-     * which are jwt token and username. Then this signal is fired and
+     * Whenever an user tries to connect to the game GameHost it first waits for credentials,
+     * which are jwt token and username. Then this signal is fired.
      */
     void authorizationRequired(const QString& jwtToken, const QString& username);
 
 public slots:
     /**
-     * @brief authorizationFailed: Removes player who waits for authorization with given credentials if is present
+     * @brief authorizationFailed: Removes player who failed to authorize
      * @param jwtToken
      * @param username
      */
     void onAuthorizationFailed(const QString& jwtToken_, const QString& username_);
 
     /**
-     * @brief authorizationFailed: Adds player with given credentials to room he is assigned to
+     * @brief authorizationFailed: Adds player with given credentials to room he is assigned toss
      * @param jwtToken
      * @param username
      */
@@ -83,7 +83,7 @@ private slots:
     /**
      * @brief onSocketDisckonnect
      */
-    void onSocketDisckonnect();
+    void onSocketDisconnect();
 };
 
 #endif // GAMEHOSTINSTANCE_H

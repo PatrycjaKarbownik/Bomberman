@@ -26,6 +26,8 @@ signals:
 public slots:
 
 private:
+    std::unique_ptr<GameHost> createGameHost(quint32 port);
+
     std::vector<std::unique_ptr<GameHost>> m_gameHosts;
     OverseerCommunication *m_OverseerCom {nullptr};
     std::set<quint32> m_freePorts;

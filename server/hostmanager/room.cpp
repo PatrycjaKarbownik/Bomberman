@@ -4,10 +4,7 @@
 
 Room::Room(const QStringList &expectedPlayers_, QObject *parent)
     : QObject(parent),
-      m_expectedPlayers(expectedPlayers_)
-{
-
-}
+      m_expectedPlayers(expectedPlayers_) {}
 
 Room::~Room()
 {
