@@ -17,12 +17,10 @@ export class Configuration {
 
   spritePath = '/assets/images/sprite.png';
   sprites: Sprite[];
-  startPositions: PlayerDetailsModel[];
   keyboardsSettings;
 
   constructor() {
     this.setSprites();
-    this.setStartPositions();
     this.keyboardsSettings = new KeyboardSettings();
   }
 
@@ -156,35 +154,6 @@ export class Configuration {
         width: null,
         height: null
       },
-    ];
-  }
-
-  private setStartPositions() {
-    this.startPositions = [
-      { // TOP LEFT - chicken
-        x: 0.15 * this.tileWidth,
-        y: 0.15 * this.tileHeight,
-        speed: 2,
-        bombPusher: false
-      },
-      { // TOP RIGHT - pig
-        x: this.mapWidth - 0.85 * this.tileWidth,
-        y: 0.15 * this.tileHeight,
-        speed: 2,
-        bombPusher: false
-      },
-      { // BOTTOM LEFT - whale
-        x: 0.15 * this.tileWidth,
-        y: this.mapHeight - 0.85 * this.tileHeight,
-        speed: 2,
-        bombPusher: false
-      },
-      { // BOTTOM RIGHT - chick
-        x: this.mapWidth - 0.85 * this.tileWidth,
-        y: this.mapHeight - 0.85 * this.tileHeight,
-        speed: 2,
-        bombPusher: false
-      }
     ];
   }
 }

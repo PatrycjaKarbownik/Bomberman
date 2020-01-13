@@ -28,11 +28,11 @@ export class GameService {
   // and it's necessary to split them
   private bombsUnderPlayer: BombModel[] = [];
   private walls: TileModel[];
+  private otherPlayers: PlayerDetailsModel[];
   private bonuses: TileModel[];
 
   // player details
   private player: PlayerDetailsModel = null;
-  private playerCorner; // remember corner where player started - to get correct sprite
   private playerSprite: Sprite;
 
   // player move
@@ -47,6 +47,7 @@ export class GameService {
     this.gameDetailsService.getConfigurationSetEmitter().subscribe(configurationSet => {
       if(configurationSet === true) {
         this.walls = gameDetailsService.getWalls();
+        this.otherPlayers = gameDetailsService.getOtherPlayers();
       }
     });
 
@@ -70,10 +71,6 @@ export class GameService {
     });
   }
 
-  loadMap() {
-
-  }
-
   startGameLoop() {
     this.setPlayerDetails();
     this.gameLoop = setInterval(() => {
@@ -81,6 +78,7 @@ export class GameService {
       this.drawTiles();
       this.checkIfPlayerLeavesTilesWithBomb();
       this.drawBombs();
+      this.drawOtherPlayers();
       this.drawPlayer();
     }, 10);
   }
@@ -111,6 +109,19 @@ export class GameService {
     });
   }
 
+  private drawOtherPlayers() {
+    this.otherPlayers.forEach(player => {
+      let playerSprite = this.configuration.sprites[player.inGameId % 4];
+      this.context.drawImage(
+        this.image,
+        playerSprite.spriteX, playerSprite.spriteY,
+        playerSprite.spriteWidth, playerSprite.spriteHeight,
+        player.x, player.y,
+        playerSprite.width, playerSprite.height,
+      );
+    })
+  }
+
   private drawPlayer() {
     if (this.up) {
       this.moveUp();
@@ -136,9 +147,8 @@ export class GameService {
   }
 
   private setPlayerDetails() {
-    this.playerCorner = this.gameDetailsService.playerCorner;
-    this.player = this.configuration.startPositions[this.playerCorner];
-    this.playerSprite = this.configuration.sprites[this.playerCorner];
+    this.player = this.gameDetailsService.player;
+    this.playerSprite = this.configuration.sprites[this.player.inGameId % 4];
   }
 
   private moveUp() {

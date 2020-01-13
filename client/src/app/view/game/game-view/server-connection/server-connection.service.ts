@@ -9,6 +9,7 @@ import { AccessToken } from '@app/core/storages/access-token.storage';
 import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 import { gamehostIP } from '@app/shared/ip-configuration';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
+import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class ServerConnectionService {
   private gameHostSocket: WebSocketSubject<{}>;
   private gameStartedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   private mapInfoEmitter: EventEmitter<TileModel[]> = new EventEmitter<TileModel[]>();
+  private playersInfoEmitter: EventEmitter<PlayerDetailsModel[]> = new EventEmitter<PlayerDetailsModel[]>();
 
   constructor(private websocketService: WebsocketService) {
     console.log('port', websocketService.port);
@@ -38,6 +40,10 @@ export class ServerConnectionService {
     return this.mapInfoEmitter;
   }
 
+  getPlayersInfoEmitter() {
+    return this.playersInfoEmitter;
+  }
+
   getGameStartedEmitter() {
     return this.gameStartedEmitter;
   }
@@ -50,7 +56,7 @@ export class ServerConnectionService {
         if (messageData.messageType === MessageType.MAP_INFO) {
           this.emitMapInfo(messageData.content);
         } else if (messageData.messageType === MessageType.PLAYER_INFO) {
-
+          this.emitPlayersInfo(messageData.content);
         } else if (messageData.messageType === MessageType.START) {
           this.emitStartGame();
         }
@@ -60,6 +66,10 @@ export class ServerConnectionService {
 
   private emitMapInfo(mapInfo: TileModel[]) {
     this.mapInfoEmitter.emit(mapInfo);
+  }
+
+  private emitPlayersInfo(playersInfo: PlayerDetailsModel[]) {
+    this.playersInfoEmitter.emit(playersInfo);
   }
 
   private emitStartGame() {

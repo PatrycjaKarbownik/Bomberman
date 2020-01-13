@@ -2,8 +2,8 @@ import { EventEmitter, Injectable } from '@angular/core';
 
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
-import { HeroModel } from '@app/view/game/models/hero.model';
-import { UserId } from '@app/core/storages/user-details.storage';
+import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
+import { UserId, Username } from '@app/core/storages/user-details.storage';
 import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
 // game details service
@@ -14,24 +14,39 @@ import { ServerConnectionService } from '@app/view/game/game-view/server-connect
   providedIn: 'root'
 })
 export class GameDetailsService {
-  @UserId() userId;
+  @Username() username;
 
-  playerCorner: number;
-  walls: TileModel[];
+  player: PlayerDetailsModel;
+  private walls: TileModel[];
+  private otherPlayers: PlayerDetailsModel[];
   private mapLoaded = false;
-  private playerLoaded = true; // false
+  private playerLoaded = false;
   private configurationSetEmitter: EventEmitter<boolean> = new EventEmitter();
 
   private temporaryTileHeight = 140;
 
   constructor(private serverConnectionService: ServerConnectionService) {
-    this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
+    this.listenMapInfo();
+    this.listenPlayersInfo();
+  }
+
+  private listenMapInfo() {
     this.serverConnectionService.getMapInfoEmitter().subscribe((walls: TileModel[]) => {
       this.walls = walls.filter(it => it.type !== TileType.NOTHING);
       console.log(this.walls);
       this.mapLoaded = true;
       this.emitConfigurationSet();
     });
+  }
+
+  private listenPlayersInfo() {
+    this.serverConnectionService.getPlayersInfoEmitter().subscribe((players: PlayerDetailsModel[]) => {
+      this.otherPlayers = players.filter(it => it.username !== this.username);
+      console.log(this.otherPlayers);
+      this.player = players.find(it => it.username === this.username);
+      this.playerLoaded = true;
+      this.emitConfigurationSet();
+    })
   }
 
   private emitConfigurationSet() {
@@ -42,62 +57,12 @@ export class GameDetailsService {
     return this.configurationSetEmitter;
   }
 
-  // todo: remove - it's mock
-  getHeroes(): HeroModel[] {
-    return [
-      {
-        id: 8,
-        inGameId: 0
-      } as HeroModel,
-      {
-        id: 9,
-        inGameId: 1
-      } as HeroModel,
-      {
-        id: 6,
-        inGameId: 2
-      } as HeroModel,
-      {
-        id: 7,
-        inGameId: 3
-      } as HeroModel,
-    ];
+  getOtherPlayers(): PlayerDetailsModel[] {
+    return this.otherPlayers;
   }
 
-  // todo: remove - it's mock
   getWalls(): TileModel[] {
-    return this.walls; /*[{
-      id: 0,
-      x: 2 * this.temporaryTileHeight,
-      y: 0 * this.temporaryTileHeight,
-      type: TileType.FRAGILE
-    } as TileModel, {
-      id: 1,
-      x: 1 * this.temporaryTileHeight,
-      y: 1 * this.temporaryTileHeight,
-      type: TileType.WALL
-    } as TileModel, {
-      id: 2,
-      x: 3 * this.temporaryTileHeight,
-      y: 1 * this.temporaryTileHeight,
-      type: TileType.WALL
-    } as TileModel, {
-      id: 3,
-      x: 4 * this.temporaryTileHeight,
-      y: 2 * this.temporaryTileHeight,
-      type: TileType.FRAGILE
-    } as TileModel, {
-      id: 4,
-      x: 1 * this.temporaryTileHeight,
-      y: 3 * this.temporaryTileHeight,
-      type: TileType.WALL
-    } as TileModel, {
-      id: 5,
-      x: 3 * this.temporaryTileHeight,
-      y: 3 * this.temporaryTileHeight,
-      type: TileType.WALL
-    } as TileModel
-    ];*/
+    return this.walls;
   }
 
   getBonuses(): TileModel[] {
