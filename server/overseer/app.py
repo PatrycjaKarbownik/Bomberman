@@ -95,6 +95,8 @@ def initialize_app(flask_app):
     flask_app.register_blueprint(blueprint)
 
     lobby.socketio = socketio
+    host_manager.authorization_callback = lobby.authorize_user
+    host_manager.room_ready_callback = lobby.send_port
 
 
 if __name__ == '__main__':

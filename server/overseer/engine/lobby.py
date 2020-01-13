@@ -1,5 +1,6 @@
 import logging
 
+from engine.host_manager import host_manager
 from engine.id_manager import IdManager
 from engine.room import Room
 from engine.user import *
@@ -10,8 +11,8 @@ logger = logging.getLogger(__name__)
 class Lobby:
 
     def __init__(self):
-        self.users = dict()  # Dict of User objects
-        self.rooms = dict()  # Dict of Room objects
+        self.users = dict()  # Dict of User objects mapped by id
+        self.rooms = dict()  # Dict of Room objects mapped by id
         self.user_id_manager = IdManager()
         self.room_id_manager = IdManager()
         self.socketio = None
@@ -60,6 +61,24 @@ class Lobby:
 
         return True
 
+    def get_user_by_name(self, name):
+        """Returns user with given name or None"""
+        for user in self.users.values():
+            if user.name == name:
+                return user
+
+        return None
+
+    def authorize_user(self, jwt_token, username):
+        user = self.get_user_by_name(username)
+        if user is None:
+            return False
+        else:
+            if user.access_token == jwt_token:
+                return True
+            else:
+                return False
+
     def create_room(self):
         """Creates room and returns it's id"""
         new_room = Room()
@@ -77,6 +96,17 @@ class Lobby:
 
         return True
 
+    def send_port(self, room, port):
+        """Sends port for game to players in room"""
+        assumed_room = self.rooms.get(room.id)
+        # check if room still exists
+        if assumed_room != room:
+            return
+
+        socketio_room_name = 'room_{}'.format(room.id)
+        lobby.socketio.emit('port_ready', port, room=socketio_room_name)
+        print('sending info of port {} to room {}'.format(port, room.id))
+
     def notify(self, class_notifying, class_instance):
         """Used to notify lobby about events by classes which it subscribed
 
@@ -84,6 +114,10 @@ class Lobby:
         if class_notifying is Room:
             if class_instance.empty():
                 self.remove_room(class_instance.id)
+                return
+            if class_instance.all_ready():
+                host_manager.send_create_room_request(class_instance)
+                return
 
     def get_json_rooms(self, only_usernames=True):
         """Returns JSON string with all rooms

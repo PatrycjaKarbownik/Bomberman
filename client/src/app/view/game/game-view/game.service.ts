@@ -8,6 +8,7 @@ import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
+import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
 // game service
 // answer for game view dependent on game logic
@@ -15,7 +16,6 @@ import { TileType } from '@app/view/game/game-view/models/tile-type.model';
   providedIn: 'root'
 })
 export class GameService {
-
   // view details
   private image: HTMLImageElement = null;
   private context: CanvasRenderingContext2D;
@@ -41,7 +41,8 @@ export class GameService {
   left = false;
   right = false;
 
-  constructor(private gameDetailsService: GameDetailsService, private configuration: Configuration) {
+  constructor(private gameDetailsService: GameDetailsService, private serverConnectionService: ServerConnectionService,
+              private configuration: Configuration) {
     this.walls = gameDetailsService.getWalls();
     this.bonuses = gameDetailsService.getBonuses();
   }

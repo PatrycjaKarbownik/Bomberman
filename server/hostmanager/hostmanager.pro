@@ -1,23 +1,21 @@
 QT -= gui
-QT += network
+QT += network websockets
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
+#CONFIG += testcase # Add ability to use make check
 
-# The following define makes your compiler emit warnings if you use
-# any Qt feature that has been marked deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
+# Enable QT logging
+DEFINES += QT_MESSAGELOGCONTEXT
 DEFINES += QT_DEPRECATED_WARNINGS
 
-# You can also make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
 SOURCES += \
-        main.cpp \
-        overseercommunication.cpp
+        gamehost.cpp \
+        gamehostshub.cpp \
+        gamemap.cpp \
+        overseercommunication.cpp \
+        player.cpp \
+        room.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -25,4 +23,25 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    overseercommunication.h
+    gamehost.h \
+    gamehostshub.h \
+    gamemap.h \
+    overseercommunication.h \
+    player.h \
+    room.h \
+
+# Special configuration for tests
+test_conf {
+    TARGET = hostmanager_test
+    QT += testlib
+
+    SOURCES +=  \
+            tests/maintest.cpp \
+            tests/testgamemap.cpp
+
+    HEADERS += \
+            tests/testgamemap.h
+} else {
+
+    SOURCES += main.cpp
+}
