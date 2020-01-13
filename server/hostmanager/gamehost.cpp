@@ -21,6 +21,8 @@ GameHost::GameHost(const quint16 port_)
 void GameHost::createRoom(const QStringList &expectedPlayerUsernames_)
 {
     Room *newRoom = new Room(expectedPlayerUsernames_);
+    qDebug() << "BLABLA";
+    newRoom->moveToThread(this->thread());
     m_rooms.push_back(newRoom);
 }
 
@@ -114,6 +116,7 @@ void GameHost::onIncomingConnection()
     qDebug() << "[Connection] Incoming connection";
     while(m_server.hasPendingConnections()) {
         QWebSocket *pendingConnection = m_server.nextPendingConnection();
+        pendingConnection->moveToThread(this->thread());
         qInfo() << "[Connection] Somebody has connected to gamehost with port " << m_port;
         connect(pendingConnection, &QWebSocket::textMessageReceived, this, &GameHost::onReceivedTextMessage);
         connect(pendingConnection, &QWebSocket::disconnected, this, &GameHost::onSocketDisconnect);
@@ -142,6 +145,9 @@ void GameHost::onReceivedTextMessage(const QString &message_)
     }
 
     Player *newUnauthorizedPlayer = new Player(socket, username.toString());
+    newUnauthorizedPlayer->moveToThread(this->thread());
+    disconnect(socket, &QWebSocket::textMessageReceived, this, &GameHost::onReceivedTextMessage);
+    disconnect(socket, &QWebSocket::disconnected, this, &GameHost::onSocketDisconnect);
 
     // Remove socket from anonymous sockets as player just introduced itself
     auto socketIt = std::find(m_anonymousSockets.begin(), m_anonymousSockets.end(), socket);

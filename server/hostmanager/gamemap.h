@@ -25,7 +25,9 @@ struct MapTile {
     quint16 y {0};
     TileType type = TileType::Nothing;
     BonusType bonus = BonusType::None;
+    bool hasBomb = false;
 };
+
 
 /**
  * @brief The GameMap class

@@ -26,6 +26,7 @@ bool GameMap::generate(quint32 sideN_)
             m_tiles[y][x].x = x;
             m_tiles[y][x].y = y;
             m_tiles[y][x].id = id++;
+            m_tiles[y][x].hasBomb = false;
 
             // If both x and y are odd, there should be a wall
             if (x%2 == 1 && y%2 == 1) {

@@ -4,6 +4,11 @@
 #include <QObject>
 #include <QWebSocket>
 
+struct Coordinates {
+    qint32 x {0};
+    qint32 y {0};
+};
+
 /**
  * @brief The Player class
  *
@@ -41,14 +46,25 @@ public:
     quint32 getPlacedBombs() const;
     void setPlacedBombs(const quint32 &placedBombs_);
 
-    bool getPushBonus() const;
+    bool hasPushBonus() const;
     void setPushBonus(bool pushBonus_);
 
     quint32 getInGameId() const;
     void setInGameId(const quint32 &id);
 
-    quint32 getLastRejectedRequestId() const;
-    void setLastRejectedRequestId(const quint32 &lastRejectedRequestId);
+    qint32 getLastRejectedRequestId() const;
+    void setLastRejectedRequestId(const qint32 &lastRejectedRequestId);
+
+    bool isAlive() const;
+    void setAlive(bool alive);
+
+    quint32 getSpeed() const;
+    void setSpeed(const quint32 &speed);
+
+    std::list<Coordinates> getBombsUnderPlayer() const;
+    bool areCoordsOfBombUnderPlayer(const qint32 xPos_, const qint32 yPos_);
+    void addBombUnderPlayer(const qint32 bombXPos_, const qint32 bombYPos_);
+    void removeBombUnderPlayer(const qint32 bombXPos_, const qint32 bombYPos_);
 
 signals:
     /**
@@ -64,6 +80,7 @@ signals:
 public slots:
 
 private:
+    std::list<Coordinates> m_bombsUnderPlayer;
     QWebSocket *m_socket;
     const QString m_username;
     double m_posX {0};
@@ -71,8 +88,11 @@ private:
     quint32 m_bombLimit {0};
     quint32 m_placedBombs {0};
     quint32 m_inGameId {0};
-    quint32 m_lastRejectedRequestId {0};
+    qint32 m_lastRejectedRequestId {-1};
+    quint32 m_speed {2};
     bool m_pushBonus {false};
+    bool m_alive {true};
+    bool m_onBomb {false};
 
 private slots:
     void onReceivedTextMessage(const QString &message_);
