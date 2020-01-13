@@ -11,6 +11,21 @@
 #include <map>
 
 // TODO Implement deleting of GameHost after rooms are closed? Or maybe keep it anyway?
+/**
+ * @brief The GameHost class
+ *
+ * Class responsible for hosting games in several rooms. Every object of Room class is a separate game
+ * for up to 4 players. Every GameHost has it's own porn on which players are connecting. Every rooms is a separate
+ * entity but every connection of every player in every room is held by QWebSocketServer of GameHost.
+ *
+ * When GameHost receives new websocket (connection) it puts this new websocket into m_anonymousSockets so it
+ * won't be lost. When this websocket sends an authorization message GameHost reads credentials (jwtToken and username)
+ * and emits a signal that he needs an authorization. There is also created a class Player which gets to hold a scoket
+ * and whole Player class's object now awaits in m_unauthorizedPlayers. When authorization arrives (on one of its slots)
+ * it can be either failed one or succesful one. If authorization failed socket is disconnected and cleaned up. If it
+ * succeeded gamehost looks for a room that expects a player with given username and when room is found
+ * socket is put there.
+ */
 class GameHost : public QObject
 {
     Q_OBJECT
@@ -61,7 +76,7 @@ private:
 
 private slots:
     /**
-     * @brief onIncomingConnection
+     * @brief onIncomingConnection: connects socket's signals to gamehost's slots and puts it in m_anonymousSockets
      */
     void onIncomingConnection();
 
@@ -75,13 +90,13 @@ private slots:
     void onReceivedTextMessage(const QString &message_);
 
     /**
-     * @brief onLeftRoom
+     * @brief onLeftRoom: Deletes an room when it becomes empty
      * @param emptyRoom_
      */
     void onLeftRoom(Room *emptyRoom_);
 
     /**
-     * @brief onSocketDisckonnect
+     * @brief onSocketDisckonnect: Deletes socket when it is no longer needed
      */
     void onSocketDisconnect();
 };
