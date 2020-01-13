@@ -25,8 +25,6 @@ export class GameDetailsService {
 
   private temporaryTileHeight = 140;
 
-  private counter = 1;
-
   constructor(private websocketService: WebsocketService) {
     this.playerCorner = this.getHeroes().find(it => it.id === this.userId).inGameId % 4;
     console.log('port', websocketService.port);
@@ -34,13 +32,6 @@ export class GameDetailsService {
 
 /*
     this.gamehostSocket.asObservable().subscribe(data => console.log(data));*/
-  }
-
-  // todo: remove
-  newMessage() {
-    console.log(this.counter);
-    this.gamehostSocket.next({msg: `Test message ${this.counter}`});
-    this.counter++;
   }
 
   getGamehostSocket() {

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Observable, ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { RoomModel } from '@app/view/room/models/room.model';
 import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'

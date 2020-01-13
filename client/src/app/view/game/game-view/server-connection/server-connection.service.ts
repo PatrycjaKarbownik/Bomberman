@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { GameDetailsService } from '@app/view/game/game-view/game-details.service';
+
 import { WebSocketSubject } from 'rxjs/webSocket';
+
+import { GameDetailsService } from '@app/view/game/game-view/game-details.service';
 import { MessageModel } from '@app/view/game/game-view/server-connection/message.model';
 import { MessageType } from '@app/view/game/game-view/server-connection/message-type';
 import { Username } from '@app/core/storages/user-details.storage';
@@ -35,10 +37,4 @@ export class ServerConnectionService {
       }
     } as MessageModel);
   }
-
-  /*newMessage() {
-    console.log(this.counter);
-    this.gamehostSocket.next({msg: `Test message ${this.counter}`});
-    this.counter++;
-  }*/
 }

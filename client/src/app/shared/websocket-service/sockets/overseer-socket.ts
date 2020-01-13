@@ -4,7 +4,6 @@ import { overseerIP } from '@app/shared/configuration';
 export class OverseerSocket extends Socket {
   constructor() {
     super({
-      // url: 'http://localhost:5000',
       url: `http://${overseerIP}`,
       options: {
         transports: [/*'websocket', */'polling'], // todo: do websocket transport working

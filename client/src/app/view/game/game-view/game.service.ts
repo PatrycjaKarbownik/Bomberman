@@ -8,7 +8,6 @@ import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
-import { WebSocketSubject } from 'rxjs/webSocket';
 import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
 // game service
