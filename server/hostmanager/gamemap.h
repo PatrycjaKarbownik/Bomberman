@@ -1,8 +1,11 @@
 #ifndef GAMEMAP_H
 #define GAMEMAP_H
 
+#include <bomb.h>
+
 #include <QObject>
 
+#include <memory>
 #include <vector>
 #include <unordered_set>
 
@@ -14,8 +17,9 @@ enum TileType {
 
 enum BonusType {
     IncreaseBombLimit,  DecreaseBombLimit,
-    PushBomb,           IncreaseBombRange,
-    None
+    IncreaseSpeed,      DecreaseSpeed,
+    IncreaseBombRange,  DecreaseBombRange,
+    PushBomb,           None
 };
 
 struct MapTile {
@@ -24,7 +28,9 @@ struct MapTile {
     quint16 y {0};
     TileType type = TileType::Nothing;
     BonusType bonus = BonusType::None;
+    std::shared_ptr<Bomb> bomb = nullptr;
 };
+
 
 /**
  * @brief The GameMap class
@@ -72,9 +78,13 @@ public:
 
     /**
      * @brief dumpMap: Dumps whole map into QJsonArray (without information about bonus under tile)
+     * @param tilePixelWidth_: pixel width of a single tile
      * @return QJsonArray version of map
+     *
+     * Function generates dump of a whole map for a client. It means that positions x and y are already in coordinates
+     * which will be used to draw them on client's screen. Dump of map also does not contain bonuses.
      */
-    QJsonArray dumpMap();
+    QJsonArray dumpMap(double tileWidth_ = 1);
 
     // NOTE For the sake of completness I just keep both CoordProxy and GameMap's [] operator as a code in same place
     // TODO Keep CoordProxy or not? How to secure it?

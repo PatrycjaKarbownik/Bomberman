@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { ReplaySubject } from 'rxjs';
-import { webSocket } from 'rxjs/webSocket';
 
 import { RoomModel } from '@app/view/room/models/room.model';
 import { OverseerSocket } from '@app/shared/websocket-service/sockets/overseer-socket';
 import { UserId } from '@app/core/storages/user-details.storage';
 import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
 
+// service for connection with overseer connection by websocket (socket-io)
 @Injectable({
   providedIn: 'root'
 })

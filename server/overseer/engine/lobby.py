@@ -115,7 +115,10 @@ class Lobby:
             if class_instance.empty():
                 self.remove_room(class_instance.id)
                 return
+
             if class_instance.all_ready():
+                for user in class_instance.users:
+                    user.ready_to_game = False
                 host_manager.send_create_room_request(class_instance)
                 return
 
@@ -134,21 +137,3 @@ class Lobby:
 #  sharing object or not.
 lobby = Lobby()
 
-# TODO Test data delete later
-
-lobby.add_user("Jack")
-lobby.add_user("Matty")
-lobby.add_user("Patrice")
-lobby.add_user("Bastian")
-lobby.add_user("GuyWhoKnowsAGuy")
-lobby.add_user("xXx__DeStRoYeR_PL__xXx")
-
-lobby.create_room()
-lobby.create_room()
-
-roomA = lobby.rooms.get(0)
-roomB = lobby.rooms.get(1)
-
-roomA.add_user(lobby.users.get(0))
-roomA.add_user(lobby.users.get(2))
-roomB.add_user(lobby.users.get(3))
