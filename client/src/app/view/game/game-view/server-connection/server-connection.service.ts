@@ -13,6 +13,8 @@ import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-detai
 import { RequestType } from '@app/view/game/game-view/server-connection/request-type';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 
+// service only for communication with game server
+// and information transfer to another components
 @Injectable({
   providedIn: 'root'
 })
@@ -25,6 +27,7 @@ export class ServerConnectionService {
   private actualRequestId = 0;
   private lastReviewedId = 0;
 
+  // information transmitters
   private gameHostSocket: WebSocketSubject<{}>;
   private gameStartedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   private mapInfoEmitter: EventEmitter<TileModel[]> = new EventEmitter<TileModel[]>();
@@ -95,9 +98,7 @@ export class ServerConnectionService {
     this.actualRequestId += 1;
   }
 
-  getGameHostSocket() {
-    return this.gameHostSocket;
-  }
+  // methods allow listen if information come by other components
 
   getMapInfoEmitter() {
     return this.mapInfoEmitter;
@@ -126,6 +127,8 @@ export class ServerConnectionService {
   getRejectedBombEmitter() {
     return this.rejectedBombEmitter;
   }
+
+  // methods relay information if it comes
 
   private emitMapInfo(mapInfo: TileModel[]) {
     this.mapInfoEmitter.emit(mapInfo);

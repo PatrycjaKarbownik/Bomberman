@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { GameDetailsService } from '@app/view/game/game-view/game-details.service';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
-import { MapConfiguration } from '@app/view/game/game-view/models/map-configuration';
+import { MapConfiguration } from '@app/view/game/game-view/map-configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
@@ -22,15 +22,15 @@ export class GameService {
   private gameLoop = null;
 
   // other items
-  private bombs: BombModel[] = [];
-  private playerBombs: BombModel[] = [];
-  // collection of bombs witch player placed but didn't leave tiles with them
-  // it's needed, because player have to leave tiles, where placed bomb
-  // and it's necessary to split them
+  private bombs: BombModel[] = []; // bomb placed by other players
+  private playerBombs: BombModel[] = []; // bomb placed by player
+  // collection of bombs which were placed under player and he didn't leave these tiles yet
+  // it's needed, because player have to leave tiles on which are placing bomb
+  // it's necessary to split them
   private bombsUnderPlayer: BombModel[] = [];
   private walls: TileModel[];
   private otherPlayers: PlayerDetailsModel[];
-  private bonuses: TileModel[];
+  private bonuses: TileModel[] = [];
 
   // player details
   private player: PlayerDetailsModel = null;
@@ -67,6 +67,8 @@ export class GameService {
     });
   }
 
+  // enable refreshing map state (players', bombs', bonuses' positions)
+  // and checking validity of player's actions
   setServerSubscriptions() {
     this.setConfigurationSubscription();
     this.setOtherPlayersUpdateSubscription();
@@ -259,7 +261,7 @@ export class GameService {
       this.bombsUnderPlayer.push({
         x: x,
         y: y,
-        isPlayersBomb: true
+        isPlayerBomb: true
       } as BombModel);
       this.serverConnectionService.sendBombRequest(x, y);
     }
@@ -282,7 +284,7 @@ export class GameService {
   }
 
   private setNotOwnBomb(bomb: BombModel) {
-    bomb.isPlayersBomb = false;
+    bomb.isPlayerBomb = false;
 
     const supposedLeftSide = this.player.x;
     const supposedRightSide = this.player.x + this.playerSprite.width;
@@ -310,7 +312,7 @@ export class GameService {
     this.bombsUnderPlayer.forEach(bomb => {
       if (!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
         bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight)) {
-        if (bomb.isPlayersBomb === true) {
+        if (bomb.isPlayerBomb === true) {
           this.playerBombs.push(bomb);
         } else {
           this.bombs.push(bomb);

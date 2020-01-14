@@ -26,8 +26,9 @@ export class LobbyComponent implements OnInit {
   // executes on create component
   // gets rooms which will be shown on view
   ngOnInit() {
-    this.lobbyService.getRooms().subscribe(rooms =>
-      this.rooms = rooms);
+    this.lobbyService.getRooms()
+      .subscribe(rooms =>
+        this.rooms = rooms);
   }
 
   // creates room and navigate user to it
@@ -40,7 +41,7 @@ export class LobbyComponent implements OnInit {
     this.lobbyService.enterRoom(id)
       .subscribe(response => {
         this.navigateToRoom(id);
-      })
+      });
   }
 
   private navigateToRoom(id: number) {

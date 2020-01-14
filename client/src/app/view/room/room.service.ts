@@ -8,6 +8,10 @@ import { first } from 'rxjs/operators';
 import { RoomModel } from '@app/view/room/models/room.model';
 import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
+// room service
+// communicate with overseer
+// send requests to overseer
+// requests relate only specified room info
 @Injectable({
   providedIn: 'root'
 })
@@ -23,6 +27,7 @@ export class RoomService {
     return this.websocketService.room$;
   }
 
+  // when server sends port on which game will be play, navigate to match view
   listenPort() {
     return this.websocketService.port$
       .subscribe(port => this.router.navigateByUrl('game/match'));

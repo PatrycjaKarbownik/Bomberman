@@ -7,6 +7,9 @@ import { RoomService } from '@app/view/room/room.service';
 import { RoomModel } from '@app/view/room/models/room.model';
 import { ViewModel } from '@app/core/navigation/view.model';
 
+// room component
+// show users in room and their statuses - ready to game or not
+// give change readiness and leave room options
 @Component({
   selector: 'bomb-room',
   templateUrl: './room.component.pug',
@@ -27,13 +30,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.remainingTime = this.timerStartingValue;
 
-    this.roomService.getRoom().subscribe(room => {
-      this.room = room;
-    });
+    this.roomService.getRoom()
+      .subscribe(room => {
+        this.room = room;
+      });
 
     this.roomService.listenPort();
     // todo: add getting counter state from backend (add maybe 5 seconds on room state change)
-      this.counter = of(this.countdown()).subscribe();
+    this.counter = of(this.countdown()).subscribe();
   }
 
   ngOnDestroy(): void {
