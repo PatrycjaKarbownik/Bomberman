@@ -128,7 +128,7 @@ export class ServerConnectionService {
     return this.rejectedBombEmitter;
   }
 
-  // methods relay information if it comes
+  // methods transmit information if it comes
 
   private emitMapInfo(mapInfo: TileModel[]) {
     this.mapInfoEmitter.emit(mapInfo);
