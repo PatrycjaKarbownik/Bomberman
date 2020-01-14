@@ -19,7 +19,7 @@ enum BonusType {
     IncreaseBombLimit,  DecreaseBombLimit,
     IncreaseSpeed,      DecreaseSpeed,
     IncreaseBombRange,  DecreaseBombRange,
-    PushBomb,          None
+    PushBomb,           None
 };
 
 struct MapTile {

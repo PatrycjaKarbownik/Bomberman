@@ -11,7 +11,6 @@ class Bomb : public QObject
     Q_OBJECT
 public:
     explicit Bomb(qint32 id_, Player *owner_, const qint32 explosionTimeout, QObject *parent = nullptr);
-    ~Bomb();
 
     void stopCountdown();
 

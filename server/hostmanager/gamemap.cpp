@@ -124,27 +124,31 @@ void GameMap::generateFragileWalls(const std::unordered_set<quint16> &potentialF
             double bonusResult = QRandomGenerator::global()->bounded(1.0);
 
             // TODO const values add
-            if (bonusResult < 0.1) {
+            if (bonusResult < 0.09) {
                 tile.bonus = BonusType::IncreaseBombRange;
                 continue;
             }
-            if (bonusResult < 0.2) {
+            if (bonusResult < 0.18) {
                 tile.bonus = BonusType::IncreaseBombLimit;
                 continue;
             }
-            if (bonusResult < 0.3) {
+            if (bonusResult < 0.27) {
                 tile.bonus = BonusType::IncreaseSpeed;
                 continue;
             }
-            if (bonusResult < 0.4) {
+            if (bonusResult < 0.36) {
                 tile.bonus = BonusType::DecreaseSpeed;
                 continue;
             }
-            if (bonusResult < 0.5) {
+            if (bonusResult < 0.45) {
                 tile.bonus = BonusType::DecreaseBombLimit;
                 continue;
             }
-            if (bonusResult < 0.6) {
+            if (bonusResult < 0.54) {
+                tile.bonus = BonusType::DecreaseBombRange;
+                continue;
+            }
+            if (bonusResult < 0.63) {
                 tile.bonus = BonusType::PushBomb;
                 continue;
             }

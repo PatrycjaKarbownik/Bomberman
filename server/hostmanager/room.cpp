@@ -325,7 +325,6 @@ void Room::resetPlayers()
     }
 
     m_lastPlace = static_cast<quint32>(m_players.size());
-    qDebug() << "Last place is started at " << m_lastPlace;
 }
 
 void Room::checkIfGameEnd()
@@ -422,7 +421,6 @@ void Room::killPlayersOnTile(const MapTile &tile)
         if (isColliding(player->getPosX(), player->getPosY(), tile)) {
             player->setAlive(false);
             player->setPlace(m_lastPlace);
-            qDebug() << player->getUsername() << " died so he is now " << player->getPlace();
 
             // Send information to player about its death
             sendPlayerUpdate(player);
@@ -494,6 +492,12 @@ void Room::pickUpBonus(Player *player_, const BonusType bonus_)
 
     case BonusType::IncreaseBombRange:
         player_->setBombRange(player_->getBombRange() + 1);
+        break;
+
+    case BonusType::DecreaseBombRange:
+        if (player_->getBombRange() > 1) {
+            player_->setBombRange(player_->getBombRange() - 1);
+        }
         break;
 
     default:

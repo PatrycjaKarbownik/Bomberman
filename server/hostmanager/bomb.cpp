@@ -11,11 +11,6 @@ Bomb::Bomb(qint32 id_, Player *owner_, const qint32 explosionTimeout, QObject *p
 
 }
 
-Bomb::~Bomb()
-{
-    qDebug() << "KABOM USUNIETE";
-}
-
 void Bomb::stopCountdown()
 {
     m_explosionTimer.stop();

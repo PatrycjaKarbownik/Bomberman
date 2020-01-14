@@ -21,7 +21,6 @@ GameHost::GameHost(const quint16 port_)
 void GameHost::createRoom(const QStringList &expectedPlayerUsernames_)
 {
     Room *newRoom = new Room(expectedPlayerUsernames_);
-    qDebug() << "BLABLA";
     newRoom->moveToThread(this->thread());
     m_rooms.push_back(newRoom);
 }

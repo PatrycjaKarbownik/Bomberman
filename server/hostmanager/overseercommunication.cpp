@@ -13,7 +13,7 @@ OverseerCommunication::OverseerCommunication(const quint16 overseerPort_, QObjec
     m_socket.waitForConnected(5000);
 
     if (m_socket.state() != QTcpSocket::ConnectedState) {
-        qCritical() << "Socket could not connect!";
+        qCritical() << "[TCP Socket] Socket could not connect!";
         return;
     }
 
@@ -65,7 +65,7 @@ void OverseerCommunication::onReadyRead()
 {
     while (m_socket.canReadLine()) {
         QByteArray message = m_socket.readLine();
-        qDebug() << "Received line " << message;
+        qDebug() << "[TCP Socket] Received line " << message;
 
         QJsonDocument doc = QJsonDocument::fromJson(message);
         if (doc.isEmpty()) {
