@@ -33,9 +33,9 @@ export class MapConfiguration {
         width: 0.70 * this.tileWidth,
         height: 0.70 * this.tileHeight
       },
-      { // TOP RIGHT - pig
+      { // BOTTOM RIGHT - chick
         spriteX: 38,
-        spriteY: 145,
+        spriteY: 2,
         spriteWidth: 128,
         spriteHeight: 128,
         width: 0.70 * this.tileWidth,
@@ -49,9 +49,9 @@ export class MapConfiguration {
         width: 0.70 * this.tileWidth,
         height: 0.70 * this.tileHeight
       },
-      { // BOTTOM RIGHT - chick
+      { // TOP RIGHT - pig
         spriteX: 38,
-        spriteY: 2,
+        spriteY: 145,
         spriteWidth: 128,
         spriteHeight: 128,
         width: 0.70 * this.tileWidth,
@@ -137,21 +137,13 @@ export class MapConfiguration {
         width: this.tileWidth,
         height: this.tileHeight
       },
-      { // fire_horizontal
+      { // fire
         spriteX: 38,
         spriteY: 750,
         spriteWidth: 128,
         spriteHeight: 128,
-        width: null,
-        height: null
-      },
-      { // fire_vertical
-        spriteX: 179,
-        spriteY: 750,
-        spriteWidth: 128,
-        spriteHeight: 128,
-        width: null,
-        height: null
+        width: this.tileWidth,
+        height: this.tileHeight
       },
     ];
   }

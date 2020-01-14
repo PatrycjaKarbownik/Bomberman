@@ -10,6 +10,7 @@ import { WebsocketService } from '@app/shared/websocket-service/websocket.servic
 // lobby service
 // communicate with overseer
 // send requests to overseer
+// requests relate only lobby info
 @Injectable({
   providedIn: 'root'
 })

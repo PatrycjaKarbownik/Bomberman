@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 
 import { GameDetailsService } from '@app/view/game/game-view/game-details.service';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
-import { MapConfiguration } from '@app/view/game/game-view/models/map-configuration';
+import { MapConfiguration } from '@app/view/game/game-view/map-configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
 import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
+import { BombExplodedModel } from '@app/view/game/game-view/server-connection/bomb-exploded.model';
+import { FlamesModel } from '@app/view/game/game-view/server-connection/flames.model';
 
 // game service
 // answer for game view dependent on game logic
@@ -22,15 +24,16 @@ export class GameService {
   private gameLoop = null;
 
   // other items
-  private bombs: BombModel[] = [];
-  private playerBombs: BombModel[] = [];
-  // collection of bombs witch player placed but didn't leave tiles with them
-  // it's needed, because player have to leave tiles, where placed bomb
-  // and it's necessary to split them
+  private bombs: BombModel[] = []; // bombs placed by other players
+  private playerBombs: BombModel[] = []; // bombs placed by player
+  // collection of bombs which were placed under player and he didn't leave these tiles yet
+  // it's needed, because player have to leave tiles on which are placing bomb
+  // it's necessary to split them
   private bombsUnderPlayer: BombModel[] = [];
+  private flames: FlamesModel[] = [];
   private walls: TileModel[];
   private otherPlayers: PlayerDetailsModel[];
-  private bonuses: TileModel[];
+  private bonuses: TileModel[] = [];
 
   // player details
   private player: PlayerDetailsModel = null;
@@ -46,11 +49,9 @@ export class GameService {
               private configuration: MapConfiguration) {
 
     this.setServerSubscriptions();
-
-    this.bonuses = gameDetailsService.getBonuses();
   }
 
-  loadAssets(canvasElement: HTMLCanvasElement): Promise<void> {
+  createPlayground(canvasElement: HTMLCanvasElement): Promise<void> {
     this.context = canvasElement.getContext('2d');
 
     canvasElement.width = this.configuration.mapWidth;
@@ -67,12 +68,16 @@ export class GameService {
     });
   }
 
+  // enable refreshing map state (players', bombs', bonuses' positions)
+  // and checking validity of player's actions
   setServerSubscriptions() {
     this.setConfigurationSubscription();
     this.setOtherPlayersUpdateSubscription();
     this.setPlayerUpdateSubscription();
     this.setNewBombsSubscription();
     this.setRejectedBombsSubscription();
+    this.setBombExplodedSubscription();
+    this.setPickedBonusSubscription();
   }
 
   startGameLoop() {
@@ -80,6 +85,7 @@ export class GameService {
     this.gameLoop = setInterval(() => {
       this.clearGround();
       this.drawTiles();
+      this.drawFlames();
       this.checkIfPlayerLeavesTilesWithBomb();
       this.drawBombs();
       this.drawOtherPlayers();
@@ -98,6 +104,27 @@ export class GameService {
         sprite.width, sprite.height
       );
     });
+  }
+
+  private drawFlames() {
+    let flameSprite = this.getTileSprite(TileType.FIRE);
+
+    this.flames.filter(flames => flames.frameNumber === 100)
+      .forEach(it => this.flames.splice(this.flames.indexOf(it), 1));
+
+
+    this.flames.forEach(it => {
+      it.frameNumber += 1;
+      it.flames.forEach(flame => {
+        this.context.drawImage(
+          this.image,
+          flameSprite.spriteX, flameSprite.spriteY,
+          flameSprite.spriteWidth, flameSprite.spriteHeight,
+          flame.x, flame.y,
+          flameSprite.width, flameSprite.height
+        );
+      })
+    })
   }
 
   private drawBombs() {
@@ -128,21 +155,23 @@ export class GameService {
   }
 
   private drawPlayer() {
-    if (this.up) {
-      this.moveUp();
-    } else if (this.down) {
-      this.moveDown();
-    } else if (this.left) {
-      this.moveLeft();
-    } else if (this.right) this.moveRight();
+    if (this.player.alive) {
+      if (this.up) {
+        this.moveUp();
+      } else if (this.down) {
+        this.moveDown();
+      } else if (this.left) {
+        this.moveLeft();
+      } else if (this.right) this.moveRight();
 
-    this.context.drawImage(
-      this.image,
-      this.playerSprite.spriteX, this.playerSprite.spriteY,
-      this.playerSprite.spriteWidth, this.playerSprite.spriteHeight,
-      this.player.x, this.player.y,
-      this.playerSprite.width, this.playerSprite.height,
-    );
+      this.context.drawImage(
+        this.image,
+        this.playerSprite.spriteX, this.playerSprite.spriteY,
+        this.playerSprite.spriteWidth, this.playerSprite.spriteHeight,
+        this.player.x, this.player.y,
+        this.playerSprite.width, this.playerSprite.height,
+      );
+    }
   }
 
   // cleans game view - it's necessary, because next frames will be rendered on previous canvas.
@@ -244,24 +273,26 @@ export class GameService {
   }
 
   setBomb() {
-    let horizontalTileNumber = Math.floor(this.player.x / this.configuration.tileWidth);
-    let leftTile = horizontalTileNumber * this.configuration.tileWidth;
-    let rightTile = (horizontalTileNumber + 1) * this.configuration.tileWidth;
+    if(this.playerBombs.length < this.player.bombLimit) {
+      let horizontalTileNumber = Math.floor(this.player.x / this.configuration.tileWidth);
+      let leftTile = horizontalTileNumber * this.configuration.tileWidth;
+      let rightTile = (horizontalTileNumber + 1) * this.configuration.tileWidth;
 
-    let verticalTileNumber = Math.floor(this.player.y / this.configuration.tileHeight);
-    let topTile = verticalTileNumber * this.configuration.tileHeight;
-    let bottomTile = (verticalTileNumber + 1) * this.configuration.tileHeight;
+      let verticalTileNumber = Math.floor(this.player.y / this.configuration.tileHeight);
+      let topTile = verticalTileNumber * this.configuration.tileHeight;
+      let bottomTile = (verticalTileNumber + 1) * this.configuration.tileHeight;
 
-    let x = this.chooseTile(this.player.x, leftTile, rightTile);
-    let y = this.chooseTile(this.player.y, topTile, bottomTile);
+      let x = this.chooseTile(this.player.x, leftTile, rightTile);
+      let y = this.chooseTile(this.player.y, topTile, bottomTile);
 
-    if (!this.isBombPresentAtTile(x, y)) {
-      this.bombsUnderPlayer.push({
-        x: x,
-        y: y,
-        isPlayersBomb: true
-      } as BombModel);
-      this.serverConnectionService.sendBombRequest(x, y);
+      if (!this.isBombPresentAtTile(x, y)) {
+        this.bombsUnderPlayer.push({
+          x: x,
+          y: y,
+          isPlayerBomb: true
+        } as BombModel);
+        this.serverConnectionService.sendBombRequest(x, y);
+      }
     }
   }
 
@@ -282,7 +313,7 @@ export class GameService {
   }
 
   private setNotOwnBomb(bomb: BombModel) {
-    bomb.isPlayersBomb = false;
+    bomb.isPlayerBomb = false;
 
     const supposedLeftSide = this.player.x;
     const supposedRightSide = this.player.x + this.playerSprite.width;
@@ -310,7 +341,7 @@ export class GameService {
     this.bombsUnderPlayer.forEach(bomb => {
       if (!this.areCollisionConditionsAchieved(supposedLeftSide, supposedRightSide, supposedTopSide, supposedBottomSide,
         bomb.x, bomb.x + tileWidth, bomb.y, bomb.y + tileHeight)) {
-        if (bomb.isPlayersBomb === true) {
+        if (bomb.isPlayerBomb === true) {
           this.playerBombs.push(bomb);
         } else {
           this.bombs.push(bomb);
@@ -324,12 +355,13 @@ export class GameService {
     if (tileType === TileType.WALL) return this.configuration.sprites[SpriteType.WALL];
     if (tileType === TileType.FRAGILE) return this.configuration.sprites[SpriteType.FRAGILE];
     if (tileType === TileType.RANGE_INC) return this.configuration.sprites[SpriteType.RANGE_INC];
-    if (tileType === TileType.RANGE_DESC) return this.configuration.sprites[SpriteType.RANGE_DESC];
+    if (tileType === TileType.RANGE_DEC) return this.configuration.sprites[SpriteType.RANGE_DESC];
     if (tileType === TileType.BOMB_INC) return this.configuration.sprites[SpriteType.BOMB_INC];
-    if (tileType === TileType.BOMB_DESC) return this.configuration.sprites[SpriteType.BOMB_DESC];
+    if (tileType === TileType.BOMB_DEC) return this.configuration.sprites[SpriteType.BOMB_DESC];
     if (tileType === TileType.SPEED_INC) return this.configuration.sprites[SpriteType.SPEED_INC];
-    if (tileType === TileType.SPEED_DESC) return this.configuration.sprites[SpriteType.SPEED_DESC];
+    if (tileType === TileType.SPEED_DEC) return this.configuration.sprites[SpriteType.SPEED_DESC];
     if (tileType === TileType.PUSH_BOMB) return this.configuration.sprites[SpriteType.PUSH_BOMB];
+    if (tileType === TileType.FIRE) return this.configuration.sprites[SpriteType.FIRE];
   }
 
   private setConfigurationSubscription() {
@@ -361,6 +393,7 @@ export class GameService {
         this.player.alive = playerInfo.alive;
         this.player.speed = playerInfo.speed;
         this.player.bombPusher = playerInfo.bombPusher;
+        this.player.bombLimit = playerInfo.bombLimit;
       });
   }
 
@@ -374,15 +407,68 @@ export class GameService {
   private setRejectedBombsSubscription() {
     this.serverConnectionService.getRejectedBombEmitter()
       .subscribe((bomb: BombModel) => {
-        let suspectedBomb = this.bombsUnderPlayer.find(it => it.x === bomb.x && it.y === bomb.y);
-        if (suspectedBomb !== undefined) {
-          this.bombsUnderPlayer.splice(this.bombsUnderPlayer.indexOf(suspectedBomb), 1);
-        } else {
-          suspectedBomb = this.playerBombs.find(it => it.x === bomb.x && it.y === bomb.y);
-          if (suspectedBomb !== undefined) {
-            this.playerBombs.splice(this.bombsUnderPlayer.indexOf(suspectedBomb), 1);
-          }
-        }
+        this.removeBombIfItsPlayer(bomb.x, bomb.y);
       });
+  }
+
+  private removeBombIfItsPlayer(x: number, y: number): boolean {
+    let indexOfBombToRemove = this.bombsUnderPlayer.findIndex(it => it.x === x && it.y === y);
+    if (indexOfBombToRemove !== -1) {
+      this.bombsUnderPlayer.splice(indexOfBombToRemove, 1);
+      return true;
+    } else {
+      indexOfBombToRemove = this.playerBombs.findIndex(it => it.x === x && it.y === y);
+      if (indexOfBombToRemove !== -1) {
+        this.playerBombs.splice(indexOfBombToRemove, 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private removeBomb(x: number, y: number) {
+    if (this.removeBombIfItsPlayer(x, y) === true) return;
+
+    let indexOfBombToRemove = this.bombs.findIndex(it => it.x === x && it.y === y);
+    if (indexOfBombToRemove !== -1) {
+      this.bombs.splice(indexOfBombToRemove, 1);
+    }
+  }
+
+  private setBombExplodedSubscription() {
+    this.serverConnectionService.getBombExplodedEmitter()
+      .subscribe((bombExplodedModel: BombExplodedModel) => {
+        bombExplodedModel.removedFragileWalls.forEach(fragileWall => this.removeFragileWall(fragileWall));
+        bombExplodedModel.removedBonuses.forEach(bonus => this.removeBonus(bonus));
+        bombExplodedModel.removedBombs.forEach((bomb => this.removeBomb(bomb.x, bomb.y)));
+        bombExplodedModel.newBonuses.forEach((bonus: TileModel) => this.bonuses.push(bonus));
+        this.addFlames(bombExplodedModel.flames);
+      });
+  }
+
+  private removeFragileWall(fragileWall: TileModel) {
+    let indexOfWallToRemove = this.walls.findIndex(it => it.id === fragileWall.id);
+    if (indexOfWallToRemove != -1) {
+      this.walls.splice(indexOfWallToRemove, 1);
+    }
+  }
+
+  private removeBonus(bonus: TileModel) {
+    let indexOfBonusToRemove = this.bonuses.findIndex(it => it.id === bonus.id);
+    if (indexOfBonusToRemove != -1) {
+      this.bonuses.splice(indexOfBonusToRemove, 1);
+    }
+  }
+
+  private setPickedBonusSubscription() {
+    this.serverConnectionService.getPickedBonusEmitter()
+      .subscribe((bonus: TileModel) => this.removeBonus(bonus));
+  }
+
+  private addFlames(flames: TileModel[]) {
+    this.flames.push({
+      flames: flames,
+      frameNumber: 0
+    } as FlamesModel)
   }
 }

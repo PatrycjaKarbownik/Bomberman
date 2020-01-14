@@ -1,3 +1,4 @@
+// determine type of messages received from server
 export enum MessageType {
   AUTHORIZATION = "authorization",
   MAP_INFO = "mapInfo",
@@ -8,4 +9,6 @@ export enum MessageType {
   LAST_REQUEST = "lastReviewedRequestId",
   BOMB_PLACED = "bombPlaced",
   BOMB_REJECTED = "bombRejected",
+  BOMB_EXPLODED = "bombExploded",
+  BONUS_PICKED_UP = "bonusPickedUp",
 }

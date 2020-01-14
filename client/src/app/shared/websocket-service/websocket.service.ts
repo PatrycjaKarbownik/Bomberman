@@ -7,6 +7,7 @@ import { OverseerSocket } from '@app/shared/websocket-service/sockets/overseer-s
 import { UserId } from '@app/core/storages/user-details.storage';
 import { RoomWithUsernamesModel } from '@app/view/lobby/models/room-with-usernames.model';
 
+// service for connection with overseer connection by websocket (socket-io)
 @Injectable({
   providedIn: 'root'
 })

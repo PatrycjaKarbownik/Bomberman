@@ -12,7 +12,10 @@ import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
 import { RequestType } from '@app/view/game/game-view/server-connection/request-type';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
+import { BombExplodedModel } from '@app/view/game/game-view/server-connection/bomb-exploded.model';
 
+// service only for communication with game server
+// and information transfer to another components
 @Injectable({
   providedIn: 'root'
 })
@@ -25,6 +28,7 @@ export class ServerConnectionService {
   private actualRequestId = 0;
   private lastReviewedId = 0;
 
+  // information transmitters
   private gameHostSocket: WebSocketSubject<{}>;
   private gameStartedEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   private mapInfoEmitter: EventEmitter<TileModel[]> = new EventEmitter<TileModel[]>();
@@ -33,6 +37,8 @@ export class ServerConnectionService {
   private playerInfoEmitter: EventEmitter<PlayerDetailsModel> = new EventEmitter<PlayerDetailsModel>();
   private newBombEmitter: EventEmitter<BombModel> = new EventEmitter<BombModel>();
   private rejectedBombEmitter: EventEmitter<BombModel> = new EventEmitter<BombModel>();
+  private bombExplodedEmitter: EventEmitter<BombExplodedModel> = new EventEmitter<BombExplodedModel>();
+  private pickedBonusEmitter: EventEmitter<TileModel> = new EventEmitter<TileModel>();
 
   constructor(private websocketService: WebsocketService) {
     this.gameHostSocket = webSocket(`ws://${gamehostIP}:${websocketService.port}`);
@@ -62,6 +68,10 @@ export class ServerConnectionService {
           this.emitNewBomb(messageData.content);
         } else if (messageData.messageType === MessageType.BOMB_REJECTED) {
           this.emitRejectedBomb(messageData.content);
+        } else if (messageData.messageType === MessageType.BOMB_EXPLODED) {
+          this.emitBombExploded(messageData.content);
+        } else if (messageData.messageType === MessageType.BONUS_PICKED_UP) {
+          this.emitPickedBonus(messageData.content);
         }
       }
     );
@@ -95,9 +105,7 @@ export class ServerConnectionService {
     this.actualRequestId += 1;
   }
 
-  getGameHostSocket() {
-    return this.gameHostSocket;
-  }
+  // methods allow listen if information come by other components
 
   getMapInfoEmitter() {
     return this.mapInfoEmitter;
@@ -127,6 +135,16 @@ export class ServerConnectionService {
     return this.rejectedBombEmitter;
   }
 
+  getBombExplodedEmitter() {
+    return this.bombExplodedEmitter;
+  }
+
+  getPickedBonusEmitter() {
+    return this.pickedBonusEmitter;
+  }
+
+  // methods transmit information if it comes
+
   private emitMapInfo(mapInfo: TileModel[]) {
     this.mapInfoEmitter.emit(mapInfo);
   }
@@ -153,5 +171,13 @@ export class ServerConnectionService {
 
   private emitRejectedBomb(bomb: BombModel) {
     this.rejectedBombEmitter.emit(bomb);
+  }
+
+  private emitBombExploded(bombExplodedModel: BombExplodedModel) {
+    this.bombExplodedEmitter.emit(bombExplodedModel);
+  }
+
+  private emitPickedBonus(bonus: TileModel) {
+    this.pickedBonusEmitter.emit(bonus);
   }
 }
