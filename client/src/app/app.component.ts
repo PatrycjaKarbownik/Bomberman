@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
+// primary application component
 @Component({
   selector: 'bomb-root',
   templateUrl: './app.component.pug',

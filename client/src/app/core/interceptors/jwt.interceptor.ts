@@ -11,6 +11,9 @@ import { AccessToken } from '@app/core/storages/access-token.storage';
 import { AuthService } from '@app/auth/auth.service';
 import { ErrorType } from '@app/core/error/error-type';
 
+// manage http requests - add access token to all of requests
+// and handle tokens expiration - if it's present, send request for new access token (add refresh token to this request) and save them
+// if refresh token expired, navigate user to login view
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 

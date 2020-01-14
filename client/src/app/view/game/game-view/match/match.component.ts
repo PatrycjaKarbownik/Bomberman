@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 
-import { ActionService } from '@app/view/game/game-view/action.service';
+import { UserActionService } from '@app/view/game/game-view/user-action.service';
 import { GameService } from '@app/view/game/game-view/game.service';
 import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
@@ -24,13 +24,12 @@ export class MatchComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef;
   showLoader = true;
 
-  constructor(private actionService: ActionService, private gameService: GameService,
+  constructor(private userActionService: UserActionService, private gameService: GameService,
               private serverConnectionService: ServerConnectionService) { }
 
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
-    this.actionService.createPlayGround(canvasEl);
-    this.actionService.setConfiguration();
+    this.userActionService.createPlayGround(canvasEl);
     this.serverConnectionService.getGameStartedEmitter()
       .subscribe(gameStarted => {
         this.showLoader = !(gameStarted === true);
@@ -39,10 +38,10 @@ export class MatchComponent implements AfterViewInit {
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    this.actionService.keyDown(event);
+    this.userActionService.keyDown(event);
   }
 
   @HostListener('document:keyup', ['$event']) onKeyupHandler(event: KeyboardEvent) {
-    this.actionService.keyUp(event);
+    this.userActionService.keyUp(event);
   }
 }

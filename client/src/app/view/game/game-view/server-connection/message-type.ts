@@ -1,3 +1,4 @@
+// determine type of messages received from server
 export enum MessageType {
   AUTHORIZATION = "authorization",
   MAP_INFO = "mapInfo",

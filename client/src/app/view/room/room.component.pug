@@ -6,9 +6,9 @@
     div(*ngIf="!room.inGame")
       span(*ngIf="room.users.length < 2", translate) ROOM.WAITING_FOR_USERS
       div(*ngIf="room.users.length >= 2")
-        span(*ngIf="remainingTime === 0 || areAllUsersReady()", translate) ROOM.GAME_IS_STARTING
-        div.d-flex.flex-column(*ngIf="remainingTime !== 0 && !areAllUsersReady()")
-          span {{ ('ROOM.GAME_START_IN' | translate) + ' ' + remainingTime + ' ' + ('ROOM.SEC' | translate) }}
+        span(*ngIf="areAllUsersReady()", translate) ROOM.GAME_IS_STARTING
+        div.d-flex.flex-column(*ngIf="!areAllUsersReady()")
+          span(translate) ROOM.WAITING_FOR_READINESS_ALL_USERS
           button.mt-1.button-primary((click)="changeReadiness()", translate) ROOM.CHANGE_READINESS
     div.d-flex.flex-column(*ngIf="room.inGame")
       span(translate) ROOM.GAME_RUNS
@@ -22,8 +22,6 @@
             span {{ user.name }}
       .row.mt-5
         button.button-primary(type="button", (click)="leaveRoom()", translate) ROOM.LEAVE_ROOM
-      .row.mt-5
-        button.button-primary(type="button", (click)="gameView()", translate) GAME VIEW
 
     img(src="/assets/images/smiley-bomb.png")
 

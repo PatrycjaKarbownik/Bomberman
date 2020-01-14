@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+// component which shows match view
 @Component({
   selector: 'bomb-game-view',
   template: `

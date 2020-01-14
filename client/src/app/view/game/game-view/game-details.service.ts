@@ -3,12 +3,11 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
-import { UserId, Username } from '@app/core/storages/user-details.storage';
+import { Username } from '@app/core/storages/user-details.storage';
 import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
 
 // game details service
-// connects with gamehost
-// and gets needed initial information
+// gets needed initial information via server-connection service
 // like players and map details
 @Injectable({
   providedIn: 'root'
@@ -27,7 +26,7 @@ export class GameDetailsService {
 
   constructor(private serverConnectionService: ServerConnectionService) {
     this.listenMapInfo();
-    this.listenPlayersInfo();
+    this.listenInitialPlayersInfo();
   }
 
   private listenMapInfo() {
@@ -39,7 +38,7 @@ export class GameDetailsService {
     });
   }
 
-  private listenPlayersInfo() {
+  private listenInitialPlayersInfo() {
     this.serverConnectionService.getInitialPlayersInfoEmitter().subscribe((players: PlayerDetailsModel[]) => {
       this.otherPlayers = players.filter(it => it.username !== this.username);
       console.log('other playaers', this.otherPlayers);
