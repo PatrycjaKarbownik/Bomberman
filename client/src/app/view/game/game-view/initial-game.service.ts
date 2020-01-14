@@ -28,11 +28,12 @@ export class InitialGameService {
   }
 
   private listenMapInfo() {
-    this.serverConnectionService.getMapInfoEmitter().subscribe((walls: TileModel[]) => {
-      this.walls = walls.filter(it => it.type !== TileType.NOTHING);
-      this.mapLoaded = true;
-      this.emitConfigurationSet();
-    });
+    this.serverConnectionService.getMapInfoEmitter()
+      .subscribe((walls: TileModel[]) => {
+        this.walls = walls.filter(it => it.type !== TileType.NOTHING);
+        this.mapLoaded = true;
+        this.emitConfigurationSet();
+      });
   }
 
   private listenInitialPlayersInfo() {
@@ -41,7 +42,7 @@ export class InitialGameService {
       this.player = players.find(it => it.username === this.username);
       this.playerLoaded = true;
       this.emitConfigurationSet();
-    })
+    });
   }
 
   private emitConfigurationSet() {
