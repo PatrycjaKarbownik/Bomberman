@@ -161,6 +161,16 @@ void Player::setBombRange(const qint32 &bombRange)
     m_bombRange = bombRange;
 }
 
+quint32 Player::getPlace() const
+{
+    return m_place;
+}
+
+void Player::setPlace(const quint32 &place)
+{
+    m_place = place;
+}
+
 void Player::onReceivedTextMessage(const QString &message_)
 {
     // Remove unnecessary symbols causing parsing errors

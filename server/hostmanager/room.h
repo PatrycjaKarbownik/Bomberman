@@ -59,8 +59,10 @@ private:
     void broadcastMap(const QJsonArray &map_);
     void broadcastStart();
     void broadcastPlayerInfo();
-    void broadcastMapChanges(std::list<MapTile> wallsToRemove, std::list<MapTile> bonusesToRemove,
-                             std::list<std::shared_ptr<Bomb>> bombsToRemove);
+    void broadcastMapChanges(std::list<MapTile> wallsToRemove_, std::list<MapTile> bonusesToRemove_,
+                             std::list<MapTile> bonusesToAdd_, std::list<MapTile> flames_,
+                             std::list<std::shared_ptr<Bomb>> bombsToRemove_);
+    void broadcastGameResult();
     void broadcastBonusPickUp(const MapTile& tile_);
     void sendReviewedRequestId(const Player *player_, const qint32 requestId_);
     void sendPlayerUpdate(const Player *player_);
@@ -68,6 +70,7 @@ private:
     void sendBombPlaced(const Player *bombOwner_, double bombX_, double bombY_);
     void sendBombReject(const Player *player_, double bombX_, double bombY_);
     void resetPlayers();
+    void checkIfGameEnd();
     bool isNotMovingTooFast(const Player *player_, const double x_, const double y_);
     bool isColliding(const double playerPosX_, const double playerPosY_, const MapTile& tile);
     /**
@@ -80,11 +83,14 @@ private:
     void killPlayersOnTile(const MapTile& tile);
     void checkAndPickUpBonus(Player *player_);
     void pickUpBonus(Player *player_, const BonusType bonus_);
+    quint32 countPlayerBombs(Player *player_);
     std::unordered_set<qint32> findBombsInExplosionRange(const quint16 bombX_, const quint16 bombY_,
                                                          const qint32 bombRange_);
     std::unordered_set<qint32> findExplodedBombs(std::shared_ptr<Bomb> firstExplodedBomb_);
     std::set<std::pair<quint16, quint16>> findExplodedTiles(const std::unordered_set<qint32> &explodedBombs);
-    QJsonArray tilesListToJsonArray(const std::list<MapTile> &tiles);
+    QJsonArray tilesListToJsonArray(const std::list<MapTile> &tiles_, const bool onlyCoords_ = false);
+    QJsonArray bonusesListToJsonArray(const std::list<MapTile> &bonuses);
+    QString bonusToString(const BonusType bonus_);
 
     GameMap m_map;
     // Waiting for players to start the game
@@ -95,7 +101,8 @@ private:
     const QStringList m_expectedPlayers;
     double m_playerWidth;
     double m_tileWidth;
-    qint32 m_bombId = 0;
+    qint32 m_bombId {0};
+    quint32 m_lastPlace {0};
 
 private slots:
     void onPlayerDisconnected();

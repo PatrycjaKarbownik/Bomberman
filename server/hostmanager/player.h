@@ -69,6 +69,9 @@ public:
     qint32 getBombRange() const;
     void setBombRange(const qint32 &bombRange);
 
+    quint32 getPlace() const;
+    void setPlace(const quint32 &place);
+
 signals:
     /**
      * @brief disconnected: signals that player's socket disconnected
@@ -94,6 +97,7 @@ private:
     qint32 m_lastRejectedRequestId {-1};
     qint32 m_bombRange {2};
     quint32 m_speed {2};
+    quint32 m_place {5};
     bool m_pushBonus {false};
     bool m_alive {true};
     bool m_onBomb {false};
