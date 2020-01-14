@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UserResultModel } from '@app/view/game/models/user-result.model';
+import { UserResultModel } from '@app/view/game/server-connection/models/user-result.model';
 import { ViewModel } from '@app/core/navigation/view.model';
 import { Username } from '@app/core/storages/user-details.storage';
+import { ServerConnectionService } from '@app/view/game/server-connection/server-connection.service';
+import { UserActionService } from '@app/view/game/game-view/user-action.service';
 
 @Component({
   selector: 'bomb-game-result',
@@ -15,30 +17,17 @@ export class GameResultComponent implements OnInit {
 
   game_result: UserResultModel[];
 
-  constructor(private router: Router) { }
+  constructor(private serverConnectionService: ServerConnectionService, private userActionService: UserActionService,
+              private router: Router) { }
 
   ngOnInit() {
-    // todo: get game result
-    this.game_result = [
-      {
-        username: 'xxWyGryWxxx',
-        place: 3
-      },
-      {
-        username: 'Patrice44',
-        place: 1
-      },
-      {
-        username: 'Keke',
-        place: 2
-      }
-    ];
-
+    this.game_result = this.serverConnectionService.getGameResult();
     this.game_result.sort((a, b) => a.place - b.place);
   }
 
   returnToLobby() {
-    this.router.navigateByUrl(ViewModel.LOBBY);
+    this.userActionService.leaveRoom()
+      .subscribe(() => this.router.navigateByUrl(ViewModel.LOBBY));
   }
 
   tryAgain() {

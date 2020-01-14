@@ -1,4 +1,4 @@
-import { MessageType } from '@app/view/game/game-view/server-connection/message-type';
+import { MessageType } from '@app/view/game/server-connection/models/message-type';
 
 export interface MessageModel {
   messageType: MessageType;

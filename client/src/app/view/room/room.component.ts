@@ -37,8 +37,6 @@ export class RoomComponent implements OnInit {
 
   changeReadiness() {
     this.roomService.changeReadiness().subscribe();
-    // to testing game-result-view
-    // this.router.navigateByUrl('game/result');
   }
 
   areAllUsersReady(): boolean {

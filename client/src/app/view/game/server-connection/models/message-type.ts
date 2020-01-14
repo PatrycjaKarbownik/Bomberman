@@ -11,4 +11,5 @@ export enum MessageType {
   BOMB_REJECTED = "bombRejected",
   BOMB_EXPLODED = "bombExploded",
   BONUS_PICKED_UP = "bonusPickedUp",
+  GAME_RESULT = "gameResult",
 }

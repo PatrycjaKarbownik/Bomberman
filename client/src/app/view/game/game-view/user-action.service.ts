@@ -1,4 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { GameService } from '@app/view/game/game-view/game.service';
 import { MapConfiguration } from '@app/view/game/game-view/map-configuration';
@@ -8,7 +12,7 @@ import { MapConfiguration } from '@app/view/game/game-view/map-configuration';
 })
 export class UserActionService {
 
-  constructor(private gameService: GameService, private configuration: MapConfiguration) { }
+  constructor(private gameService: GameService, private configuration: MapConfiguration, private httpClient: HttpClient) { }
 
   keyDown(event: KeyboardEvent): void {
     if (event.code === this.configuration.keyboardsSettings.placeBomb) {
@@ -49,5 +53,11 @@ export class UserActionService {
         this.gameService.right = false;
       }
     }
+  }
+
+  // gives possibility to leave room
+  leaveRoom(): Observable<any> {
+    return this.httpClient.put('room/leave', null)
+      .pipe(first());
   }
 }
