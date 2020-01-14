@@ -77,7 +77,7 @@ private:
     std::unordered_set<qint32> findBombsInExplosionRange(const quint16 bombX_, const quint16 bombY_,
                                                          const qint32 bombRange_);
     std::unordered_set<qint32> findExplodedBombs(std::shared_ptr<Bomb> firstExplodedBomb_);
-    std::list<std::pair<quint16, quint16>> findExplodedTiles(const std::unordered_set<qint32> &explodedBombs);
+    std::set<std::pair<quint16, quint16>> findExplodedTiles(const std::unordered_set<qint32> &explodedBombs);
 
     GameMap m_map;
     // Waiting for players to start the game
