@@ -163,6 +163,23 @@ void Room::broadcastMapChanges(std::list<MapTile> wallsToRemove, std::list<MapTi
 
 }
 
+void Room::broadcastBonusPickUp(const MapTile &tile_)
+{
+    QJsonObject message;
+    message.insert("messageType", "bonusPickedUp");
+
+    QJsonObject content;
+    content.insert("x", static_cast<double>(tile_.x) * m_tileWidth);
+    content.insert("y", static_cast<double>(tile_.y) * m_tileWidth);
+
+    message.insert("content", content);
+    QJsonDocument doc(message);
+
+    for (const Player* player : m_players) {
+        player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
+    }
+}
+
 void Room::sendReviewedRequestId(const Player *player_, const qint32 requestId_)
 {
     QJsonObject message;
@@ -351,6 +368,72 @@ void Room::killPlayersOnTile(const MapTile &tile)
     }
 }
 
+void Room::checkAndPickUpBonus(Player *player_)
+{
+    auto xCoord = static_cast<quint16>(player_->getPosX() / m_tileWidth);
+    auto yCoord = static_cast<quint16>(player_->getPosY() / m_tileWidth);
+
+    std::list<std::pair<quint16, quint16>> coordsList = {
+        {xCoord - 1, yCoord}, {xCoord, yCoord}, {xCoord + 1, yCoord}, {xCoord, yCoord - 1}, {xCoord, yCoord + 1} };
+
+    for (const auto& coord : coordsList) {
+        auto x = coord.first;
+        auto y = coord.second;
+
+        if (x > MAP_SIZE || y > MAP_SIZE) {
+            continue;
+        }
+
+        const auto& tile = m_map[x][y];
+        if (tile.bonus == BonusType::None) {
+            continue;
+        }
+
+        if (isColliding(player_->getPosX(), player_->getPosY(), tile)) {
+            pickUpBonus(player_, tile.bonus);
+            broadcastBonusPickUp(tile);
+            sendPlayerUpdate(player_);
+        }
+    }
+}
+
+void Room::pickUpBonus(Player *player_, const BonusType bonus_)
+{
+    switch (bonus_) {
+
+    case BonusType::PushBomb:
+        player_->setPushBonus(true);
+        break;
+
+    case BonusType::DecreaseSpeed:
+        if (player_->getSpeed() > 1) {
+            player_->setSpeed(player_->getSpeed() - 1);
+        }
+        break;
+
+    case BonusType::IncreaseSpeed:
+        player_->setSpeed(player_->getSpeed() + 1);
+        break;
+
+    case BonusType::DecreaseBombLimit:
+        if (player_->getBombLimit() > 1) {
+            player_->setBombLimit(player_->getBombLimit() - 1);
+        }
+        break;
+
+    case BonusType::IncreaseBombLimit:
+        player_->setBombLimit(player_->getBombLimit() + 1);
+        break;
+
+    case BonusType::IncreaseBombRange:
+        player_->setBombRange(player_->getBombRange() + 1);
+        break;
+
+    default:
+        break;
+    }
+}
+
 // TODO Do something about these casts
 std::unordered_set<qint32> Room::findBombsInExplosionRange(quint16 bombX_, quint16 bombY_, qint32 bombRange_)
 {
@@ -519,6 +602,7 @@ void Room::onPlayerMoveRequest(Player* player_, qint32 requestId_, qint32 lastRe
 
     player_->setPosX(x_);
     player_->setPosY(y_);
+    checkAndPickUpBonus(player_);
 
     auto bombsUnder = player_->getBombsUnderPlayer();
 

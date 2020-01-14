@@ -61,6 +61,7 @@ private:
     void broadcastPlayerInfo();
     void broadcastMapChanges(std::list<MapTile> wallsToRemove, std::list<MapTile> bonusesToRemove,
                              std::list<std::shared_ptr<Bomb>> bombsToRemove);
+    void broadcastBonusPickUp(const MapTile& tile_);
     void sendReviewedRequestId(const Player *player_, const qint32 requestId_);
     void sendPlayerUpdate(const Player *player_);
     void sendOtherPlayerUpdate(const Player *updatedPlayer_);
@@ -77,6 +78,8 @@ private:
      */
     bool hasCollidingTile(Player *player_, const double playerNewPosx_, const double playerNewPosy_);
     void killPlayersOnTile(const MapTile& tile);
+    void checkAndPickUpBonus(Player *player_);
+    void pickUpBonus(Player *player_, const BonusType bonus_);
     std::unordered_set<qint32> findBombsInExplosionRange(const quint16 bombX_, const quint16 bombY_,
                                                          const qint32 bombRange_);
     std::unordered_set<qint32> findExplodedBombs(std::shared_ptr<Bomb> firstExplodedBomb_);
