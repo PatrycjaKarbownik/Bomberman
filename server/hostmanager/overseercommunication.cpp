@@ -106,8 +106,10 @@ void OverseerCommunication::handleAuthorizationMessage(const QJsonObject &conten
     }
 
     if(authorized) {
+        qInfo() << "[Authorization] Authorization of user " << username << " succeeded";
         emit authorizationSucceed(jwtToken, username);
     } else {
+        qInfo() << "[Authorization] Authorization of user " << username << " failed";
         emit authorizationFailed(jwtToken, username);
     }
 }

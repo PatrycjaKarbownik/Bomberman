@@ -20,14 +20,14 @@ class HostManager:
         self.client_writer = None
         self.client_reader = None
 
-        # # Start a host manager application
-        # try:
-        #     subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games)])
-        # except FileNotFoundError:
-        #     # TODO logg information about file not found
-        #     print("Wrong path to hostmanager")
-        #     print("Given path: ", settings.HOST_MANAGER_PATH)
-        #     exit(1)
+        # Start a host manager application
+        try:
+            subprocess.Popen([settings.HOST_MANAGER_PATH, str(port), str(max_games)])
+        except FileNotFoundError:
+            # TODO logg information about file not found
+            print("Wrong path to hostmanager")
+            print("Given path: ", settings.HOST_MANAGER_PATH)
+            exit(1)
 
         self.thread = None
         self.awaiting_rooms = {}  # TODO Maybe remove after some time rooms from there?

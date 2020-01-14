@@ -133,8 +133,8 @@ void Room::broadcastPlayerInfo()
     }
 }
 
-void Room::broadcastMapChanges(std::list<MapTile> wallsToRemove_, std::list<MapTile> bonusesToRemove_,
-                               std::list<MapTile> bonusesToAdd_, std::list<MapTile> flames_,
+void Room::broadcastMapChanges(TileList wallsToRemove_, TileList bonusesToRemove_,
+                               TileList bonusesToAdd_, TileList flames_,
                                std::list<std::shared_ptr<Bomb> > bombsToRemove_)
 {
     QJsonObject message;
@@ -323,6 +323,9 @@ void Room::resetPlayers()
         player->setPosX(*posXIter++);
         player->setPosY(*posYIter++);
     }
+
+    m_lastPlace = static_cast<quint32>(m_players.size());
+    qDebug() << "Last place is started at " << m_lastPlace;
 }
 
 void Room::checkIfGameEnd()
@@ -343,8 +346,15 @@ void Room::checkIfGameEnd()
 
     if (alivePlayers == 1) {
         livingPlayer->setPlace(1);
-        broadcastGameResult();
+    } else {
+
+        // last players died in explosion so move everyone up in ranking
+        for (const auto player : m_players) {
+            player->setPlace(player->getPlace() - 1);
+        }
     }
+
+    broadcastGameResult();
 }
 
 bool Room::isNotMovingTooFast(const Player *player_, const double x_, const double y_)
@@ -412,12 +422,14 @@ void Room::killPlayersOnTile(const MapTile &tile)
         if (isColliding(player->getPosX(), player->getPosY(), tile)) {
             player->setAlive(false);
             player->setPlace(m_lastPlace);
+            qDebug() << player->getUsername() << " died so he is now " << player->getPlace();
 
             // Send information to player about its death
             sendPlayerUpdate(player);
 
             // Inform other players about death
             sendOtherPlayerUpdate(player);
+            m_playerWasKilled = true;
         }
     }
 }
@@ -489,13 +501,25 @@ void Room::pickUpBonus(Player *player_, const BonusType bonus_)
     }
 }
 
-quint32 Room::countPlayerBombs(Player *player_)
+quint32 Room::amountOfPlayerBombs(Player *player_)
 {
     quint32 count = 0;
 
     for (const auto& bombItem : m_bombs) {
         auto bomb = bombItem.second;
         if (bomb->owner() == player_) {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
+quint32 Room::amountOfAlivePlayers()
+{
+    quint32 count = 0;
+    for (const auto player : m_players) {
+        if (player->isAlive()) {
             ++count;
         }
     }
@@ -659,7 +683,41 @@ std::set<std::pair<quint16, quint16> > Room::findExplodedTiles(const std::unorde
     return explodedTiles;
 }
 
-QJsonArray Room::tilesListToJsonArray(const std::list<MapTile> &tiles_, const bool onlyCoords_)
+void Room::setTileExplosionResult(MapTile &tile_, TileList &wallsToRemove_,
+                                  TileList &bonusesToRemove_, TileList &bonusesToAdd_,
+                                  TileList &flames_, std::list<std::shared_ptr<Bomb> > &bombsToRemove_)
+{
+    flames_.push_back(tile_);
+
+    if (tile_.bomb) {
+        auto bomb = tile_.bomb;
+        tile_.bomb = nullptr;
+        bomb->stopCountdown();
+        Player *bombOwner = bomb->owner();
+        bombOwner->removeBombUnderPlayer(tile_.x, tile_.y);
+        m_bombs.erase(m_bombs.find(bomb->id()));
+        bombsToRemove_.push_back(bomb);
+    }
+
+    if (tile_.type == TileType::Nothing && tile_.bonus != BonusType::None) {
+        bonusesToRemove_.push_back(tile_);
+        tile_.bonus = BonusType::None;
+    }
+
+    if (tile_.type == TileType::FragileWall) {
+        wallsToRemove_.push_back(tile_);
+        tile_.type = TileType::Nothing;
+
+        // Drop bonus from wall if it has any
+        if (tile_.bonus != BonusType::None) {
+            bonusesToAdd_.push_back(tile_);
+        }
+    }
+
+    killPlayersOnTile(tile_);
+}
+
+QJsonArray Room::tilesListToJsonArray(const TileList &tiles_, const bool onlyCoords_)
 {
     QJsonArray resultArray;
     for (const auto& tile : tiles_) {
@@ -790,7 +848,7 @@ void Room::onPlayerBombRequest(Player *player_, qint32 requestId_, qint32 lastRe
         return;
     }
 
-    if (countPlayerBombs(player_) >= player_->getBombLimit()) {
+    if (amountOfPlayerBombs(player_) >= player_->getBombLimit()) {
         sendBombReject(player_, x_, y_);
         return;
     }
@@ -831,48 +889,25 @@ void Room::onBombExplosion(Bomb *bomb_)
     auto bomb = m_bombs.at(bomb_->id());
     std::unordered_set<qint32> explodedBombs = findExplodedBombs(bomb);
     std::set<std::pair<quint16, quint16>> explodedTiles = findExplodedTiles(explodedBombs);
-    std::list<MapTile> wallsToRemove;
-    std::list<MapTile> bonusesToRemove;
-    std::list<MapTile> bonusesToAdd;
-    std::list<MapTile> flames;
+    TileList wallsToRemove;
+    TileList bonusesToRemove;
+    TileList bonusesToAdd;
+    TileList flames;
     std::list<std::shared_ptr<Bomb>> bombsToRemove;
+    m_playerWasKilled = false;
 
     // Check every tile if something has changed
     for (auto tileCoords : explodedTiles) {
         auto [xCoord, yCoord] = tileCoords;
         MapTile &tile = m_map[yCoord][xCoord];
-        flames.push_back(tile);
 
-        if (tile.bomb) {
-            auto bomb = tile.bomb;
-            tile.bomb = nullptr;
-            bomb->stopCountdown();
-            Player *bombOwner = bomb->owner();
-            bombOwner->removeBombUnderPlayer(xCoord, yCoord);
-            m_bombs.erase(m_bombs.find(bomb->id()));
-            bombsToRemove.push_back(bomb);
-        }
+        setTileExplosionResult(tile, wallsToRemove, bonusesToRemove, bonusesToAdd, flames, bombsToRemove);
+    }
 
-        if (tile.type == TileType::Nothing && tile.bonus != BonusType::None) {
-            bonusesToRemove.push_back(tile);
-            tile.bonus = BonusType::None;
-        }
-
-        if (tile.type == TileType::FragileWall) {
-            wallsToRemove.push_back(tile);
-            tile.type = TileType::Nothing;
-
-            // Drop bonus from wall if it has any
-            if (tile.bonus != BonusType::None) {
-                bonusesToAdd.push_back(tile);
-            }
-            continue;
-        }
-
-        killPlayersOnTile(tile);
+    if (m_playerWasKilled) {
+        m_lastPlace = amountOfAlivePlayers();
         checkIfGameEnd();
     }
 
-    m_lastPlace;
     broadcastMapChanges(wallsToRemove, bonusesToRemove, bonusesToAdd, flames, bombsToRemove);
 }
