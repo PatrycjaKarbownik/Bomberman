@@ -22,8 +22,8 @@ export class GameService {
   private gameLoop = null;
 
   // other items
-  private bombs: BombModel[] = []; // bomb placed by other players
-  private playerBombs: BombModel[] = []; // bomb placed by player
+  private bombs: BombModel[] = []; // bombs placed by other players
+  private playerBombs: BombModel[] = []; // bombs placed by player
   // collection of bombs which were placed under player and he didn't leave these tiles yet
   // it's needed, because player have to leave tiles on which are placing bomb
   // it's necessary to split them
