@@ -20,7 +20,7 @@ export class RoomComponent implements OnInit {
   constructor(private roomService: RoomService,
               private route: ActivatedRoute, private router: Router) { }
 
-  // get room to which user has entered and set countdown to game begin
+  // get room to which user has entered
   ngOnInit() {
     this.roomService.getRoom()
       .subscribe(room => {
@@ -37,8 +37,6 @@ export class RoomComponent implements OnInit {
 
   changeReadiness() {
     this.roomService.changeReadiness().subscribe();
-    // to testing game-result-view
-    // this.router.navigateByUrl('game/result');
   }
 
   areAllUsersReady(): boolean {

@@ -2,17 +2,18 @@ import { EventEmitter, Injectable } from '@angular/core';
 
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 
-import { MessageModel } from '@app/view/game/game-view/server-connection/message.model';
-import { MessageType } from '@app/view/game/game-view/server-connection/message-type';
+import { MessageModel } from '@app/view/game/server-connection/models/message.model';
+import { MessageType } from '@app/view/game/server-connection/models/message-type';
 import { Username } from '@app/core/storages/user-details.storage';
 import { AccessToken } from '@app/core/storages/access-token.storage';
 import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 import { gamehostIP } from '@app/shared/ip-configuration';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
-import { RequestType } from '@app/view/game/game-view/server-connection/request-type';
+import { RequestType } from '@app/view/game/server-connection/models/request-type';
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
-import { BombExplodedModel } from '@app/view/game/game-view/server-connection/bomb-exploded.model';
+import { BombExplodedModel } from '@app/view/game/server-connection/models/bomb-exploded.model';
+import { UserResultModel } from '@app/view/game/server-connection/models/user-result.model';
 
 // service only for communication with game server
 // and information transfer to another components
@@ -39,6 +40,9 @@ export class ServerConnectionService {
   private rejectedBombEmitter: EventEmitter<BombModel> = new EventEmitter<BombModel>();
   private bombExplodedEmitter: EventEmitter<BombExplodedModel> = new EventEmitter<BombExplodedModel>();
   private pickedBonusEmitter: EventEmitter<TileModel> = new EventEmitter<TileModel>();
+  private gameResultEmitter: EventEmitter<UserResultModel[]> = new EventEmitter<UserResultModel[]>();
+
+  private gameResult: UserResultModel[];
 
   constructor(private websocketService: WebsocketService) {
     this.gameHostSocket = webSocket(`ws://${gamehostIP}:${websocketService.port}`);
@@ -72,6 +76,9 @@ export class ServerConnectionService {
           this.emitBombExploded(messageData.content);
         } else if (messageData.messageType === MessageType.BONUS_PICKED_UP) {
           this.emitPickedBonus(messageData.content);
+        } else if (messageData.messageType === MessageType.GAME_RESULT) {
+          this.gameResult = messageData.content;
+          this.emitGameResult(messageData.content);
         }
       }
     );
@@ -99,10 +106,13 @@ export class ServerConnectionService {
     let request = `RQ_${requestType}_${this.actualRequestId}_${this.lastReviewedId}`;
 
     additionalInfo.forEach(it => request = request.concat(`_${it}`));
-    console.log('request', request);
 
     this.gameHostSocket.next(request);
     this.actualRequestId += 1;
+  }
+
+  getGameResult() {
+    return this.gameResult;
   }
 
   // methods allow listen if information come by other components
@@ -143,6 +153,10 @@ export class ServerConnectionService {
     return this.pickedBonusEmitter;
   }
 
+  getGameResultEmitter() {
+    return this.gameResultEmitter;
+  }
+
   // methods transmit information if it comes
 
   private emitMapInfo(mapInfo: TileModel[]) {
@@ -179,5 +193,9 @@ export class ServerConnectionService {
 
   private emitPickedBonus(bonus: TileModel) {
     this.pickedBonusEmitter.emit(bonus);
+  }
+
+  private emitGameResult(gameResult: UserResultModel[]) {
+    this.gameResultEmitter.emit(gameResult);
   }
 }

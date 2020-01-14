@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 
-import { GameDetailsService } from '@app/view/game/game-view/game-details.service';
+import { InitialGameService } from '@app/view/game/game-view/initial-game.service';
 import { PlayerDetailsModel } from '@app/view/game/game-view/models/player-details.model';
 import { MapConfiguration } from '@app/view/game/game-view/map-configuration';
 import { Sprite } from '@app/view/game/game-view/models/sprite.model';
@@ -8,9 +8,10 @@ import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { SpriteType } from '@app/view/game/game-view/models/sprite-type.model';
 import { TileModel } from '@app/view/game/game-view/models/tile.model';
 import { TileType } from '@app/view/game/game-view/models/tile-type.model';
-import { ServerConnectionService } from '@app/view/game/game-view/server-connection/server-connection.service';
-import { BombExplodedModel } from '@app/view/game/game-view/server-connection/bomb-exploded.model';
-import { FlamesModel } from '@app/view/game/game-view/server-connection/flames.model';
+import { ServerConnectionService } from '@app/view/game/server-connection/server-connection.service';
+import { BombExplodedModel } from '@app/view/game/server-connection/models/bomb-exploded.model';
+import { FlamesModel } from '@app/view/game/server-connection/models/flames.model';
+import { UserResultModel } from '@app/view/game/server-connection/models/user-result.model';
 
 // game service
 // answer for game view dependent on game logic
@@ -45,7 +46,9 @@ export class GameService {
   left = false;
   right = false;
 
-  constructor(private gameDetailsService: GameDetailsService, private serverConnectionService: ServerConnectionService,
+  private gameResultPresentEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  constructor(private initialGameService: InitialGameService, private serverConnectionService: ServerConnectionService,
               private configuration: MapConfiguration) {
 
     this.setServerSubscriptions();
@@ -68,9 +71,13 @@ export class GameService {
     });
   }
 
+  getGameResultPresentEmitter() {
+    return this.gameResultPresentEmitter;
+  }
+
   // enable refreshing map state (players', bombs', bonuses' positions)
   // and checking validity of player's actions
-  setServerSubscriptions() {
+  private setServerSubscriptions() {
     this.setConfigurationSubscription();
     this.setOtherPlayersUpdateSubscription();
     this.setPlayerUpdateSubscription();
@@ -78,6 +85,7 @@ export class GameService {
     this.setRejectedBombsSubscription();
     this.setBombExplodedSubscription();
     this.setPickedBonusSubscription();
+    this.setGameResultSubscription();
   }
 
   startGameLoop() {
@@ -109,9 +117,11 @@ export class GameService {
   private drawFlames() {
     let flameSprite = this.getTileSprite(TileType.FIRE);
 
+    // flames will be showed only for 1 second -
+    // canvas redraws every 10 millisecond, so we have to count number of frames to 100
+    // and later remove them
     this.flames.filter(flames => flames.frameNumber === 100)
       .forEach(it => this.flames.splice(this.flames.indexOf(it), 1));
-
 
     this.flames.forEach(it => {
       it.frameNumber += 1;
@@ -181,7 +191,7 @@ export class GameService {
   }
 
   private setPlayerDetails() {
-    this.player = this.gameDetailsService.player;
+    this.player = this.initialGameService.player;
     this.playerSprite = this.configuration.sprites[this.player.inGameId % 4];
   }
 
@@ -365,11 +375,11 @@ export class GameService {
   }
 
   private setConfigurationSubscription() {
-    this.gameDetailsService.getConfigurationSetEmitter()
+    this.initialGameService.getConfigurationSetEmitter()
       .subscribe(configurationSet => {
         if (configurationSet === true) {
-          this.walls = this.gameDetailsService.getWalls();
-          this.otherPlayers = this.gameDetailsService.getOtherPlayers();
+          this.walls = this.initialGameService.getWalls();
+          this.otherPlayers = this.initialGameService.getOtherPlayers();
         }
       });
   }
@@ -411,6 +421,7 @@ export class GameService {
       });
   }
 
+  // returns true if bomb removed; otherwise - returns false
   private removeBombIfItsPlayer(x: number, y: number): boolean {
     let indexOfBombToRemove = this.bombsUnderPlayer.findIndex(it => it.x === x && it.y === y);
     if (indexOfBombToRemove !== -1) {
@@ -435,17 +446,6 @@ export class GameService {
     }
   }
 
-  private setBombExplodedSubscription() {
-    this.serverConnectionService.getBombExplodedEmitter()
-      .subscribe((bombExplodedModel: BombExplodedModel) => {
-        bombExplodedModel.removedFragileWalls.forEach(fragileWall => this.removeFragileWall(fragileWall));
-        bombExplodedModel.removedBonuses.forEach(bonus => this.removeBonus(bonus));
-        bombExplodedModel.removedBombs.forEach((bomb => this.removeBomb(bomb.x, bomb.y)));
-        bombExplodedModel.newBonuses.forEach((bonus: TileModel) => this.bonuses.push(bonus));
-        this.addFlames(bombExplodedModel.flames);
-      });
-  }
-
   private removeFragileWall(fragileWall: TileModel) {
     let indexOfWallToRemove = this.walls.findIndex(it => it.id === fragileWall.id);
     if (indexOfWallToRemove != -1) {
@@ -460,15 +460,31 @@ export class GameService {
     }
   }
 
-  private setPickedBonusSubscription() {
-    this.serverConnectionService.getPickedBonusEmitter()
-      .subscribe((bonus: TileModel) => this.removeBonus(bonus));
-  }
-
   private addFlames(flames: TileModel[]) {
     this.flames.push({
       flames: flames,
       frameNumber: 0
     } as FlamesModel)
+  }
+
+  private setBombExplodedSubscription() {
+    this.serverConnectionService.getBombExplodedEmitter()
+      .subscribe((bombExplodedModel: BombExplodedModel) => {
+        bombExplodedModel.removedFragileWalls.forEach(fragileWall => this.removeFragileWall(fragileWall));
+        bombExplodedModel.removedBonuses.forEach(bonus => this.removeBonus(bonus));
+        bombExplodedModel.removedBombs.forEach((bomb => this.removeBomb(bomb.x, bomb.y)));
+        bombExplodedModel.newBonuses.forEach((bonus: TileModel) => this.bonuses.push(bonus));
+        this.addFlames(bombExplodedModel.flames);
+      });
+  }
+
+  private setPickedBonusSubscription() {
+    this.serverConnectionService.getPickedBonusEmitter()
+      .subscribe((bonus: TileModel) => this.removeBonus(bonus));
+  }
+
+  private setGameResultSubscription() {
+    this.serverConnectionService.getGameResultEmitter()
+      .subscribe(result => this.gameResultPresentEmitter.emit(true));
   }
 }
