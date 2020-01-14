@@ -66,6 +66,9 @@ public:
     void addBombUnderPlayer(const qint32 bombXPos_, const qint32 bombYPos_);
     void removeBombUnderPlayer(const qint32 bombXPos_, const qint32 bombYPos_);
 
+    qint32 getBombRange() const;
+    void setBombRange(const qint32 &bombRange);
+
 signals:
     /**
      * @brief disconnected: signals that player's socket disconnected
@@ -89,6 +92,7 @@ private:
     quint32 m_placedBombs {0};
     quint32 m_inGameId {0};
     qint32 m_lastRejectedRequestId {-1};
+    qint32 m_bombRange {2};
     quint32 m_speed {2};
     bool m_pushBonus {false};
     bool m_alive {true};

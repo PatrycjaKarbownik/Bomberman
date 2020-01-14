@@ -133,6 +133,36 @@ void Room::broadcastPlayerInfo()
     }
 }
 
+void Room::broadcastMapChanges(std::list<MapTile> wallsToRemove, std::list<MapTile> bonusesToRemove,
+                               std::list<std::shared_ptr<Bomb> > bombsToRemove)
+{
+    QJsonObject message;
+    message.insert("messageType", "updateMap");
+
+    QJsonArray bonusesRemovedArray = tilesListToJsonArray(bonusesToRemove);
+    QJsonArray wallsRemovedArray = tilesListToJsonArray(wallsToRemove);
+    QJsonArray bombsRemovedArray;
+
+    for (const auto& bomb : bombsToRemove) {
+        QJsonObject removedBomb;
+        removedBomb.insert("x", bomb->posX());
+        removedBomb.insert("y", bomb->posY());
+
+        bombsRemovedArray.append(removedBomb);
+    }
+
+    message.insert("removedFragileWalls", wallsRemovedArray);
+    message.insert("removedBonuses", bonusesRemovedArray);
+    message.insert("removedBombs", bombsRemovedArray);
+    QJsonDocument doc(message);
+
+    for (const Player* player : m_players) {
+        player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
+    }
+
+
+}
+
 void Room::sendReviewedRequestId(const Player *player_, const qint32 requestId_)
 {
     QJsonObject message;
@@ -304,6 +334,23 @@ bool Room::hasCollidingTile(Player *player_, const double playerNewPosx_, const 
     return false;
 }
 
+void Room::killPlayersOnTile(const MapTile &tile)
+{
+    for (auto player : m_players) {
+        if (!player->isAlive()) {
+            continue;
+        }
+        if (isColliding(player->getPosX(), player->getPosY(), tile)) {
+            player->setAlive(false);
+            // Send information to player about its death
+            sendPlayerUpdate(player);
+
+            // Inform other players about death
+            sendOtherPlayerUpdate(player);
+        }
+    }
+}
+
 // TODO Do something about these casts
 std::unordered_set<qint32> Room::findBombsInExplosionRange(quint16 bombX_, quint16 bombY_, qint32 bombRange_)
 {
@@ -389,6 +436,20 @@ std::set<std::pair<quint16, quint16> > Room::findExplodedTiles(const std::unorde
     }
 
     return explodedTiles;
+}
+
+QJsonArray Room::tilesListToJsonArray(const std::list<MapTile> &tiles)
+{
+    QJsonArray resultArray;
+    for (const auto& tile : tiles) {
+        QJsonObject removedTile;
+        removedTile.insert("x", static_cast<double>(tile.x) * m_tileWidth);
+        removedTile.insert("y", static_cast<double>(tile.y) * m_tileWidth);
+
+        resultArray.append(removedTile);
+    }
+
+    return resultArray;
 }
 
 void Room::onPlayerDisconnected()
@@ -496,6 +557,7 @@ void Room::onPlayerBombRequest(Player *player_, qint32 requestId_, qint32 lastRe
     bomb->moveToThread(this->thread());
     bomb->setPosX(x_);
     bomb->setPosY(y_);
+    bomb->setRange(player_->getBombRange());
     m_map[yMapCoord][xMapCoord].bomb = bomb;
     connect(bomb.get(), &Bomb::exploded, this, &Room::onBombExplosion);
 
@@ -505,14 +567,18 @@ void Room::onPlayerBombRequest(Player *player_, qint32 requestId_, qint32 lastRe
 }
 
 // todo Check if bomb still exists?
+// Todo shorten this function
 void Room::onBombExplosion(Bomb *bomb_)
 {
+    qDebug() << "[Bomb] Bomb exploded";
     auto bomb = m_bombs.at(bomb_->id());
     std::unordered_set<qint32> explodedBombs = findExplodedBombs(bomb);
     std::set<std::pair<quint16, quint16>> explodedTiles = findExplodedTiles(explodedBombs);
-    std::list<MapTile> tilesToRemove;
+    std::list<MapTile> wallsToRemove;
+    std::list<MapTile> bonusesToRemove;
     std::list<std::shared_ptr<Bomb>> bombsToRemove;
 
+    // Check every tile if something has changed
     for (auto tileCoords : explodedTiles) {
         auto [xCoord, yCoord] = tileCoords;
         MapTile &tile = m_map[yCoord][xCoord];
@@ -530,26 +596,19 @@ void Room::onBombExplosion(Bomb *bomb_)
             m_bombs.erase(m_bombs.find(bomb->id()));
         }
 
+        if (tile.type == TileType::Nothing && tile.bonus != BonusType::None) {
+            bonusesToRemove.push_back(tile);
+            tile.bonus = BonusType::None;
+        }
+
         if (tile.type == TileType::FragileWall) {
+            wallsToRemove.push_back(tile);
             tile.type = TileType::Nothing;
-            tilesToRemove.push_back(tile);
             continue;
         }
 
-        // Check if player is not in range
-        for (auto player : m_players) {
-            if (!player->isAlive()) {
-                continue;
-            }
-            if (isColliding(player->getPosX(), player->getPosY(), tile)) {
-                player->setAlive(false);
-                // Send information to player about its death
-                sendPlayerUpdate(player);
-
-                // Inform other players about death
-                sendOtherPlayerUpdate(player);
-            }
-        }
+        killPlayersOnTile(tile);
     }
-    //bomb_->deleteLater();
+
+    broadcastMapChanges(wallsToRemove, bonusesToRemove, bombsToRemove);
 }

@@ -59,6 +59,8 @@ private:
     void broadcastMap(const QJsonArray &map_);
     void broadcastStart();
     void broadcastPlayerInfo();
+    void broadcastMapChanges(std::list<MapTile> wallsToRemove, std::list<MapTile> bonusesToRemove,
+                             std::list<std::shared_ptr<Bomb>> bombsToRemove);
     void sendReviewedRequestId(const Player *player_, const qint32 requestId_);
     void sendPlayerUpdate(const Player *player_);
     void sendOtherPlayerUpdate(const Player *updatedPlayer_);
@@ -74,10 +76,12 @@ private:
      * @return true if player is colliding with something, otherwise false
      */
     bool hasCollidingTile(Player *player_, const double playerNewPosx_, const double playerNewPosy_);
+    void killPlayersOnTile(const MapTile& tile);
     std::unordered_set<qint32> findBombsInExplosionRange(const quint16 bombX_, const quint16 bombY_,
                                                          const qint32 bombRange_);
     std::unordered_set<qint32> findExplodedBombs(std::shared_ptr<Bomb> firstExplodedBomb_);
     std::set<std::pair<quint16, quint16>> findExplodedTiles(const std::unordered_set<qint32> &explodedBombs);
+    QJsonArray tilesListToJsonArray(const std::list<MapTile> &tiles);
 
     GameMap m_map;
     // Waiting for players to start the game
