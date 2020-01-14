@@ -13,6 +13,5 @@ export enum SpriteType {
   SPEED_INC,
   SPEED_DESC,
   PUSH_BOMB,
-  FIRE_HORIZONTAL,
-  FIRE_VERTICAL
+  FIRE,
 }

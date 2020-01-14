@@ -6,13 +6,9 @@ import { MapConfiguration } from '@app/view/game/game-view/map-configuration';
 @Injectable({
   providedIn: 'root'
 })
-export class UserActionService { // todo: change service name
+export class UserActionService {
 
   constructor(private gameService: GameService, private configuration: MapConfiguration) { }
-
-  createPlayGround(canvasElement): void {
-    this.gameService.loadAssets(canvasElement).then();
-  }
 
   keyDown(event: KeyboardEvent): void {
     if (event.code === this.configuration.keyboardsSettings.placeBomb) {

@@ -137,21 +137,13 @@ export class MapConfiguration {
         width: this.tileWidth,
         height: this.tileHeight
       },
-      { // fire_horizontal
+      { // fire
         spriteX: 38,
         spriteY: 750,
         spriteWidth: 128,
         spriteHeight: 128,
-        width: null,
-        height: null
-      },
-      { // fire_vertical
-        spriteX: 179,
-        spriteY: 750,
-        spriteWidth: 128,
-        spriteHeight: 128,
-        width: null,
-        height: null
+        width: this.tileWidth,
+        height: this.tileHeight
       },
     ];
   }

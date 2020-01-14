@@ -22,8 +22,6 @@ export class GameDetailsService {
   private playerLoaded = false;
   private configurationSetEmitter: EventEmitter<boolean> = new EventEmitter();
 
-  private temporaryTileHeight = 140;
-
   constructor(private serverConnectionService: ServerConnectionService) {
     this.listenMapInfo();
     this.listenInitialPlayersInfo();
@@ -62,46 +60,5 @@ export class GameDetailsService {
 
   getWalls(): TileModel[] {
     return this.walls;
-  }
-
-  getBonuses(): TileModel[] {
-    return [{
-      id: 6,
-      x: 2 * this.temporaryTileHeight,
-      y: 1 * this.temporaryTileHeight,
-      type: TileType.PUSH_BOMB
-    } as TileModel,{
-      id: 7,
-      x: 0 * this.temporaryTileHeight,
-      y: 2 * this.temporaryTileHeight,
-      type: TileType.SPEED_INC
-    } as TileModel,{
-      id: 8,
-      x: 1 * this.temporaryTileHeight,
-      y: 2 * this.temporaryTileHeight,
-      type: TileType.RANGE_DESC
-    } as TileModel,{
-      id: 9,
-      x: 2 * this.temporaryTileHeight,
-      y: 2 * this.temporaryTileHeight,
-      type: TileType.SPEED_DESC
-    } as TileModel,{
-      id: 10,
-      x: 3 * this.temporaryTileHeight,
-      y: 2 * this.temporaryTileHeight,
-      type: TileType.BOMB_INC
-    } as TileModel,{
-      id: 11,
-      x: 2 * this.temporaryTileHeight,
-      y: 3 * this.temporaryTileHeight,
-      type: TileType.RANGE_INC
-    } as TileModel,{
-      id: 12,
-      x: 2 * this.temporaryTileHeight,
-      y: 4 * this.temporaryTileHeight,
-      type: TileType.BOMB_DESC
-    } as TileModel,
-
-    ];
   }
 }

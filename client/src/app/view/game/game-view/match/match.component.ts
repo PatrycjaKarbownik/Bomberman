@@ -29,7 +29,7 @@ export class MatchComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
-    this.userActionService.createPlayGround(canvasEl);
+    this.gameService.createPlayground(canvasEl).then();
     this.serverConnectionService.getGameStartedEmitter()
       .subscribe(gameStarted => {
         this.showLoader = !(gameStarted === true);

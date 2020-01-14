@@ -7,4 +7,5 @@ export interface PlayerDetailsModel {
   speed: number;
   bombPusher: boolean;
   alive: boolean;
+  bombLimit: number;
 }
