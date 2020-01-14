@@ -1,8 +1,11 @@
 #ifndef GAMEMAP_H
 #define GAMEMAP_H
 
+#include <bomb.h>
+
 #include <QObject>
 
+#include <memory>
 #include <vector>
 #include <unordered_set>
 
@@ -25,7 +28,7 @@ struct MapTile {
     quint16 y {0};
     TileType type = TileType::Nothing;
     BonusType bonus = BonusType::None;
-    bool hasBomb = false;
+    std::shared_ptr<Bomb> bomb = nullptr;
 };
 
 

@@ -121,6 +121,7 @@ void Room::broadcastPlayerInfo()
         playerObject.insert("x", player->getPosX());
         playerObject.insert("y", player->getPosY());
         playerObject.insert("alive", player->isAlive());
+        playerObject.insert("bombLimit", static_cast<qint64>(player->getBombLimit()));
         content.append(playerObject);
     }
 
@@ -153,6 +154,7 @@ void Room::sendPlayerUpdate(const Player *player_)
     content.insert("alive", player_->isAlive());
     content.insert("speed", static_cast<qint64>(player_->getSpeed()));
     content.insert("bombPusher", player_->hasPushBonus());
+    content.insert("bombLimit", static_cast<qint64>(player_->getBombLimit()));
 
     message.insert("content", content);
 
@@ -181,6 +183,43 @@ void Room::sendOtherPlayerUpdate(const Player *updatedPlayer_)
 
         player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
     }
+}
+
+void Room::sendBombPlaced(const Player *bombOwner_, double bombX_, double bombY_)
+{
+    QJsonObject message;
+    message.insert("messageType", "bombPlaced");
+
+    QJsonObject content;
+    content.insert("x", bombX_);
+    content.insert("y", bombY_);
+
+    message.insert("content", content);
+
+    QJsonDocument doc(message);
+    for (const auto player : m_players) {
+        if (player == bombOwner_) {
+            continue;
+        }
+
+        player->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
+    }
+}
+
+void Room::sendBombReject(const Player *player_, double bombX_, double bombY_)
+{
+    QJsonObject message;
+    message.insert("messageType", "bombRejected");
+
+    QJsonObject content;
+    content.insert("x", bombX_);
+    content.insert("y", bombY_);
+
+    message.insert("content", content);
+
+    QJsonDocument doc(message);
+    player_->getSocket()->sendTextMessage(doc.toJson(QJsonDocument::Compact));
+
 }
 
 void Room::resetPlayers()
@@ -246,7 +285,7 @@ bool Room::hasCollidingTile(Player *player_, const double playerNewPosx_, const 
             }
 
             auto mapTile = m_map[yCoord][xCoord];
-            if (mapTile.type == TileType::Nothing && !mapTile.hasBomb) {
+            if (mapTile.type == TileType::Nothing && !mapTile.bomb) {
                 continue;
             }
 
@@ -263,6 +302,93 @@ bool Room::hasCollidingTile(Player *player_, const double playerNewPosx_, const 
     }
 
     return false;
+}
+
+// TODO Do something about these casts
+std::unordered_set<qint32> Room::findBombsInExplosionRange(quint16 bombX_, quint16 bombY_, qint32 bombRange_)
+{
+    std::unordered_set<qint32> explodedBombs;
+    for (qint32 x = static_cast<qint32>(bombX_) - bombRange_; x <= static_cast<qint32>(bombX_) + bombRange_; ++x) {
+        if (x < 0 || static_cast<qint32>(bombX_) == x || x >= MAP_SIZE) {
+            continue;
+        }
+        if (m_map[bombY_][x].bomb) {
+            explodedBombs.insert(m_map[bombY_][x].id);
+        }
+    }
+
+    for (qint32 y = static_cast<qint32>(bombY_) - bombRange_; y <= static_cast<qint32>(bombY_) + bombRange_; ++y) {
+        if (y < 0 || static_cast<qint32>(bombY_) == y || y >= MAP_SIZE) {
+            continue;
+        }
+        if (m_map[y][bombX_].bomb) {
+            explodedBombs.insert(m_map[y][bombX_].id);
+        }
+    }
+
+    return explodedBombs;
+}
+
+std::unordered_set<qint32> Room::findExplodedBombs(std::shared_ptr<Bomb> firstExplodedBomb_)
+{
+    // We are creating two collections: explodedBombs are bombs that their explosion is already calculated,
+    // bombsToExplode are just about to be calculated
+    std::unordered_set<qint32> explodedBombs;
+    std::unordered_set<qint32> bombsToExplode;
+
+    // bomb_ is first bomb which is about to explode
+    bombsToExplode.insert(firstExplodedBomb_->id());
+
+    while(bombsToExplode.size() > 0) {
+        // Pop first element
+        qint32 id = *(bombsToExplode.begin());
+        bombsToExplode.erase(bombsToExplode.begin());
+        explodedBombs.insert(id);
+
+        // Find bombs affected by explosion
+        auto bomb = m_bombs[id];
+        auto xCoord = static_cast<quint16>(bomb->posX() / m_tileWidth);
+        auto yCoord = static_cast<quint16>(bomb->posY() / m_tileWidth);
+        auto bombsInRange = findBombsInExplosionRange(xCoord, yCoord, bomb->range());
+
+        // Check if bombs are already not in one of collections
+        for (qint32 bombId : bombsInRange) {
+            if (explodedBombs.find(bombId) != explodedBombs.end() &&
+                    bombsToExplode.find(bombId) != bombsToExplode.end()) {
+                bombsToExplode.insert(bombId);
+            }
+        }
+    }
+
+    return explodedBombs;
+}
+
+// TODO reduce code duplication and casts
+std::set<std::pair<quint16, quint16> > Room::findExplodedTiles(const std::unordered_set<qint32> &explodedBombs)
+{
+    std::set<std::pair<quint16, quint16>> explodedTiles;
+
+    for (const qint32 bombId : explodedBombs) {
+        auto bomb = m_bombs[bombId];
+        auto xCoord = static_cast<quint16>(bomb->posX() / m_tileWidth);
+        auto yCoord = static_cast<quint16>(bomb->posY() / m_tileWidth);
+
+        for (qint32 x = static_cast<qint32>(xCoord) - bomb->range(); x <= static_cast<qint32>(xCoord) + bomb->range(); ++x) {
+            if (x < 0 || static_cast<qint32>(xCoord) == x || x >= MAP_SIZE) {
+                continue;
+            }
+            explodedTiles.insert(std::make_pair(x, yCoord));
+        }
+
+        for (qint32 y = static_cast<qint32>(yCoord) - bomb->range(); y <= static_cast<qint32>(yCoord) + bomb->range(); ++y) {
+            if (y < 0 || static_cast<qint32>(yCoord) == y || y >= MAP_SIZE) {
+                continue;
+            }
+            explodedTiles.insert(std::make_pair(xCoord, y));
+        }
+    }
+
+    return explodedTiles;
 }
 
 void Room::onPlayerDisconnected()
@@ -286,11 +412,13 @@ void Room::onPlayerDisconnected()
 
 void Room::onStartTimeout()
 {
+    // If there are no players just emit that everyone left
     if (m_players.size() == 0) {
         emit everyoneLeft(this);
         return;
     }
 
+    // If there is one player close connection with him
     if (m_players.size() == 1) {
         auto player = m_players[0];
         player->getSocket()->close(QWebSocketProtocol::CloseCodeNormal, "Not enough players to start the game");
@@ -331,8 +459,10 @@ void Room::onPlayerMoveRequest(Player* player_, qint32 requestId_, qint32 lastRe
     player_->setPosX(x_);
     player_->setPosY(y_);
 
-    for (auto bombCoords : player_->getBombsUnderPlayer()) {
-        if (isColliding(x_, y_, m_map[bombCoords.y][bombCoords.x])) {
+    auto bombsUnder = player_->getBombsUnderPlayer();
+
+    for (const auto &bombCoords : bombsUnder) {
+        if (!isColliding(x_, y_, m_map[bombCoords.y][bombCoords.x])) {
             player_->removeBombUnderPlayer(bombCoords.x, bombCoords.y);
         }
     }
@@ -343,7 +473,83 @@ void Room::onPlayerMoveRequest(Player* player_, qint32 requestId_, qint32 lastRe
 void Room::onPlayerBombRequest(Player *player_, qint32 requestId_, qint32 lastReviewedRequestId_,
                                double x_, double y_)
 {
+    sendReviewedRequestId(player_, requestId_);
+
     if (!player_->isAlive()) {
         return;
     }
+
+    if (lastReviewedRequestId_ < player_->getLastRejectedRequestId()) {
+        return;
+    }
+
+    auto xMapCoord = static_cast<quint16>(x_ / m_tileWidth);
+    auto yMapCoord = static_cast<quint16>(y_ / m_tileWidth);
+
+    if (m_map[yMapCoord][xMapCoord].bomb) {
+        sendBombReject(player_, x_, y_);
+        return;
+    }
+
+    player_->addBombUnderPlayer(xMapCoord, yMapCoord);
+    auto bomb = std::make_shared<Bomb>(new Bomb(m_bombId++, player_, EXPLOSION_TIMEOUT));
+    bomb->moveToThread(this->thread());
+    bomb->setPosX(x_);
+    bomb->setPosY(y_);
+    m_map[yMapCoord][xMapCoord].bomb = bomb;
+    connect(bomb.get(), &Bomb::exploded, this, &Room::onBombExplosion);
+
+    m_bombs[bomb->id()] = bomb;
+    sendBombPlaced(player_, x_, y_);
+
+}
+
+// todo Check if bomb still exists?
+void Room::onBombExplosion(Bomb *bomb_)
+{
+    auto bomb = m_bombs.at(bomb_->id());
+    std::unordered_set<qint32> explodedBombs = findExplodedBombs(bomb);
+    std::set<std::pair<quint16, quint16>> explodedTiles = findExplodedTiles(explodedBombs);
+    std::list<MapTile> tilesToRemove;
+    std::list<std::shared_ptr<Bomb>> bombsToRemove;
+
+    for (auto tileCoords : explodedTiles) {
+        auto [xCoord, yCoord] = tileCoords;
+        MapTile &tile = m_map[yCoord][xCoord];
+
+        if (tile.type == TileType::Nothing && !tile.bomb) {
+            continue;
+        }
+
+        if (tile.bomb) {
+            auto bomb = tile.bomb;
+            tile.bomb = nullptr;
+            bomb->stopCountdown();
+            Player *bombOwner = bomb->owner();
+            bombOwner->removeBombUnderPlayer(xCoord, yCoord);
+            m_bombs.erase(m_bombs.find(bomb->id()));
+        }
+
+        if (tile.type == TileType::FragileWall) {
+            tile.type = TileType::Nothing;
+            tilesToRemove.push_back(tile);
+            continue;
+        }
+
+        // Check if player is not in range
+        for (auto player : m_players) {
+            if (!player->isAlive()) {
+                continue;
+            }
+            if (isColliding(player->getPosX(), player->getPosY(), tile)) {
+                player->setAlive(false);
+                // Send information to player about its death
+                sendPlayerUpdate(player);
+
+                // Inform other players about death
+                sendOtherPlayerUpdate(player);
+            }
+        }
+    }
+    //bomb_->deleteLater();
 }

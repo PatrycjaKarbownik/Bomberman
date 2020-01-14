@@ -146,12 +146,14 @@ void Player::removeBombUnderPlayer(const qint32 bombXPos_, const qint32 bombYPos
     for (auto bombIt = m_bombsUnderPlayer.begin(); bombIt != m_bombsUnderPlayer.end(); ++bombIt) {
         if ((*bombIt).x == bombXPos_ && (*bombIt).y == bombYPos_) {
             m_bombsUnderPlayer.erase(bombIt);
+            return;
         }
     }
 }
 
 void Player::onReceivedTextMessage(const QString &message_)
 {
+    // Remove unnecessary symbols causing parsing errors
     QString stringMessage = QString(message_).replace("\\", "").replace("\"", "");
 
     QStringList messageList = stringMessage.split("_");

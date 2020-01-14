@@ -10,6 +10,7 @@ DEFINES += QT_MESSAGELOGCONTEXT
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+        bomb.cpp \
         gamehost.cpp \
         gamehostshub.cpp \
         gamemap.cpp \
@@ -23,6 +24,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    bomb.h \
     gamehost.h \
     gamehostshub.h \
     gamemap.h \

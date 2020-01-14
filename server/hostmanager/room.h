@@ -2,11 +2,13 @@
 #define ROOM_H
 
 #include <player.h>
+#include <bomb.h>
 #include <gamemap.h>
 
 #include <QTimer>
 
 #include <vector>
+#include <set>
 
 /**
  * @brief The Room class
@@ -23,6 +25,7 @@ public:
     static const quint32 MAP_SIZE = 11; // TODO change it so maps can be different
     static const quint32 CANVAS_WIDTH = 700; // size of client's game window
     static constexpr double TOLERATION = 0.4; // Toleration used in calculations of movement and collisions
+    static const qint32 EXPLOSION_TIMEOUT = 3000; // Explode bomb after 3 seconds
 
     explicit Room(const QStringList& expectedPlayers_, QObject *parent = nullptr);
     ~Room();
@@ -59,6 +62,8 @@ private:
     void sendReviewedRequestId(const Player *player_, const qint32 requestId_);
     void sendPlayerUpdate(const Player *player_);
     void sendOtherPlayerUpdate(const Player *updatedPlayer_);
+    void sendBombPlaced(const Player *bombOwner_, double bombX_, double bombY_);
+    void sendBombReject(const Player *player_, double bombX_, double bombY_);
     void resetPlayers();
     bool isNotMovingTooFast(const Player *player_, const double x_, const double y_);
     bool isColliding(const double playerPosX_, const double playerPosY_, const MapTile& tile);
@@ -69,15 +74,21 @@ private:
      * @return true if player is colliding with something, otherwise false
      */
     bool hasCollidingTile(Player *player_, const double playerNewPosx_, const double playerNewPosy_);
+    std::unordered_set<qint32> findBombsInExplosionRange(const quint16 bombX_, const quint16 bombY_,
+                                                         const qint32 bombRange_);
+    std::unordered_set<qint32> findExplodedBombs(std::shared_ptr<Bomb> firstExplodedBomb_);
+    std::list<std::pair<quint16, quint16>> findExplodedTiles(const std::unordered_set<qint32> &explodedBombs);
 
     GameMap m_map;
     // Waiting for players to start the game
     QTimer m_startTimeout;
     QTimer m_countdownTimer;
     std::vector<Player*> m_players;
+    std::map<qint32, std::shared_ptr<Bomb>> m_bombs;
     const QStringList m_expectedPlayers;
     double m_playerWidth;
     double m_tileWidth;
+    qint32 m_bombId = 0;
 
 private slots:
     void onPlayerDisconnected();
@@ -87,6 +98,7 @@ private slots:
                              double x_, double y_);
     void onPlayerBombRequest(Player* player_, qint32 requestId_, qint32 lastReviewedRequestId_,
                              double x_, double y_);
+    void onBombExplosion(Bomb *bomb_);
 };
 
 #endif // ROOM_H
