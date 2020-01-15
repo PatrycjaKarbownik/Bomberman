@@ -1,8 +1,7 @@
 DEBUG_MODE = True
 FLASK_IP = '0.0.0.0'
-HOST_MANAGER_PATH = '../builds/hostmanager/hostmanager'
-GAME_HOST_PATH = '../builds/gamehost/gamehost'
-HOST_MANAGER_PORT = 5005
+HOST_MANAGER_PATH = '../hostmanager-build/hostmanager'
+HOST_MANAGER_PORT = 4999
 MAX_GAMES_PER_HOST = 3
 SWAGGER_UI_DOC_EXPANSION = 'list'
 RESTPLUS_MASK_SWAGGER = False

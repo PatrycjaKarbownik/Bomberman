@@ -24,10 +24,10 @@
     "TITLE": "Pokój",
     "USERS_LIST": "Lista graczy",
     "WAITING_FOR_USERS": "Oczekiwanie na pozostałych graczy",
-    "GAME_START_IN": "Gra rozpocznie się za",
+    "WAITING_FOR_READINESS_ALL_USERS": "Oczekiwanie na gotość wszystkich graczy",
+    "GAME_IS_STARTING": "Gra uruchamia się",
     "GAME_RUNS": "Gra trwa",
-    "SEC": "sek.",
-    "REPORT_READINESS": "Zgłoś gotowość do gry",
+    "CHANGE_READINESS": "Zmień gotowość do gry",
     "LEGEND": "Legenda",
     "USER_READY": "Gracz zgłosił gotowość do gry",
     "USER_NOT_READY": "Gracz nie zgłosił gotowości do gry",
@@ -46,6 +46,7 @@
   "EXCEPTION": {
     "UNEXPECTED": "Wystąpił nieoczekiwany błąd"
   },
+
   "VALIDATION": {
     "FIELD_NOT_VALID": "Pole jest niepoprawne.",
     "BAD_CREDENTIALS": "Niepoprawna nazwa użytkownika",

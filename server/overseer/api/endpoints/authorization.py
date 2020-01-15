@@ -29,10 +29,19 @@ class AuthLogin(Resource):
                    }, 401
 
         user_id = lobby.add_user(username)
+        # TODO Maybe just return whole user instead of just id?
+        user = lobby.users[user_id]
+
+        access_token = create_access_token(identity=user_id)
+        refresh_token = create_refresh_token(identity=user_id)
+        user.access_token = 'Bearer ' + access_token
+        user.refresh_token = 'Bearer ' + refresh_token
+
         return {
-                   'userId': user_id,
-                   'accessToken': create_access_token(identity=user_id),
-                   'refreshToken': create_refresh_token(identity=user_id)
+                    'userId': user_id,
+                    'username': username,
+                    'accessToken': access_token,
+                    'refreshToken': refresh_token
                }, 200
 
 
@@ -43,7 +52,9 @@ class AuthRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):
         username_id = get_jwt_identity()
+        user = lobby.users[username_id]
+        user.access_token = create_access_token(identity=username_id)
 
         return {
-                   'accessToken': create_access_token(identity=username_id)
+                    'accessToken': user.access_token
                }, 200

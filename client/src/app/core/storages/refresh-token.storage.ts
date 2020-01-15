@@ -1,14 +1,14 @@
-// remember refresh token in local storage
+// remember refresh token in session storage
 export function RefreshToken() {
   return (target: any, key: string) => {
     const tokenKey = 'refreshToken';
 
     Object.defineProperty(target, key, {
       get: () => {
-        return JSON.parse(localStorage.getItem(tokenKey));
+        return JSON.parse(sessionStorage.getItem(tokenKey));
       },
       set: (token: string) => {
-        localStorage.setItem(tokenKey, JSON.stringify("Bearer " + token));
+        sessionStorage.setItem(tokenKey, JSON.stringify("Bearer " + token));
       }
     });
   };

@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
-
 import { AccessToken } from '@app/core/storages/access-token.storage';
-import { CurrentUserModel } from '@app/shared/auth/current-user.model';
-import { CurrentUserService } from '@app/shared/auth/current-user.service';
 import { RefreshToken } from '@app/core/storages/refresh-token.storage';
+import { UserId, Username } from '@app/core/storages/user-details.storage';
+import { WebsocketService } from '@app/shared/websocket-service/websocket.service';
 
 // bar on view top -> shows username and gives logout option
 @Component({
@@ -19,17 +16,17 @@ export class HeaderComponent {
 
   @AccessToken() private accessToken: string;
   @RefreshToken() private refreshToken: string;
+  @UserId() private userId: number;
+  @Username() private username: string;
 
-  constructor(private router: Router, private modal: NgbModal, private currentUserService: CurrentUserService) { }
+  constructor(private router: Router, private websocketService: WebsocketService) { }
 
   logout() {
-    // todo: send info to overseer about logout
+    this.websocketService.overseerDisconnect();
     this.accessToken = null;
     this.refreshToken = null;
+    this.userId = null;
+    this.username = null;
     this.router.navigateByUrl('auth').then(() => location.reload());
-  }
-
-  getUsername(): Observable<CurrentUserModel> {
-    return this.currentUserService.getCurrentUser();
   }
 }
