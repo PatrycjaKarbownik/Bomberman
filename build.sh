@@ -2,6 +2,16 @@
 # Thanks to Robert Siemer for providing useful template for parsing arguments
 # https://stackoverflow.com/a/29754866
 
+function print_help() {
+	echo 'Bomberman building script'
+  echo 'Usage: ./build.sh -q path_to_your_qmake_file'
+  echo 'Flags:'
+  echo '-h --help         print help'
+	echo '-q --qmake <PATH> path to qmake for building c++'
+	echo '--nocpp           not building game host'
+	echo '--noclient        not building client'
+}
+
 # saner programming env: these switches turn some bugs into errors
 set -o errexit -o pipefail -o noclobber -o nounset
 
@@ -14,8 +24,8 @@ if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
 fi
 
 # ':' after option means that it will have an argument
-OPTIONS=q:vpco
-LONGOPTS=qmake:,verbose,nocpp,noclient,nooverseer
+OPTIONS=q:vpcoh
+LONGOPTS=qmake:,nocpp,noclient,nooverseer,help
 
 # -regarding ! and PIPESTATUS see above
 # -temporarily store output to be able to check for errors
@@ -31,7 +41,7 @@ fi
 eval set -- "$PARSED"
 
 echo $PARSED
-q=n v=n p=n c=n o=n QMAKE_PATH=""
+q=n h=n nocpp=n noclient=n nooverseer=n QMAKE_PATH=""
 # now enjoy the options in order and nicely split until we see --
 while true 
 do
@@ -40,20 +50,16 @@ do
       QMAKE_PATH="$2"
       shift 2
       ;;
-    -v|--verbose)
-      v=y
+    --nocpp)
+      nocpp=y
       shift
       ;;
-    -p|--nocpp)
-      p=y
+    --noclient)
+      noclient=y
       shift
       ;;
-    -c|--noclient)
-      c=y
-      shift
-      ;;
-    -o|--nooverseer)
-      o=y
+    -h|--help)
+      h=y
       shift
       ;;
     --)
@@ -76,48 +82,76 @@ done
 # Set path of running build.sh file
 START_PATH=`pwd`
 
-# In case of not verbose execution just throw most of informations into /dev/null
-if [ "v" == "y" ]
+if [ "$h" == "y" ]
 then
-  REDIRECT="> /dev/null"
-else
-  REDIRECT=""
+	print_help
+  exit 0
 fi
 
-if [ "$p" == "n" ]
+if [ "$nocpp" == "n" ]
 then
 
 	echo "Building c++ applications"
 	if [ -z "$QMAKE_PATH" ]
 	then
 		read -ep "Path to your QMake: " QMAKE_PATH
-		#QMAKE_PATH=~/Qt/5.13.2/gcc_64/bin/qmake
-		echo "QMake path: $QMAKE_PATH"
 	fi
 
-	# Create folders
-	mkdir server/builds server/builds/gamehost server/builds/hostmanager
+	echo "QMake path: $QMAKE_PATH"
 
-	echo "Build gamehost"
-	cd $START_PATH/server/builds/gamehost
+	# Create folder
+	mkdir -p server/hostmanager-build
+
+	echo "Build hostmanager"
+	cd $START_PATH/server/hostmanager-build
 	
-  $QMAKE_PATH $START_PATH/server/gamehost/gamehost.pro -Wall $REDIRECT
+  $QMAKE_PATH $START_PATH/server/hostmanager/hostmanager.pro -Wall -config test_conf
 	if [ $? -ne 0 ]
 	then
-    echo "Qmake for gamehost failed"
+    echo "Qmake for hostmanager failed"
+		exit 1
   fi	
 
-	make $REDIRECT
+	make
 	if [ $? -ne 0 ]
 	then
-    echo "Make for gamehost failed"
+    echo "Make for hostmanager failed"
+		exit 2
   fi	
+
+  $QMAKE_PATH $START_PATH/server/hostmanager/hostmanager.pro -Wall
+	if [ $? -ne 0 ]
+	then
+    echo "Qmake for hostmanager_test failed"
+		exit 1
+  fi	
+
+	make
+	if [ $? -ne 0 ]
+	then
+    echo "Make for hostmanager_test failed"
+		exit 2
+  fi	
+
+	echo "Execute test for hostmanager"
+	$START_PATH/server/hostmanager-build/hostmanager_test
+		if [ $? -ne 0 ]
+	then
+    echo "Qmake for hostmanager failed"
+		exit 1
+  fi	
+
+	echo "Building hostmanager succesful"
 
 	echo; echo; # Just give me some of that space
-	echo "Builds hostmanager"
-	cd $START_PATH/server/builds/hostmanager
-	$QMAKE_PATH $START_PATH/server/hostmanager/hostmanager.pro -Wall $REDIRECT
-	make > /dev/null
+fi
+#-config test_conf
 
+if [ "$noclient" == "n" ]
+then
+	echo "Installing client dependencies"
+	cd $START_PATH/client
+  npm install
+	echo; echo; # Just give me some of that space
 fi
 
