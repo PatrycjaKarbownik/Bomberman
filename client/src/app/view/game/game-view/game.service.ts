@@ -12,6 +12,7 @@ import { ServerConnectionService } from '@app/view/game/server-connection/server
 import { BombExplodedModel } from '@app/view/game/server-connection/models/bomb-exploded.model';
 import { FlamesModel } from '@app/view/game/server-connection/models/flames.model';
 import { UserResultModel } from '@app/view/game/server-connection/models/user-result.model';
+import { MovingBombModel } from '@app/view/game/server-connection/models/moving-bomb.model';
 
 // game service
 // answer for game view dependent on game logic
@@ -86,6 +87,7 @@ export class GameService {
     this.setBombExplodedSubscription();
     this.setPickedBonusSubscription();
     this.setGameResultSubscription();
+    this.setBombMovementSubscription();
   }
 
   startGameLoop() {
@@ -133,8 +135,8 @@ export class GameService {
           flame.x, flame.y,
           flameSprite.width, flameSprite.height
         );
-      })
-    })
+      });
+    });
   }
 
   private drawBombs() {
@@ -283,7 +285,7 @@ export class GameService {
   }
 
   setBomb() {
-    if(this.playerBombs.length < this.player.bombLimit) {
+    if (this.playerBombs.length < this.player.bombLimit) {
       let horizontalTileNumber = Math.floor(this.player.x / this.configuration.tileWidth);
       let leftTile = horizontalTileNumber * this.configuration.tileWidth;
       let rightTile = (horizontalTileNumber + 1) * this.configuration.tileWidth;
@@ -464,7 +466,7 @@ export class GameService {
     this.flames.push({
       flames: flames,
       frameNumber: 0
-    } as FlamesModel)
+    } as FlamesModel);
   }
 
   private setBombExplodedSubscription() {
@@ -481,6 +483,35 @@ export class GameService {
   private setPickedBonusSubscription() {
     this.serverConnectionService.getPickedBonusEmitter()
       .subscribe((bonus: TileModel) => this.removeBonus(bonus));
+  }
+
+  private setBombMovementSubscription() {
+    this.serverConnectionService.getBombMovementEmitter()
+      .subscribe((bomb: MovingBombModel) => {
+        let indexOfBombToMove = this.bombsUnderPlayer.findIndex(it => it.x === bomb.previousX && it.y === bomb.previousY);
+        if (indexOfBombToMove !== -1) {
+          this.bombsUnderPlayer.filter(it => it.x === bomb.previousX && it.y === bomb.previousY).forEach(b => {
+            b.x = bomb.actualX;
+            b.y = bomb.actualY;
+          });
+        }
+
+        indexOfBombToMove = this.playerBombs.findIndex(it => it.x === bomb.previousX && it.y === bomb.previousY);
+        if (indexOfBombToMove !== -1) {
+          this.playerBombs.filter(it => it.x === bomb.previousX && it.y === bomb.previousY).forEach(b => {
+            b.x = bomb.actualX;
+            b.y = bomb.actualY;
+          });
+        }
+
+        indexOfBombToMove = this.bombs.findIndex(it => it.x === bomb.previousX && it.y === bomb.previousY);
+        if (indexOfBombToMove !== -1) {
+          this.bombs.filter(it => it.x === bomb.previousX && it.y === bomb.previousY).forEach(b => {
+            b.x = bomb.actualX;
+            b.y = bomb.actualY;
+          });
+        }
+      });
   }
 
   private setGameResultSubscription() {

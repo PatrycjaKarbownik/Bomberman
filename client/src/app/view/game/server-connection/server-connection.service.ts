@@ -14,6 +14,7 @@ import { RequestType } from '@app/view/game/server-connection/models/request-typ
 import { BombModel } from '@app/view/game/game-view/models/bomb.model';
 import { BombExplodedModel } from '@app/view/game/server-connection/models/bomb-exploded.model';
 import { UserResultModel } from '@app/view/game/server-connection/models/user-result.model';
+import { MovingBombModel } from '@app/view/game/server-connection/models/moving-bomb.model';
 
 // service only for communication with game server
 // and information transfer to another components
@@ -40,6 +41,7 @@ export class ServerConnectionService {
   private rejectedBombEmitter: EventEmitter<BombModel> = new EventEmitter<BombModel>();
   private bombExplodedEmitter: EventEmitter<BombExplodedModel> = new EventEmitter<BombExplodedModel>();
   private pickedBonusEmitter: EventEmitter<TileModel> = new EventEmitter<TileModel>();
+  private bombMovementEmitter: EventEmitter<MovingBombModel> = new EventEmitter<MovingBombModel>();
   private gameResultEmitter: EventEmitter<UserResultModel[]> = new EventEmitter<UserResultModel[]>();
 
   private gameResult: UserResultModel[];
@@ -79,6 +81,8 @@ export class ServerConnectionService {
         } else if (messageData.messageType === MessageType.GAME_RESULT) {
           this.gameResult = messageData.content;
           this.emitGameResult(messageData.content);
+        } else if (messageData.messageType === MessageType.BOMB_MOVEMENT) {
+          this.emitBombMovement(messageData.content);
         }
       }
     );
@@ -153,6 +157,10 @@ export class ServerConnectionService {
     return this.pickedBonusEmitter;
   }
 
+  getBombMovementEmitter() {
+    return this.bombMovementEmitter;
+  }
+
   getGameResultEmitter() {
     return this.gameResultEmitter;
   }
@@ -193,6 +201,10 @@ export class ServerConnectionService {
 
   private emitPickedBonus(bonus: TileModel) {
     this.pickedBonusEmitter.emit(bonus);
+  }
+
+  private emitBombMovement(bomb: MovingBombModel) {
+    this.bombMovementEmitter.emit(bomb);
   }
 
   private emitGameResult(gameResult: UserResultModel[]) {
