@@ -12,20 +12,34 @@ Web application for Bomberman game - server using C++ and Python 3, web client u
 #### Dependencies
 * Flask
 * Flask-restplus
+* Flask-socketio
 * Flask-JWT-Extended
-* passlib
+* eventlet
 
 #### Tests
 * [Swagger](https://swagger.io/)
 * Standard Python unit tests
 
-### Host manager & Game host
+### Host manager 
 ...
 #### Development
 * C++17
 * QT 5.13.2
 
 #### Tests
+* hostmanager_test (to build tests use qmake with `-config test_conf` flag
+
+#### Compilation
+```
+cd server
+mkdir -p hostmanager-build
+cd hostmanager-build
+qmake ../hostmanager/hostmanager.pro
+make
+qmake ../hostmanager/hostmanager.pro --config test_conf
+make
+./hostmanager_test
+```
 
 ## Client
 #### Development
